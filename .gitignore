@@ -9,4 +9,7 @@ docs-map.html
 __pycache__/
 *.pyc
 
+# Agent HTML artifacts — ephemeral presentation layer, source of truth stays in files
+.artifacts/
+
 .DS_Store
