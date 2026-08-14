@@ -50,13 +50,16 @@ OntoShip ships the **GitMark** package (KB + dev-flow) as a project-local **omp*
 (The **`destructive-guard`** safety hook now lives in its own repo →
 [vakovalskii/destructive-guard](https://github.com/vakovalskii/destructive-guard).)
 
-**`gitmark`** — three skills and five commands:
+**`gitmark`** — six skills and five commands:
 
 | skill | what |
 |---|---|
 | `kb-search` | search the KB (FTS5) instead of grepping blind |
 | `kb-curate` | light ontology rules when adding/editing docs (types, frontmatter, typed links) |
 | `dev-flow` | the spec-driven loop to ship a feature: research → tasks → goal → **spec (md via `kb-curate`)** → isolated **git worktree** → implement → tests → independent review → dev-tests → prod-tests → ship (MR → `dev` → `main`). Feature to prod in ~40 min – 2 h. |
+| `grilling` | the interview primitive (rounds + frontier) — drives `mp-grill-me` and `improve-codebase-architecture` |
+| `mp-grill-me` | stateless brainstorm interview to sharpen a plan or design |
+| `improve-codebase-architecture` | scan a codebase for deepening opportunities, render an HTML report, then grill through one |
 
 So the agent searches the KB instead of grepping, follows light curation rules when
 editing, and ships changes through one repeatable, gated flow built around the KB.

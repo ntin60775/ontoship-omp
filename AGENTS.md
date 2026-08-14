@@ -16,6 +16,9 @@ linter) plus the spec-driven dev-flow built on top of it.
     kb-search/         the gitmark CLI engine (gitmark.py) + SKILL.md
     kb-curate/         rules for maintaining the KB as a typed ontology
     dev-flow/          the gated ship pipeline
+    grilling/          the interview primitive (rounds + frontier)
+    mp-grill-me/       stateless brainstorm interview
+    improve-codebase-architecture/  architectural scan + deepening report
   commands/            slash commands: /kb /kb-map /doc /onto-doc /ship
   rules/               project rules (kb-source-of-truth, kb-first)
 AGENTS.md              this entry point (read by omp)
