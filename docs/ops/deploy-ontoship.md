@@ -49,6 +49,13 @@ cp <path-to-ontoship-omp>/AGENTS.md <your-repo>/
 **Expected:** `docs/README.md` exists; the links in `AGENTS.md` → «Start here» resolve
 (`docs/README.md`, `docs/ontology.md`, `docs/reference/*`).
 
+> **Template tweaks are automatic.** `AGENTS.md` links to specific KB files
+> (`docs/ontology.md`, `docs/reference/architecture.md`, `docs/reference/commands.md`)
+> that a fresh project doesn't have yet. `/onto-doc`'s lint gate (step 5) flags these as
+> broken links (I4) and fixes them — either creating the docs (when the ontology is
+> adopted) or trimming the links in `AGENTS.md`. No manual tweaking step; the bootstrap
+> is done when lint is clean.
+
 ### 3. Build the index and smoke-test
 
 ```bash
