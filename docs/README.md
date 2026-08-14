@@ -5,7 +5,7 @@ service: _platform
 status: active
 updated: 2026-06-16
 links:
-  part_of: [../CLAUDE.md]
+  part_of: [../AGENTS.md]
 ---
 
 # OntoShip — knowledge base
@@ -16,7 +16,7 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 
 ## Reference
 
-- [architecture.md](reference/architecture.md) — how OntoShip fits together (marketplace → two plugins → skills → KB)
+- [architecture.md](reference/architecture.md) — how OntoShip fits together (omp package → skills → commands → KB)
 - [commands.md](reference/commands.md) — slash commands: `/kb`, `/kb-map`, `/doc`, `/onto-doc`, `/ship`
 - [metrics.md](reference/metrics.md) — what OntoShip is measured by (experience-transfer metrics)
 - [ontology.md](ontology.md) — the knowledge model (node_type, properties, typed links, linter)
@@ -30,14 +30,14 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 - [gitmark-cli](services/gitmark-cli/README.md) — KB search/index engine
 - [kb-curate](services/kb-curate/README.md) — KB maintenance skill
 - [dev-flow](services/dev-flow/README.md) — spec-driven ship pipeline
-- [destructive-guard](services/destructive-guard/README.md) — destructive-command guard hook
+- [destructive-guard](services/destructive-guard/README.md) — destructive-command guard hook (archived: moved to its own repo, not part of the omp package)
 
 ## Derive
 
 ```bash
 # from the repo root
-python3 skills/kb-search/gitmark.py index            # build .gitmark/index.db
-python3 skills/kb-search/gitmark.py search "query"   # FTS5 + trigram search
-python3 skills/kb-search/gitmark.py lint             # check the ontology (I1–I6)
-python3 skills/kb-search/gitmark.py map -o docs-map.html   # HTML overview + graph
+python3 .omp/skills/kb-search/gitmark.py index            # build .gitmark/index.db
+python3 .omp/skills/kb-search/gitmark.py search "query"   # FTS5 + trigram search
+python3 .omp/skills/kb-search/gitmark.py lint             # check the ontology (I1–I6)
+python3 .omp/skills/kb-search/gitmark.py map -o docs-map.html   # HTML overview + graph
 ```

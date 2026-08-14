@@ -3,24 +3,24 @@ node_type: reference
 title: OntoShip slash commands
 service: _platform
 status: active
-updated: 2026-06-16
+updated: 2026-08-14
 tags: [commands, slash-commands, reference]
 links:
-  documents: [../../commands/kb.md, ../../commands/kb-map.md, ../../commands/doc.md, ../../commands/onto-doc.md, ../../commands/ship.md]
+  documents: [../../.omp/commands/kb.md, ../../.omp/commands/kb-map.md, ../../.omp/commands/doc.md, ../../.omp/commands/onto-doc.md, ../../.omp/commands/ship.md]
   relates_to: [../services/gitmark-cli/README.md, ../services/dev-flow/README.md]
 ---
 
 # OntoShip slash commands
 
-Reference for the slash commands shipped by the **OntoShip** Claude Code plugin. Each
-command is a thin `commands/*.md` definition that drives a skill or engine. Two families:
+Reference for the slash commands shipped by the **OntoShip** omp package. Each command is
+a thin `.omp/commands/*.md` definition that drives a skill or engine. Two families:
 
 - **KB curation & search** — `/kb`, `/kb-map`, `/doc`, `/onto-doc` — drive the GitMark
-  CLI (`skills/kb-search/gitmark.py`) and the `kb-curate` ontology rules.
+  CLI (`.omp/skills/kb-search/gitmark.py`) and the `kb-curate` ontology rules.
 - **Dev-flow** — `/ship` — drives the gated `dev-flow` pipeline from idea to production.
 
-`${CLAUDE_PLUGIN_ROOT}` below resolves to the installed plugin directory; the GitMark CLI
-is `${CLAUDE_PLUGIN_ROOT}/skills/kb-search/gitmark.py`.
+The GitMark CLI is `.omp/skills/kb-search/gitmark.py` (relative to the repo root; stable
+when the `.omp/` package is copied into another project).
 
 ## Summary
 
@@ -36,7 +36,7 @@ is `${CLAUDE_PLUGIN_ROOT}/skills/kb-search/gitmark.py`.
 
 ## `/kb` — search the knowledge base
 
-- **Definition:** `commands/kb.md` · **Allowed tools:** `Bash(python3:*)`
+- **Definition:** `.omp/commands/kb.md`
 - **What it does:** searches every `.md` in the project (docs/, READMEs, etc.) via GitMark
   (FTS5 bm25 ranking + trigram/fuzzy matching), then summarizes the top hits and answers
   from the 1–2 most relevant files.
@@ -51,7 +51,7 @@ is `${CLAUDE_PLUGIN_ROOT}/skills/kb-search/gitmark.py`.
 
 ## `/kb-map` — render the KB graph
 
-- **Definition:** `commands/kb-map.md` · **Allowed tools:** `Bash(python3:*)`
+- **Definition:** `.omp/commands/kb-map.md`
 - **What it does:** generates a self-contained HTML map of the knowledge base — a
   collapsible tree, rendered markdown, and a force/radial link graph built from the typed
   links in frontmatter.
@@ -64,7 +64,7 @@ is `${CLAUDE_PLUGIN_ROOT}/skills/kb-search/gitmark.py`.
 
 ## `/doc` — compose/update one KB document
 
-- **Definition:** `commands/doc.md` · **Allowed tools:** `Bash(python3:*)`
+- **Definition:** `.omp/commands/doc.md`
 - **What it does:** composes or updates a **single** KB document for a topic, following the
   `kb-curate` ontology (node_type, frontmatter, typed links, folder README index).
 - **Args:** `$ARGUMENTS` = the topic/document subject.
@@ -82,7 +82,7 @@ is `${CLAUDE_PLUGIN_ROOT}/skills/kb-search/gitmark.py`.
 
 ## `/onto-doc` — build the whole KB
 
-- **Definition:** `commands/onto-doc.md` · **Allowed tools:** `Bash(python3:*)`, `Task`
+- **Definition:** `.omp/commands/onto-doc.md`
 - **What it does:** builds (or rebuilds) the **entire** OntoShip KB for the repo by
   surveying the codebase and fanning out `kb-curate` curator subagents per area, then
   linting, indexing, and mapping. Used to bootstrap or rebuild a project's whole KB.
@@ -97,7 +97,7 @@ is `${CLAUDE_PLUGIN_ROOT}/skills/kb-search/gitmark.py`.
      `kb-curate` on its slice only (search first, pick node_type + folder, frontmatter,
      ≥1 typed link, README index line). Independent areas run in parallel, scoped to avoid
      collisions.
-  4. **Entry point + indexes** — ensure `CLAUDE.md`/`AGENTS.md` exists, `docs/README.md`
+  4. **Entry point + indexes** — ensure `AGENTS.md` exists, `docs/README.md`
      is the master index, every folder has a README index.
   5. **Verify & derive** — `gitmark.py lint` (fix broken links/orphans/missing
      frontmatter), then `gitmark.py index`, then `gitmark.py map -o docs-map.html`.
@@ -107,8 +107,7 @@ is `${CLAUDE_PLUGIN_ROOT}/skills/kb-search/gitmark.py`.
 
 ## `/ship` — run the dev-flow
 
-- **Definition:** `commands/ship.md` · **Allowed tools:** none declared (uses default
-  toolset)
+- **Definition:** `.omp/commands/ship.md`
 - **What it does:** drives a feature/fix from idea to production through the gated
   OntoShip dev-flow pipeline.
 - **Args:** `$ARGUMENTS` = the change to ship (feature/fix description).

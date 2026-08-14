@@ -6,7 +6,7 @@ status: active
 updated: 2026-06-16
 tags: [dev-flow, pipeline, worktree, spec, ship]
 links:
-  documents: [../../../skills/dev-flow/SKILL.md, ../../../commands/ship.md]
+  documents: [../../../.omp/skills/dev-flow/SKILL.md, ../../../.omp/commands/ship.md]
   relates_to: [../gitmark-cli/README.md, ../kb-curate/README.md]
 ---
 
@@ -19,8 +19,8 @@ happens in an **isolated git worktree**, and **only green reaches prod**. The KB
 GitMark knowledge base, see [kb-curate](../kb-curate/README.md)) is the carrier of
 knowledge: onboarding, hand-off, and scaling all start from it, not from the code.
 
-It is defined by the [`dev-flow` skill](../../../skills/dev-flow/SKILL.md) and invoked
-through the [`/ship` command](../../../commands/ship.md).
+It is defined by the [`dev-flow` skill](../../../.omp/skills/dev-flow/SKILL.md) and invoked
+through the [`/ship` command](../../../.omp/commands/ship.md).
 
 ## The gated pipeline
 
@@ -116,7 +116,7 @@ onboarding, hand-off, and scaling start from the KB rather than from reading the
 
 ## How a user invokes it
 
-Run the [`/ship`](../../../commands/ship.md) command with a description of the change:
+Run the [`/ship`](../../../.omp/commands/ship.md) command with a description of the change:
 
 ```
 /ship <feature or fix description>

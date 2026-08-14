@@ -2,20 +2,25 @@
 node_type: service
 title: destructive-guard — confirm destructive commands
 service: destructive-guard
-status: active
-updated: 2026-06-16
+status: archived
+updated: 2026-08-14
 tags: [hook, safety, pretooluse, security]
 links:
-  documents: [../../../destructive-guard/hooks/confirm-destructive.py, ../../../destructive-guard/hooks/hooks.json]
-  implemented_by: [../../../destructive-guard/hooks/confirm-destructive.py]
+  relates_to: [../README.md]
 ---
 
 # destructive-guard
 
+> **Archived in OntoShip.** The guard moved to its own repository —
+> [vakovalskii/destructive-guard](https://github.com/vakovalskii/destructive-guard) —
+> and is **not** part of the omp package. omp ships its own built-in safety
+> (extensions + rules), so OntoShip does not need a PreToolUse hook. This page is kept
+> for history and to point to the external repo.
+
 A Claude Code **PreToolUse hook** that intercepts destructive shell commands and turns
 them into an interactive **y/n confirmation** before they run. It is a single
 stdlib-only Python script — no dependencies. Source:
-[confirm-destructive.py](../../../destructive-guard/hooks/confirm-destructive.py).
+[confirm-destructive.py](https://github.com/vakovalskii/destructive-guard).
 
 The guard never *blocks* a command outright (no `exit 2`); instead it returns
 `permissionDecision: "ask"`, so Claude Code surfaces a y/n prompt. On safe commands it
@@ -23,7 +28,7 @@ exits silently (`exit 0`, no decision) and lets normal permission rules decide.
 
 ## How the hook is wired
 
-[hooks.json](../../../destructive-guard/hooks/hooks.json) registers one hook:
+[hooks.json](https://github.com/vakovalskii/destructive-guard) registers one hook:
 
 - Event: **`PreToolUse`**
 - Matcher: **`Bash`** (only Bash tool calls are inspected)
@@ -122,7 +127,7 @@ On `ask`, `_alert()` fires a fire-and-forget notification (stdout stays JSON-onl
 
 ## How it's tested
 
-[tests/test_hook.py](../../../destructive-guard/tests/test_hook.py) is a stdlib-only
+[tests/test_hook.py](https://github.com/vakovalskii/destructive-guard) is a stdlib-only
 `unittest` suite that runs the real hook as a subprocess, feeds it JSON payloads, and
 asserts the returned `permissionDecision`. Alerts are silenced via `NDG_NOTIFY=0`, so the
 tests are safe and cross-platform. Coverage:

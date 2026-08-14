@@ -6,7 +6,7 @@ status: active
 updated: 2026-06-16
 tags: [ontology, curation, documentation, skill]
 links:
-  documents: [../../../skills/kb-curate/SKILL.md]
+  documents: [../../../.omp/skills/kb-curate/SKILL.md]
   depends_on: [../../ontology.md]
   relates_to: [../gitmark-cli/README.md]
 ---
@@ -75,8 +75,8 @@ These map to the kinetic layer ("Actions") of the ontology.
 ### REINDEX — always at the end
 
 ```bash
-python3 <plugin>/skills/kb-search/gitmark.py lint     # invariants I1–I6
-python3 <plugin>/skills/kb-search/gitmark.py index    # rebuild search
+python3 .omp/skills/kb-search/gitmark.py lint     # invariants I1–I6
+python3 .omp/skills/kb-search/gitmark.py index    # rebuild search
 ```
 
 `lint` flags missing/broken frontmatter, types outside the vocabulary, orphans, broken

@@ -12,7 +12,7 @@ links — inspired by Palantir Foundry/Gotham, but for documentation over code).
 ## Before writing — search, don't duplicate
 
 ```bash
-python3 <plugin>/skills/kb-search/gitmark.py search "<topic>"
+python3 .omp/skills/kb-search/gitmark.py search "<topic>"
 ```
 If the topic already exists — **edit the existing doc**, don't create a second one.
 
@@ -54,8 +54,8 @@ If the topic already exists — **edit the existing doc**, don't create a second
 ## Always at the end
 
 ```bash
-python3 <plugin>/skills/kb-search/gitmark.py lint     # invariants I1–I6
-python3 <plugin>/skills/kb-search/gitmark.py index    # rebuild search
+python3 .omp/skills/kb-search/gitmark.py lint     # invariants I1–I6
+python3 .omp/skills/kb-search/gitmark.py index    # rebuild search
 ```
 `lint` flags: missing/broken frontmatter, type outside vocabulary, orphans (0 links),
 broken links, folder without README. Fix until clean.

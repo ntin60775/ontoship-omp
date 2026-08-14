@@ -483,11 +483,11 @@ def cmd_map(root: Path, out: Path) -> dict:
                "size": f["size"], "rel": r} for r, f in files.items()]
     edges += [{"s": "area::" + f["area"], "t": r, "kind": "own"} for r, f in files.items()]
 
-    # BFS-уровни/углы от точки входа (CLAUDE.md|README.md|первый)
+    # BFS-уровни/углы от точки входа (AGENTS.md|README.md|первый)
     import math
     from collections import defaultdict, deque
     nid = {n["id"]: n for n in nodes}
-    root_id = next((c for c in ("CLAUDE.md", "README.md") if c in nid), nodes[0]["id"])
+    root_id = next((c for c in ("AGENTS.md", "README.md") if c in nid), nodes[0]["id"])
     adj = defaultdict(set)
     for e in edges:
         adj[e["s"]].add(e["t"]); adj[e["t"]].add(e["s"])

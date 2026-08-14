@@ -5,12 +5,12 @@ description: Search a project's markdown knowledge base (docs/, README files, *.
 
 # GitMark — knowledge-base search
 
-This plugin treats the repo's markdown as a **md + README(index) + git** knowledge base.
+This skill treats the repo's markdown as a **md + README(index) + git** knowledge base.
 Markdown is the source of truth; the search index and HTML map are **derived** and
 regenerated from md (`.gitmark/` is gitignored). The CLI is pure Python stdlib.
 
-Script: `${CLAUDE_PLUGIN_ROOT}/skills/kb-search/gitmark.py` (when run as a project-local
-copy, it's `.claude/skills/kb-search/gitmark.py`).
+Script: `.omp/skills/kb-search/gitmark.py` (relative to the repo root; stable when the
+`.omp/` package is copied into another project).
 
 ## When to use
 
@@ -23,7 +23,7 @@ copy, it's `.claude/skills/kb-search/gitmark.py`).
 ## Commands
 
 ```bash
-G="python3 ${CLAUDE_PLUGIN_ROOT:-.claude/plugins/gitmark}/skills/kb-search/gitmark.py"
+G="python3 .omp/skills/kb-search/gitmark.py"
 
 $G index                 # (re)build .gitmark/index.db  (fast)
 $G search "<query>"      # bm25 + trigram(substring) + fuzzy(3-gram); -k N, --json

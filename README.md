@@ -15,11 +15,11 @@ mode on. Colors = services. This isn't a mockup; it's a KB being used and evolve
 Markdown is the source of truth — the thing you and your AI assistant read directly, in
 any editor. Everything **derived** (a search index, this HTML overview, the link graph) is
 **regenerated** from the md, so git stays clean. No service, no database, no embeddings,
-no vendor. The entry point is `CLAUDE.md` / `AGENTS.md`; every folder's `README.md` is its
+no vendor. The entry point is `AGENTS.md`; every folder's `README.md` is its
 index.
 
 ```
-CLAUDE.md / AGENTS.md      ← entry point
+AGENTS.md                  ← entry point
 /docs
   README.md                ← master index
   /services
@@ -45,7 +45,8 @@ right file instead of grepping blind.
 | `lint` | *(optional)* ontology checks: broken links, frontmatter, folder READMEs |
 | `version` | — |
 
-OntoShip ships the **`gitmark`** plugin (KB + dev-flow) as a Claude Code marketplace.
+OntoShip ships the **GitMark** package (KB + dev-flow) as a project-local **omp** package
+(`.omp/` with skills, commands, and rules).
 (The **`destructive-guard`** safety hook now lives in its own repo →
 [vakovalskii/destructive-guard](https://github.com/vakovalskii/destructive-guard).)
 
@@ -107,24 +108,20 @@ name the target service/file if you know it.
 ## Quickstart
 
 ```bash
-python3 skills/kb-search/gitmark.py index            # build .gitmark/index.db
-python3 skills/kb-search/gitmark.py search "auth flow"
-python3 skills/kb-search/gitmark.py map -o docs-map.html && open docs-map.html
+python3 .omp/skills/kb-search/gitmark.py index            # build .gitmark/index.db
+python3 .omp/skills/kb-search/gitmark.py search "auth flow"
+python3 .omp/skills/kb-search/gitmark.py map -o docs-map.html && open docs-map.html
 ```
 
 Pure `python3` (≥3.7) with SQLite **FTS5**; the **trigram** tokenizer (SQLite ≥ 3.34) adds
 fuzzy/substring/non-Latin matching — detected automatically, degrades gracefully. Add
 `.gitmark/` to `.gitignore` — it's a build artifact.
 
-## Install as a Claude Code plugin
+## Install as an omp package
 
-```text
-/plugin marketplace add vakovalskii/ontoship
-/plugin install gitmark@ontoship
-```
-
-Or just copy `skills/` and `commands/` into your repo's `.claude/` — project-local, no
-marketplace needed.
+Copy the `.omp/` directory (skills + commands + rules) and `AGENTS.md` into your repo —
+project-local, no marketplace needed. omp's native provider picks up
+`.omp/skills/`, `.omp/commands/`, and `.omp/rules/` from the project root automatically.
 
 ## Optional: the ontology (only if you want guardrails)
 

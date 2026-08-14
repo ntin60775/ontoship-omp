@@ -6,7 +6,7 @@ status: active
 updated: 2026-06-16
 tags: [fts5, search, sqlite, ontology, cli]
 links:
-  documents: [../../../skills/kb-search/gitmark.py, ../../../skills/kb-search/SKILL.md]
+  documents: [../../../.omp/skills/kb-search/gitmark.py, ../../../.omp/skills/kb-search/SKILL.md]
   relates_to: [../../ontology.md]
 ---
 
@@ -22,7 +22,8 @@ It enforces and operates over the OntoShip ontology (object types, properties, t
 links). For the model itself — `node_type`, frontmatter, link types, invariants I1–I6 —
 see [ontology.md](../../ontology.md); this doc describes the engine, not the model.
 
-Script: `skills/kb-search/gitmark.py`. The usage skill is `skills/kb-search/SKILL.md`.
+Script: `.omp/skills/kb-search/gitmark.py`. The usage skill is
+`.omp/skills/kb-search/SKILL.md`.
 
 ## Subcommands
 
@@ -142,7 +143,7 @@ load-bearing doc with no in/out links and no `links:` block), I5 (a `docs/` fold
 `cmd_map()` (gitmark.py:441-537) produces one standalone HTML file (`_MAP_HTML` template,
 gitmark.py:619+) with the data inlined as JSON: a collapsible per-area file tree, the
 rendered markdown of each doc, and a radial link graph. The graph is laid out by BFS from an
-entry node (`CLAUDE.md` → `README.md` → first file), with ring = distance-from-entry; it
+entry node (`AGENTS.md` → `README.md` → first file), with ring = distance-from-entry; it
 supports drag, wheel-zoom, and clicking a node to open the doc. If the optional `markdown`
 package is installed, docs render to HTML; otherwise they show as raw `<pre>` text (the CLI
 prints a hint to `pip install markdown`).
@@ -150,7 +151,7 @@ prints a hint to `pip install markdown`).
 ## Usage examples
 
 ```bash
-G="python3 skills/kb-search/gitmark.py"
+G="python3 .omp/skills/kb-search/gitmark.py"
 
 $G index                       # build .gitmark/index.db
 $G search "trigram ranking"    # bm25 + trigram + fuzzy; prints path:line + snippet

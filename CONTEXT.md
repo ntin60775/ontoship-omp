@@ -1,0 +1,57 @@
+# OntoShip
+
+A project-local **omp package** that turns a repo's markdown into a searchable, typed
+knowledge base (KB) and ships a gated dev-flow on top of it. Markdown + git is the source
+of truth; everything derived is regenerated.
+
+## Language
+
+**KB (knowledge base)**:
+The repo's markdown (`docs/`, README files, any `*.md`) treated as the project's
+knowledge — searchable via GitMark, typed via the ontology.
+_Avoid_: wiki, memory bank, documentation site
+
+**GitMark**:
+The engine: a zero-dependency Python-stdlib CLI (`gitmark.py`) that indexes, searches,
+lints, and renders the KB.
+_Avoid_: the search plugin, the tool
+
+**Пакет (package)**:
+The `.omp/` directory (skills + commands + rules) plus the `AGENTS.md` entry point,
+copied into a project to enable OntoShip. omp's native provider discovers it from the
+project root.
+_Avoid_: плагин, marketplace, plugin
+
+**Скилл (skill)**:
+A `.omp/skills/<name>/SKILL.md` capability the agent invokes: `kb-search`, `kb-curate`,
+`dev-flow`.
+_Avoid_: плагин, под-команда
+
+**Команда (command)**:
+A `.omp/commands/<name>.md` slash-command (`/kb`, `/kb-map`, `/doc`, `/onto-doc`,
+`/ship`) — the user-facing verbs that drive skills and the CLI.
+_Avoid_: слэш-команда Claude Code, plugin command
+
+**Точка входа (entry point)**:
+The root `AGENTS.md` — the file the omp agent reads first to orient in the repo.
+_Avoid_: CLAUDE.md
+
+**Онтология (ontology)**:
+The knowledge model over the KB — `node_type`, frontmatter properties, typed links,
+invariants I1–I6 (see `docs/ontology.md`).
+_Avoid_: модель данных, схема
+
+**Куратор (curator)**:
+An agent that creates/updates KB documents following `kb-curate`; `/onto-doc` fans out
+one curator per doc area.
+_Avoid_: документатор, писатель
+
+**Dev-flow**:
+The gated ship pipeline: research → tasks → goal → spec → worktree → implement → tests →
+review → dev-tests → prod-tests → ship (MR → `dev` → `main`).
+_Avoid_: CI/CD, релизный процесс
+
+**Derived-артефакты (derived artifacts)**:
+Regenerated outputs — `.gitmark/index.db` (search index) and `*-map.html` (graph).
+Never edited or committed by hand.
+_Avoid_: кэш, база знаний
