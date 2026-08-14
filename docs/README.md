@@ -32,6 +32,10 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 - [dev-flow](services/dev-flow/README.md) — spec-driven ship pipeline
 - [destructive-guard](services/destructive-guard/README.md) — destructive-command guard hook (archived: moved to its own repo, not part of the omp package)
 
+## Ops
+
+- [deploy-ontoship.md](ops/deploy-ontoship.md) — deploy the OntoShip package into a project (checklist with expected results)
+
 ## Derive
 
 ```bash

@@ -122,9 +122,25 @@ fuzzy/substring/non-Latin matching — detected automatically, degrades graceful
 
 ## Install as an omp package
 
-Copy the `.omp/` directory (skills + commands + rules) and `AGENTS.md` into your repo —
-project-local, no marketplace needed. omp's native provider picks up
-`.omp/skills/`, `.omp/commands/`, and `.omp/rules/` from the project root automatically.
+1. **Copy the package** — `.omp/` (skills + commands + rules) and `AGENTS.md` into your
+   repo. Project-local, no marketplace needed: omp's native provider picks up
+   `.omp/skills/`, `.omp/commands/`, and `.omp/rules/` automatically.
+2. **Bootstrap the KB** — `AGENTS.md` links to `docs/`, which a fresh project doesn't
+   have yet:
+   - **new project** — run `/onto-doc`: it surveys the codebase and builds the whole KB
+     (master index + per-service READMEs + reference + decisions), then lints and
+     indexes it;
+   - **existing KB** — keep your `docs/` as-is and grow it with `/doc`.
+3. **Build the index and smoke-test:**
+   ```bash
+   python3 .omp/skills/kb-search/gitmark.py index
+   python3 .omp/skills/kb-search/gitmark.py search "<your domain>" -k 3
+   ```
+4. **Ignore derived artifacts** — add `.gitmark/` and `*-map.html` to `.gitignore`
+   (they are regenerated from md, never committed).
+
+Full checklist with expected results:
+[`docs/ops/deploy-ontoship.md`](docs/ops/deploy-ontoship.md).
 
 ## Optional: the ontology (only if you want guardrails)
 
