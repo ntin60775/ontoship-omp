@@ -6,7 +6,7 @@ status: active
 updated: 2026-08-15
 tags: [runbook, deploy, install, omp-package, gitmark]
 links:
-  documents: [../../AGENTS.md, ../../../.omp/skills/kb-search/gitmark.py]
+  documents: [../../AGENTS.md, ../../../.omp/skills/kb-search/gitmark.py, ../../../.omp/scripts/deploy-check.sh]
   relates_to: [../../README.md]
 ---
 
@@ -80,3 +80,14 @@ git status --short
 
 **Expected:** `stat` shows a non-empty index; `git status` shows no `.gitmark/` or
 `*-map.html` entries.
+
+If the package ships the check script (`.omp/scripts/deploy-check.sh`), run it instead
+of the manual checks — same coverage, one command:
+
+```bash
+bash .omp/scripts/deploy-check.sh
+```
+
+**Expected:** exit code `0` (all good) or `2` (warnings only: trigram missing, KB not
+bootstrapped, `.gitmark/` not ignored). Exit `1` means a broken deployment — fix the
+reported `[FAIL]` items first.
