@@ -30,6 +30,9 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 - [gitmark-cli](services/gitmark-cli/README.md) — KB search/index engine
 - [kb-curate](services/kb-curate/README.md) — KB maintenance skill
 - [dev-flow](services/dev-flow/README.md) — spec-driven ship pipeline
+- [grilling](services/grilling/README.md) — the interview primitive (rounds + frontier)
+- [mp-grill-me](services/mp-grill-me/README.md) — stateless brainstorm interview
+- [improve-codebase-architecture](services/improve-codebase-architecture/README.md) — architectural scan + HTML report + grill
 - [destructive-guard](services/destructive-guard/README.md) — destructive-command guard hook (archived: moved to its own repo, not part of the omp package)
 
 ## Ops

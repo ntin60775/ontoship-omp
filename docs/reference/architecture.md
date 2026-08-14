@@ -50,7 +50,10 @@ ontoship-omp/
 │  ├─ skills/                  ← the capabilities
 │  │  ├─ kb-search/  SKILL.md + gitmark.py   ← the CLI engine (zero-dep, stdlib)
 │  │  ├─ kb-curate/  SKILL.md                ← curation / ontology rules
-│  │  └─ dev-flow/   SKILL.md                ← the ship pipeline
+│  │  ├─ dev-flow/   SKILL.md                ← the ship pipeline
+│  │  ├─ grilling/   SKILL.md                ← the interview primitive (rounds + frontier)
+│  │  ├─ mp-grill-me/ SKILL.md               ← stateless brainstorm interview
+│  │  └─ improve-codebase-architecture/      ← scan → HTML report → grill (SKILL.md, HTML-REPORT.md)
 │  ├─ commands/                ← slash commands (the user-facing verbs)
 │  │  ├─ kb.md        (/kb)       search the KB
 │  │  ├─ kb-map.md    (/kb-map)   build the HTML graph
@@ -95,6 +98,9 @@ A user types a slash command; the command delegates to a skill; the skill calls 
   as markdown via `kb-curate`) → isolated git worktree → implement → tests → independent
   review → dev-tests → prod-tests → ship (MR → `dev` → `main`). Its specs become KB docs,
   closing the loop back into the same markdown.
+- **`grilling`** is the interview primitive (rounds + frontier); `mp-grill-me`
+  and `improve-codebase-architecture` drive it to sharpen a plan or walk a
+  deepening report.
 - **`.omp/rules/`** carries project-wide rules that omp injects into the agent context:
   `kb-source-of-truth` (md+git is the source; derived artifacts are regenerated, never
   committed) and `kb-first` (search the KB via `kb-search` before answering about the
