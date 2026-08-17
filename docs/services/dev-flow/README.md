@@ -116,15 +116,22 @@ onboarding, hand-off, and scaling start from the KB rather than from reading the
 
 ## How a user invokes it
 
-Run the [`/ship`](../../../.omp/commands/ship.md) command with a description of the change:
+Run the [`/ship`](../../../.omp/commands/ship.md) command — launched **only by hand**:
 
 ```
-/ship <feature or fix description>
+/ship docs/plans/<slug>.md            # a plan contract (the spec)
+/ship <feature or fix description>    # ad-hoc — full loop
+/ship                                 # empty — most recent plan
 ```
 
-`/ship` drives the change through every stage of the pipeline, keeping the gates (tests +
-independent review) and never skipping the spec. For a one-line change the stages can be
-collapsed, but the gates stay — they are where the 191 bugs were caught.
+With a contract, research/tasks/goal/spec collapse into **verification** (see the
+`dev-flow` skill's "Entry" section): read the plan, confirm `Context` is current, set
+`status: active`, take `Goal`/`Done`/`Scope` from the file. The contract's `Constraints`
+set **stop-points** — `stop-before-commit`, `stop-after-mr`, `no-deploy` — hard pauses
+where the agent reports and waits for the operator. `/ship` drives the change through
+every stage, keeping the gates (tests + independent review) and never skipping the spec.
+For a one-line change the stages can be collapsed, but the gates stay — they are where
+the 191 bugs were caught.
 
 ## Principles
 

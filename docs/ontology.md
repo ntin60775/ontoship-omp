@@ -3,7 +3,7 @@ node_type: reference
 title: GitMark ontology — a knowledge model over code
 service: _platform
 status: active
-updated: 2026-06-16
+updated: 2026-08-17
 tags: [ontology, palantir, node-type, links, frontmatter]
 links:
   relates_to: [services/kb-curate/README.md, services/gitmark-cli/README.md, reference/architecture.md]
@@ -34,7 +34,7 @@ Each document has exactly one `node_type` — its "table" in the ontology.
 | `runbook` | operational procedure ("how to X") | `docs/ops/` |
 | `gotcha` | a pitfall + how to avoid it | `docs/ops/` |
 | `decision` | an architectural/product decision (ADR) | `docs/decisions/` |
-| `plan` | a plan/design before implementation | `docs/plans/` |
+| `plan` | a plan/design before implementation — also the ship contract | `docs/plans/` |
 | `guide` | how to use something (clients, public API) | varies |
 | `report` | a one-off dated analysis/audit | `docs/reviews/` |
 | `index` | a folder's table of contents | any `README.md` |
@@ -89,6 +89,24 @@ In Palantir, **Actions** sit on top of the semantics — what you can do with ob
 Here, Actions = the **curation procedures** a human/agent runs (see `kb-curate` skill):
 CREATE → classify, place, frontmatter, link, index. UPDATE → bump `updated`/`status`.
 DEPRECATE → `status` + `supersedes`. LINK → no orphans. REINDEX → `gitmark index`.
+
+## The plan as a ship contract
+
+`docs/plans/<slug>.md` doubles as the **contract** that `/ship` executes. Its body
+carries the fields the entry skills produce and the dev-flow consumes:
+
+- `Goal` — why this change (one clear goal)
+- `Done` — the observable done-criterion
+- `Scope` — files/services touched (required)
+- `Constraints` — stop-points: `stop-before-commit`, `stop-after-mr`, `no-deploy`
+- `Context` — what the entry phase already established (root cause, prototype verdict,
+  resolved design-tree branches)
+- `Tasks` — decomposition with dependencies (optional)
+
+**Lifecycle:** `status: draft` (written by `mp-grill-me`) → `status: active` (`/ship`
+started, operator-confirmed) → `status: archived` (after merge). Only `mp-grill-me`
+authors a contract; `mp-diagnose`, `mp-prototype`, `mp-handoff` feed `Context`/`Goal`
+but never author it — and never launch `/ship`: the operator starts it by hand.
 
 ## Invariants (checked by `gitmark lint`)
 

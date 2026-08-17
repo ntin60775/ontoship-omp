@@ -11,6 +11,20 @@ skills**, the work happens in an **isolated git worktree**, and **only green rea
 prod**. The KB (see `kb-curate`) is the carrier of knowledge — onboarding, hand-off and
 scaling all start from it, not from the code.
 
+## Entry: contract vs ad-hoc
+
+`/ship` is launched by hand with one of:
+
+1. **A contract path** (`docs/plans/<slug>.md`) — the plan is the spec: collapse steps
+   1–4 (research/tasks/goal/spec) into **verification** (below), honour its `Constraints`.
+2. **An ad-hoc description** — run the full loop from step 1.
+3. **Empty** — treat the most recent `docs/plans/*.md` as the contract.
+
+**Verification (contract entry):** read the plan; check `Context` is still accurate (code
+hasn't drifted since it was written) and update it if not, re-confirming with the operator;
+set `status: active`; take `Goal`/`Done`/`Scope` from the file — do not re-derive them. The
+operator's hand launch *is* the confirmation (no second gate).
+
 ## The loop
 
 1. **Research** — understand from facts, not guesses: read logs, traces, and the code
@@ -36,7 +50,18 @@ scaling all start from it, not from the code.
 10. **Prod-tests** — E2E/smoke against the **real prod contour**, not only mocks or dev.
     Verify behaviour where users live.
 11. **Ship** — merge **`dev → main`** and deploy (build the new image *before* stopping the
-    old container, then poll the healthcheck to measure real downtime).
+    old container, then poll the healthcheck to measure real downtime). Mark the plan
+    contract `status: archived` once merged.
+
+## Stop-points (from the contract's `Constraints`)
+
+- `stop-before-commit` — after review (step 8), stop with the uncommitted diff in the
+  worktree; commit and everything after wait for the operator's "continue". Default for
+  1C projects (see the `ship-1c` rule).
+- `stop-after-mr` — after opening the MR (step 9), stop for the operator's review.
+- `no-deploy` — skip the deploy in step 11.
+
+A stop-point is a hard pause: the agent reports and waits, it never resumes on its own.
 
 ## Git-flow
 

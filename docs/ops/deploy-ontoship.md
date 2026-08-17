@@ -34,7 +34,8 @@ cp <path-to-ontoship-omp>/AGENTS.md <your-repo>/
 
 **Expected:** `<your-repo>/` has `.omp/skills/`, `.omp/commands/`, `.omp/rules/` and
 `AGENTS.md`; omp picks up the slash commands (`/kb`, `/kb-map`, `/doc`, `/onto-doc`,
-`/ship`) and the always-on rules (`kb-first`, `kb-source-of-truth`).
+`/ship`) and the always-on rules (`kb-first`, `kb-source-of-truth`, `ship-gate`); the
+`ship-1c` rule ships opt-in (enable it only in a 1C project).
 
 ### 2. Bootstrap the KB
 

@@ -25,13 +25,20 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 
 - [ontoship-positioning.md](decisions/ontoship-positioning.md) — what OntoShip is for (team experience-transfer for AI-agent dev)
 
+## Plans
+
+- [contract-driven-ship.md](plans/contract-driven-ship.md) — контракт-спек: входные навыки → ручной /ship
+
 ## Services
 
 - [gitmark-cli](services/gitmark-cli/README.md) — KB search/index engine
 - [kb-curate](services/kb-curate/README.md) — KB maintenance skill
 - [dev-flow](services/dev-flow/README.md) — spec-driven ship pipeline
 - [grilling](services/grilling/README.md) — the interview primitive (rounds + frontier)
-- [mp-grill-me](services/mp-grill-me/README.md) — stateless brainstorm interview
+- [mp-grill-me](services/mp-grill-me/README.md) — interview → writes the ship contract
+- [mp-diagnose](services/mp-diagnose/README.md) — hard-bug diagnosis → root cause for /ship
+- [mp-prototype](services/mp-prototype/README.md) — throwaway prototype → data for the decision-maker
+- [mp-handoff](services/mp-handoff/README.md) — session bridge (.scratch/), not KB knowledge
 - [improve-codebase-architecture](services/improve-codebase-architecture/README.md) — architectural scan + HTML report + grill
 - [destructive-guard](services/destructive-guard/README.md) — destructive-command guard hook (archived: moved to its own repo, not part of the omp package)
 

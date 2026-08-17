@@ -41,6 +41,20 @@ If the topic already exists — **edit the existing doc**, don't create a second
    (`depends_on`/`relates_to`). No orphans.
 5. **Add a line to the folder's `README.md`** (its index): `- [Title](file.md) — hook`.
 
+## Writing a plan contract (`docs/plans/`)
+
+A `plan` in `docs/plans/` is the **ship contract** that `/ship` executes. Body fields:
+
+- `Goal` — why (one clear goal)
+- `Done` — observable done-criterion
+- `Scope` — files/services touched (required)
+- `Constraints` — stop-points: `stop-before-commit`, `stop-after-mr`, `no-deploy`
+- `Context` — what the entry phase established (root cause, prototype verdict, resolved branches)
+- `Tasks` — decomposition with dependencies (optional)
+
+Lifecycle: `draft` → `active` (ship started) → `archived` (after merge). Only
+`mp-grill-me` authors it; entry skills feed `Context`/`Goal`, never the contract.
+
 ## When EDITING (UPDATE)
 
 - Meaning changed → bump `updated:`. Doc is stale → `status: deprecated` and set

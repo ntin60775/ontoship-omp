@@ -108,9 +108,13 @@ when the `.omp/` package is copied into another project).
 ## `/ship` — run the dev-flow
 
 - **Definition:** `.omp/commands/ship.md`
-- **What it does:** drives a feature/fix from idea to production through the gated
-  OntoShip dev-flow pipeline.
-- **Args:** `$ARGUMENTS` = the change to ship (feature/fix description).
+- **What it does:** drives a feature/fix to production through the gated OntoShip
+  dev-flow pipeline. Launched **only by hand**.
+- **Args:** `$ARGUMENTS` = a **contract path** (`docs/plans/<slug>.md`) or an ad-hoc
+  description; **empty** → treat the most recent `docs/plans/*.md` as the contract.
+- **Entry (contract path):** the plan is the spec — collapse research/tasks/goal/spec
+  into **verification**: read the plan, check `Context` is still accurate (update +
+  re-confirm if code drifted), set `status: active`, take `Goal`/`Done`/`Scope` from the file.
 - **Pipeline (per the `dev-flow` skill, end to end):**
   1. **Research** — understand from facts (logs, traces, code); reproduce before fixing.
   2. **Tasks** — decompose into tracked tasks.
@@ -125,6 +129,11 @@ when the `.omp/` package is copied into another project).
   9. **Dev-tests** — MR + commits into `dev`; run the full suite. Red → fix, don't merge.
   10. **Prod-tests** — E2E/smoke against the real prod contour.
   11. **Ship** — merge `dev → main` and deploy (build-before-stop + healthcheck-poll).
+     Mark the plan contract `status: archived` once merged.
+- **Stop-points (from the contract's `Constraints`):** `stop-before-commit` (pause with
+  uncommitted diff after review), `stop-after-mr` (pause after MR), `no-deploy` (skip
+  deploy). A stop-point is a hard pause — the agent reports and waits, never resumes on
+  its own.
 - **Gates:** tests + independent review are not skippable; the spec is the carrier of
   knowledge, not a throwaway ticket.
 - **Drives:** `dev-flow` skill.

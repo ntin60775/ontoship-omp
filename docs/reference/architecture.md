@@ -52,7 +52,10 @@ ontoship-omp/
 │  │  ├─ kb-curate/  SKILL.md                ← curation / ontology rules
 │  │  ├─ dev-flow/   SKILL.md                ← the ship pipeline
 │  │  ├─ grilling/   SKILL.md                ← the interview primitive (rounds + frontier)
-│  │  ├─ mp-grill-me/ SKILL.md               ← stateless brainstorm interview
+│  │  ├─ mp-grill-me/ SKILL.md               ← interview → writes the ship contract
+│  │  ├─ mp-diagnose/ SKILL.md + scripts/    ← hard-bug diagnosis → root cause for /ship
+│  │  ├─ mp-prototype/ SKILL.md + LOGIC/UI   ← throwaway prototype → data for the decision-maker
+│  │  ├─ mp-handoff/ SKILL.md                ← session bridge (.scratch/), not KB knowledge
 │  │  └─ improve-codebase-architecture/      ← scan → HTML report → grill (SKILL.md, HTML-REPORT.md)
 │  ├─ commands/                ← slash commands (the user-facing verbs)
 │  │  ├─ kb.md        (/kb)       search the KB
@@ -62,7 +65,9 @@ ontoship-omp/
 │  │  └─ ship.md      (/ship)     run the dev-flow
 │  └─ rules/                   ← project rules (alwaysApply)
 │     ├─ kb-source-of-truth.md  ← md+git truth; derived never committed
-│     └─ kb-first.md            ← search the KB before answering/writing
+│     ├─ kb-first.md            ← search the KB before answering/writing
+│     ├─ ship-gate.md           ← code only via dev-flow; /ship human-only
+│     └─ ship-1c.md             ← opt-in: 1C projects stop before commit
 └─ docs/                      ← the KB itself (dogfooded)
    ├─ ontology.md             ← the knowledge model (types, links, invariants)
    ├─ services/               ← per-component READMEs (gitmark-cli, dev-flow, …)
@@ -98,13 +103,17 @@ A user types a slash command; the command delegates to a skill; the skill calls 
   as markdown via `kb-curate`) → isolated git worktree → implement → tests → independent
   review → dev-tests → prod-tests → ship (MR → `dev` → `main`). Its specs become KB docs,
   closing the loop back into the same markdown.
-- **`grilling`** is the interview primitive (rounds + frontier); `mp-grill-me`
-  and `improve-codebase-architecture` drive it to sharpen a plan or walk a
-  deepening report.
+- **`grilling`** is the interview primitive (rounds + frontier); `mp-grill-me` drives it
+  and ends by writing the **ship contract** (`docs/plans/<slug>.md`, `draft`).
+  `improve-codebase-architecture` walks a deepening report. `mp-diagnose` finds the root
+  cause of a hard bug (never fixing code itself), `mp-prototype` returns data for a
+  decision, `mp-handoff` bridges sessions via `.scratch/` — none of the three authors a
+  contract or edits code.
 - **`.omp/rules/`** carries project-wide rules that omp injects into the agent context:
   `kb-source-of-truth` (md+git is the source; derived artifacts are regenerated, never
-  committed) and `kb-first` (search the KB via `kb-search` before answering about the
-  project, never duplicate a doc).
+  committed), `kb-first` (search the KB before answering, never duplicate a doc),
+  `ship-gate` (code changes only via dev-flow; `/ship` is launched only by hand), and
+  `ship-1c` (opt-in for 1C projects: stop before commit for human diff review).
 
 ## See also
 

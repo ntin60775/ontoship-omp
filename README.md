@@ -50,7 +50,7 @@ OntoShip ships the **GitMark** package (KB + dev-flow) as a project-local **omp*
 (The **`destructive-guard`** safety hook now lives in its own repo →
 [vakovalskii/destructive-guard](https://github.com/vakovalskii/destructive-guard).)
 
-**`gitmark`** — six skills and five commands:
+**`gitmark`** — nine skills and five commands:
 
 | skill | what |
 |---|---|
@@ -58,7 +58,10 @@ OntoShip ships the **GitMark** package (KB + dev-flow) as a project-local **omp*
 | `kb-curate` | light ontology rules when adding/editing docs (types, frontmatter, typed links) |
 | `dev-flow` | the spec-driven loop to ship a feature: research → tasks → goal → **spec (md via `kb-curate`)** → isolated **git worktree** → implement → tests → independent review → dev-tests → prod-tests → ship (MR → `dev` → `main`). Feature to prod in ~40 min – 2 h. |
 | `grilling` | the interview primitive (rounds + frontier) — drives `mp-grill-me` and `improve-codebase-architecture` |
-| `mp-grill-me` | stateless brainstorm interview to sharpen a plan or design |
+| `mp-grill-me` | interview → writes the **ship contract** (`docs/plans/<slug>.md`) |
+| `mp-diagnose` | hard-bug diagnosis loop → root cause, then hand the fix to `/ship` |
+| `mp-prototype` | throwaway prototype → data + recommendation for the decision-maker |
+| `mp-handoff` | session bridge (`.scratch/`), not KB knowledge |
 | `improve-codebase-architecture` | scan a codebase for deepening opportunities, render an HTML report, then grill through one |
 
 So the agent searches the KB instead of grepping, follows light curation rules when
@@ -70,7 +73,7 @@ editing, and ships changes through one repeatable, gated flow built around the K
 | `/kb-map` | build the self-contained HTML graph of the KB and open it |
 | `/doc` | compose/update **one** KB doc following the ontology (wraps `kb-curate`) |
 | `/onto-doc` | build the **whole** KB — fans out kb-curate curator agents per area, then lint + index + map |
-| `/ship` | run the dev-flow on a feature/fix: research → … → ship (MR → dev → main) |
+| `/ship` | run the dev-flow from a plan contract or an ad-hoc description — launched only by hand |
 
 ### What to write after a command (for best results)
 
@@ -95,12 +98,14 @@ node_type+folder, writes frontmatter + typed links, and indexes it.
   (parallel), then lints + reindexes + regenerates the graph.
 - Use it on a fresh repo to stand up docs/ from nothing, or to backfill coverage.
 
-**`/ship <what + why + done>`** — describe the change as fully as you can; this is what makes
-the dev-flow good. Include **what** to do, **why** (the goal), and the **done-criteria**, and
-name the target service/file if you know it.
-- Good: `/ship add a 60 rpm rate-limit to /api/search; goal: stop abuse; done = HTTP 429 over the limit + a unit test + a note in docs/reference/limits.md`.
-- Weak: `/ship fix search` → the agent has to guess the goal and the done-criteria.
-- Add "deploy it" / "don't deploy" if you want to control the last step.
+**`/ship <contract | what + why + done>`** — three ways in (see `docs/reference/commands.md`):
+- **contract path** — `/ship docs/plans/<slug>.md`: the plan is the spec; steps 1–4 collapse
+  into verification; `Constraints` set stop-points (`stop-before-commit`, `stop-after-mr`, `no-deploy`).
+- **ad-hoc description** — describe **what** to do, **why** (goal), and the **done-criteria**:
+  `/ship add a 60 rpm rate-limit to /api/search; goal: stop abuse; done = HTTP 429 over the limit + a unit test`.
+- **empty** — treat the most recent `docs/plans/*.md` as the contract.
+
+`/ship` is launched **only by hand**; the entry skills (`mp-grill-me`, …) never start it.
 
 > **Looking for `destructive-guard`?** The `PreToolUse` safety hook that intercepts
 > destructive commands (`rm -rf`, `git reset --hard`, `terraform destroy`, `DROP TABLE`…)

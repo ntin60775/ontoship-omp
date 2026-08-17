@@ -17,4 +17,10 @@ Component overviews — one folder per service/skill, each with a `README.md` in
 | [gitmark-cli](gitmark-cli/README.md) | The KB search/index engine (`gitmark.py`) — FTS5 bm25 + trigram/fuzzy, HTML graph, ontology linter |
 | [kb-curate](kb-curate/README.md) | The skill that keeps the markdown KB a typed ontology (CREATE/UPDATE/DEPRECATE/LINK/REINDEX) |
 | [dev-flow](dev-flow/README.md) | The gated spec-driven ship pipeline (research → … → MR → dev → main) |
-| [destructive-guard](destructive-guard/README.md) | PreToolUse hook that turns destructive commands into y/n confirmations — archived: moved to its own repo, not part of the omp package |
+| [grilling](grilling/README.md) | The interview primitive (rounds + frontier) |
+| [mp-grill-me](mp-grill-me/README.md) | Interview → writes the ship contract (`docs/plans/`) |
+| [mp-diagnose](mp-diagnose/README.md) | Hard-bug diagnosis loop → root cause for `/ship` |
+| [mp-prototype](mp-prototype/README.md) | Throwaway prototype → data for the decision-maker |
+| [mp-handoff](mp-handoff/README.md) | Session bridge (`.scratch/`), not KB knowledge |
+| [improve-codebase-architecture](improve-codebase-architecture/README.md) | Architectural scan + deepening report |
+| [destructive-guard](destructive-guard/README.md) | PreToolUse hook — archived: moved to its own repo, not part of the omp package |
