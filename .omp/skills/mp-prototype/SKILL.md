@@ -36,5 +36,5 @@ decision-maker (the main session, or via `mp-handoff` if in a fresh session):
 - a recommendation — but the decision belongs to the operator, not here.
 
 Return to the discussion: `/grilling` (mp-grill-with-docs) turns the outcome into a
-parent contract, then `/to-tickets`, then `/ship` one ticket at a time. The main branch
+plan contract, then `/to-tickets`, then `/ship`. The main branch
 keeps only the validated decision (a `decision` doc in the KB), never the prototype.

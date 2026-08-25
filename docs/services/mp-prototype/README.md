@@ -15,4 +15,4 @@ links:
 Builds a throwaway prototype to answer a design question (logic/state vs UI). It returns
 **data and a recommendation** for the decision-maker — it never decides or commits code.
 The main branch keeps only the validated decision; `/grilling` (mp-grill-with-docs)
-turns the outcome into a parent contract, then `/to-tickets`, then `/ship`.
+turns the outcome into a plan contract, then `/to-tickets`, then `/ship`.

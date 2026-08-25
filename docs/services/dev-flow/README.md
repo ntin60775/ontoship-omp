@@ -44,14 +44,15 @@ Take the goal and the concrete **"done" criterion** from the ticket's `What to b
 and acceptance criteria. A single goal keeps the implementation honest and gives the
 gates something to check against.
 
-### 3. Spec (the ticket)
+### 3. Spec (the ticket — or the plan file)
 The ticket **is** the spec: a `node_type: ticket` document in the KB
 (`docs/plans/<slug>/NN-<ticket>.md`) — typed, linked to its parent contract
 (`part_of`) and its blockers (`depends_on`), searchable, linkable, and graphable
 (`gitmark map`). It is **durable knowledge, not a throwaway**: a tracer-bullet vertical
-slice sized to one fresh context window. This is where dev-flow builds directly on the
-GitMark KB — the ticket becomes a first-class node in the ontology rather than a comment
-that evaporates after merge.
+slice sized to one fresh context window. A **file plan** (`docs/plans/<slug>.md`,
+`node_type: plan`) is the same kind of spec for a change small enough to ship as one
+slice. This is where dev-flow builds directly on the GitMark KB — the spec becomes a
+first-class node in the ontology rather than a comment that evaporates after merge.
 
 ### 4. Isolate (git worktree)
 Do the work in a **dedicated `git worktree`**. `main` stays untouched, parallel agents
@@ -86,8 +87,8 @@ final merge.
 ### 10. Ship
 Merge **`dev → main`** and deploy. Build the new image **before** stopping the old
 container, then **poll the healthcheck** to measure real downtime. This ordering
-minimizes the window where the service is unavailable. Mark the ticket `status:
-archived` once merged.
+minimizes the window where the service is unavailable. Mark the ticket (or the file
+plan) `status: archived` once merged.
 
 ## Git-flow
 
@@ -115,24 +116,27 @@ onboarding, hand-off, and scaling start from the KB rather than from reading the
 ## How a user invokes it
 
 Run the [`/ship`](../../../.omp/commands/ship.md) command — launched **only by hand**,
-**one ticket at a time**:
+**one ticket (or one file plan) at a time**:
 
 ```
-/ship docs/plans/<slug>/            # a plan — takes the first non-archived ticket
+/ship docs/plans/<slug>/            # a plan folder — takes the first non-archived ticket
+/ship docs/plans/<slug>.md          # a file plan — ships the whole plan as one slice
 /ship docs/plans/<slug>/02-x.md     # a specific ticket
 /ship <feature or fix description>  # ad-hoc — full loop
-/ship                               # empty — most recent plan, first non-archived ticket
+/ship                               # empty — most recent plan (file or folder)
 ```
 
-With a plan, `/ship` picks the **first ticket** (by `NN` order) whose `status` is not
-`archived`, checks its `Blocked by` tickets are all archived (if not, report blockers
-and stop), confirms `Context` in the parent contract is current, and sets the ticket
-`status: active`. The parent contract's `Constraints` set **stop-points** —
-`stop-before-commit`, `stop-after-mr`, `no-deploy` — hard pauses where the agent
-reports and waits for the operator. After a ticket is archived, the operator launches
-`/ship` again for the next. `/ship` drives the ticket through every stage, keeping the
-gates (tests + independent review). For a one-line change the stages can be collapsed,
-but the gates stay — they are where the 191 bugs were caught.
+With a plan folder, `/ship` picks the **first ticket** (by `NN` order) whose `status` is
+not `archived`, checks its `Blocked by` tickets are all archived (if not, report
+blockers and stop), confirms `Context` in the parent contract is current, and sets the
+ticket `status: active`. With a **file plan**, `/ship` ships the whole plan as a single
+slice on the plan's `Goal`/`Done` and sets the plan `status: active`. The plan
+contract's `Constraints` set **stop-points** — `stop-before-commit`, `stop-after-mr`,
+`no-deploy` — hard pauses where the agent reports and waits for the operator. After a
+ticket is archived, the operator launches `/ship` again for the next. `/ship` drives the
+ticket through every stage, keeping the gates (tests + independent review). For a
+one-line change the stages can be collapsed, but the gates stay — they are where the
+191 bugs were caught.
 
 ## Principles
 

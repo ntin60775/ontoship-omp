@@ -15,4 +15,4 @@ links:
 A discipline for hard bugs and performance regressions: build a tight red/green feedback
 loop, reproduce, minimise, hypothesise, instrument — then **report the root cause, don't
 fix the code here**. The fix goes through `dev-flow` (`/ship`), so `mp-diagnose` hands the
-root cause, minimal repro, and recommended fix to `/grilling` (mp-grill-with-docs) → parent contract → `/to-tickets` → `/ship`.
+root cause, minimal repro, and recommended fix to `/grilling` (mp-grill-with-docs) → plan contract → `/to-tickets` → `/ship`.

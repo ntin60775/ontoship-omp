@@ -24,11 +24,12 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 ## Decisions
 
 - [ontoship-positioning.md](decisions/ontoship-positioning.md) — what OntoShip is for (team experience-transfer for AI-agent dev)
-- [ticket-driven-ship.md](decisions/ticket-driven-ship.md) — plan = folder with tickets; `/ship` runs one ticket at a time, strictly sequential
+- [ticket-driven-ship.md](decisions/ticket-driven-ship.md) — plan file by default; folder + tickets only after `/to-tickets`; `/ship` runs one ticket (or one file plan) at a time, strictly sequential
 
 ## Plans
 
 - [contract-driven-ship.md](plans/contract-driven-ship.md) — контракт-спек: входные навыки → ручной /ship (superseded by the ticket-driven model)
+- [plan-file-first.md](plans/plan-file-first.md) — план-файл по умолчанию; папка + тикеты только после `/to-tickets`
 
 ## Services
 
@@ -37,7 +38,7 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 - [dev-flow](services/dev-flow/README.md) — spec-driven ship pipeline
 - [grilling](services/grilling/README.md) — the interview primitive (rounds + frontier)
 - [domain-modeling](services/domain-modeling/README.md) — glossary + ADR discipline during design
-- [mp-grill-with-docs](services/mp-grill-with-docs/README.md) — grill + domain model → parent contract
+- [mp-grill-with-docs](services/mp-grill-with-docs/README.md) — grill + domain model → plan contract file
 - [mp-to-tickets](services/mp-to-tickets/README.md) — plan → tracer-bullet tickets
 - [mp-diagnose](services/mp-diagnose/README.md) — hard-bug diagnosis → root cause for /ship
 - [mp-prototype](services/mp-prototype/README.md) — throwaway prototype → data for the decision-maker

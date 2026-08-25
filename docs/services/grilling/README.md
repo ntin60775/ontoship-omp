@@ -20,7 +20,7 @@ Two entry points drive it:
 
 - **`/grilling`** — the slash command (`.omp/commands/grilling.md`): runs
   `mp-grill-with-docs` — a relentless interview over a plan, decision, or idea with
-  `domain-modeling` active, ending in a parent ship contract;
+  `domain-modeling` active, ending in a plan contract file;
 - **improve-codebase-architecture** — after scanning a codebase and presenting an HTML
   report, grills through whichever deepening opportunity the user picks.
 

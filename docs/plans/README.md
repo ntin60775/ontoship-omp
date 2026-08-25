@@ -1,6 +1,6 @@
 ---
 node_type: index
-title: Plans — parent contracts + tickets
+title: Plans — plan contracts + tickets
 service: _platform
 status: active
 updated: 2026-08-25
@@ -8,16 +8,20 @@ updated: 2026-08-25
 
 # Plans
 
-`docs/plans/` holds the **parent ship contracts** — one folder per plan
-(`docs/plans/<slug>/`): the parent contract is the folder's `README.md`
-(`node_type: plan`), and under it live the **tickets** (`NN-<ticket>.md`,
-`node_type: ticket`) — tracer-bullet vertical slices, each declaring the tickets that
-block it.
+`docs/plans/` holds the **plan contracts**. A plan starts as a **file**
+`docs/plans/<slug>.md` (`node_type: plan`), written by `mp-grill-with-docs`. When the
+operator runs `/to-tickets`, the file is promoted to the **folder form**
+`docs/plans/<slug>/`: the contract becomes the folder's `README.md`, and under it live
+the **tickets** (`NN-<ticket>.md`, `node_type: ticket`) — tracer-bullet vertical slices,
+each declaring the tickets that block it.
 
-- The parent contract is written by `mp-grill-with-docs`; the tickets by `mp-to-tickets`.
-- `/ship` executes **one ticket at a time**, strictly sequential: `/ship <plan>` takes
-  the first ticket (by `NN` order) whose `status` is not `archived`.
-- Lifecycle: parent `draft → active → archived` (all tickets done); ticket
-  `draft → active → archived` (shipped).
+- The plan contract is written by `mp-grill-with-docs` (as a file); the tickets by
+  `mp-to-tickets` (the only step that creates the folder).
+- `/ship` executes **one ticket at a time**, strictly sequential: `/ship <folder>` takes
+  the first ticket (by `NN` order) whose `status` is not `archived`. A **file plan** is
+  shipped as a single slice: `/ship docs/plans/<slug>.md`.
+- Lifecycle: plan `draft → active → archived` (shipped as a single slice, or all
+  tickets done); ticket `draft → active → archived` (shipped).
 
 - [contract-driven-ship.md](contract-driven-ship.md) — contract-spec: entry skills → hand `/ship` (superseded by the ticket-driven model)
+- [plan-file-first.md](plan-file-first.md) — plan file by default; folder + tickets only after `/to-tickets`

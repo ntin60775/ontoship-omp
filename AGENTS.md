@@ -18,8 +18,8 @@ linter) plus the spec-driven dev-flow built on top of it.
     dev-flow/          the gated ship pipeline
     grilling/          the interview primitive (rounds + frontier)
     domain-modeling/   glossary + ADR discipline (model-invoked)
-    mp-grill-with-docs/ grill + domain model → parent contract (docs/plans/<slug>/)
-    mp-to-tickets/     plan → tracer-bullet tickets
+    mp-grill-with-docs/ grill + domain model → plan contract (docs/plans/<slug>.md)
+    mp-to-tickets/     plan file → folder + tracer-bullet tickets
     mp-diagnose/       hard-bug diagnosis loop → root cause for /ship
     mp-prototype/      throwaway prototype → data for the decision-maker
     mp-handoff/        session bridge (.scratch/), not KB knowledge

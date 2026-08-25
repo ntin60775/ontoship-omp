@@ -56,11 +56,11 @@ OntoShip ships the **GitMark** package (KB + dev-flow) as a project-local **omp*
 |---|---|
 | `kb-search` | search the KB (FTS5) instead of grepping blind |
 | `kb-curate` | light ontology rules when adding/editing docs (types, frontmatter, typed links) |
-| `dev-flow` | the spec-driven loop to ship a feature: **one ticket at a time** — worktree → implement → tests → independent review → dev-tests → prod-tests → ship (MR → `dev` → `main`). Ticket to prod in ~40 min – 2 h. |
+| `dev-flow` | the spec-driven loop to ship a feature: **one ticket at a time** (or one file plan as a single slice) — worktree → implement → tests → independent review → dev-tests → prod-tests → ship (MR → `dev` → `main`). Ticket to prod in ~40 min – 2 h. |
 | `grilling` | the interview primitive (rounds + frontier) — drives `mp-grill-with-docs` and `improve-codebase-architecture` |
 | `domain-modeling` | glossary + ADR discipline — keeps `CONTEXT.md` and `docs/decisions/` current during design |
-| `mp-grill-with-docs` | grill + build the domain model → writes the **parent contract** (`docs/plans/<slug>/README.md`) |
-| `mp-to-tickets` | break a plan into **tracer-bullet tickets** with blocking edges (`docs/plans/<slug>/NN-<ticket>.md`) |
+| `mp-grill-with-docs` | grill + build the domain model → writes the **plan contract** file (`docs/plans/<slug>.md`) |
+| `mp-to-tickets` | promote a plan file to the plan folder and break it into **tracer-bullet tickets** with blocking edges (`docs/plans/<slug>/NN-<ticket>.md`) |
 | `mp-diagnose` | hard-bug diagnosis loop → root cause, then hand the fix to `/ship` |
 | `mp-prototype` | throwaway prototype → data + recommendation for the decision-maker |
 | `mp-handoff` | session bridge (`.scratch/`), not KB knowledge |
@@ -73,11 +73,11 @@ editing, and ships changes through one repeatable, gated flow built around the K
 |---|---|
 | `/kb` | search the KB (FTS5) and answer from the top hits |
 | `/kb-map` | build the self-contained HTML graph of the KB and open it |
-| `/grilling` | grill the user about a plan/decision/idea, building the domain model, ending in a parent contract |
+| `/grilling` | grill the user about a plan/decision/idea, building the domain model, ending in a plan contract file |
 | `/to-tickets` | break a plan into tracer-bullet tickets with blocking edges |
 | `/handoff` | compact the conversation into a handoff doc under `.scratch/` |
 | `/prototype` | build a throwaway prototype to answer a design question |
-| `/ship` | ship **one ticket** from a plan through the gated pipeline — launched only by hand, strictly sequential |
+| `/ship` | ship **one ticket** from a plan folder (or a whole **file plan** as a single slice) through the gated pipeline — launched only by hand, strictly sequential |
 
 ### What to write after a command (for best results)
 
@@ -105,10 +105,12 @@ node_type+folder, writes frontmatter + typed links, and indexes it.
 - The agent asks the whole frontier in one round (numbered, with recommended answers) and
   finds facts itself; the decisions are yours. As terms crystallise it writes them to
   `CONTEXT.md` / `docs/decisions/`. Done when the frontier is empty — it then writes the
-  **parent contract** (`docs/plans/<slug>/README.md`) and stops.
+  **plan contract** as a file (`docs/plans/<slug>.md`) and stops.
 
 **`/to-tickets [plan]`** — break a plan into tracer-bullet tickets.
-- Good: `/to-tickets docs/plans/billing-webhooks/`, or just `/to-tickets` for the most recent plan.
+- Good: `/to-tickets docs/plans/billing-webhooks.md`, or just `/to-tickets` for the most recent plan.
+- If the plan is a file, it is first promoted to the folder `docs/plans/billing-webhooks/`
+  (contract → `README.md`) — the folder is created only here.
 - Each ticket is sized to one fresh context window (one `/ship` run) and declares its
   blocking edges.
 
@@ -119,14 +121,16 @@ so a fresh agent can continue.
 (logic/state → single HTML file; UI → several variations). Returns data + a
 recommendation, never commits code.
 
-**`/ship <plan | ticket | what + why + done>`** — ship **one ticket** (see
-`docs/reference/commands.md`):
-- **plan path** — `/ship docs/plans/<slug>/`: takes the **first non-archived ticket**
+**`/ship <plan | ticket | what + why + done>`** — ship **one ticket** (or one file plan;
+see `docs/reference/commands.md`):
+- **plan folder** — `/ship docs/plans/<slug>/`: takes the **first non-archived ticket**
   (by `NN` order); checks its blockers are done.
+- **file plan** — `/ship docs/plans/<slug>.md`: ships the whole plan as a single slice.
 - **ticket path** — `/ship docs/plans/<slug>/02-<ticket>.md`: that specific ticket.
 - **ad-hoc description** — describe **what** to do, **why** (goal), and the
   **done-criteria**.
-- **empty** — most recent plan, first non-archived ticket.
+- **empty** — most recent plan (a file or a folder, by `updated:`); a file plan ships as
+  a single slice, a folder plan via its first non-archived ticket.
 
 `/ship` is launched **only by hand**, **one ticket at a time**; the entry skills
 (`mp-grill-with-docs`, `mp-to-tickets`, …) never start it.

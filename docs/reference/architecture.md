@@ -53,7 +53,7 @@ ontoship-omp/
 │  │  ├─ dev-flow/   SKILL.md                ← the ship pipeline
 │  │  ├─ grilling/   SKILL.md                ← the interview primitive (rounds + frontier)
 │  │  ├─ domain-modeling/ SKILL.md           ← glossary + ADR discipline (model-invoked)
-│  │  ├─ mp-grill-with-docs/ SKILL.md        ← grill + domain model → parent contract
+│  │  ├─ mp-grill-with-docs/ SKILL.md        ← grill + domain model → plan contract (docs/plans/<slug>.md)
 │  │  ├─ mp-to-tickets/ SKILL.md             ← plan → tracer-bullet tickets
 │  │  ├─ mp-diagnose/ SKILL.md + scripts/    ← hard-bug diagnosis → root cause for /ship
 │  │  ├─ mp-prototype/ SKILL.md + LOGIC/UI   ← throwaway prototype → data for the decision-maker
@@ -63,11 +63,11 @@ ontoship-omp/
 │  │  ├─ kb-map.md    (/kb-map)   build the HTML graph
 │  │  ├─ doc.md       (/doc)      compose/update ONE doc
 │  │  ├─ onto-doc.md  (/onto-doc) build the WHOLE KB (fan-out curators)
-│  │  ├─ grilling.md  (/grilling)   grill + domain model → parent contract
+│  │  ├─ grilling.md  (/grilling)   grill + domain model → plan contract file
 │  │  ├─ to-tickets.md (/to-tickets) plan → tracer-bullet tickets
 │  │  ├─ handoff.md   (/handoff)    session bridge (.scratch/)
 │  │  ├─ prototype.md (/prototype)  throwaway prototype for a design question
-│  │  └─ ship.md      (/ship)       ship ONE ticket, strictly sequential
+│  │  └─ ship.md      (/ship)       ship ONE ticket (or one file plan), strictly sequential
 │  └─ rules/                   ← project rules (alwaysApply)
 │     ├─ kb-source-of-truth.md  ← md+git truth; derived never committed
 │     ├─ kb-first.md            ← search the KB before answering/writing
@@ -107,16 +107,17 @@ A user types a slash command; the command delegates to a skill; the skill calls 
   [`ontology.md`](../../ontology.md) — what `node_type` a doc gets, where it lives, its
   frontmatter and typed links. `/doc` wraps it for one doc; `/onto-doc` fans out a
   `kb-curate` curator agent per area to build the whole KB, then lints + indexes + maps.
-- **`dev-flow`** is the spec-driven loop (`/ship`): **one ticket at a time**, strictly
-  sequential — worktree → implement → tests → independent review → dev-tests →
-  prod-tests → ship (MR → `dev` → `main`). A ticket is a tracer-bullet vertical slice
-  sized to one fresh context window; its specs become KB docs, closing the loop back
-  into the same markdown.
+- **`dev-flow`** is the spec-driven loop (`/ship`): **one ticket at a time** (or one
+  **file plan** as a single slice), strictly sequential — worktree → implement → tests →
+  independent review → dev-tests → prod-tests → ship (MR → `dev` → `main`). A ticket is
+  a tracer-bullet vertical slice sized to one fresh context window; its specs become KB
+  docs, closing the loop back into the same markdown.
 - **`grilling`** is the interview primitive (rounds + frontier); **`domain-modeling`**
   is the glossary + ADR discipline. `/grilling` drives `mp-grill-with-docs` (grilling +
-  domain-modeling) and ends by writing the **parent contract**
-  (`docs/plans/<slug>/README.md`, `draft`); `/to-tickets` drives `mp-to-tickets` and
-  writes the tickets under the plan folder. `improve-codebase-architecture` walks a
+  domain-modeling) and ends by writing the **plan contract** as a file
+  (`docs/plans/<slug>.md`, `draft`); `/to-tickets` drives `mp-to-tickets`, which
+  promotes the file to the plan folder and writes the tickets under it.
+  `improve-codebase-architecture` walks a
   deepening report. `mp-diagnose` finds the root cause of a hard bug (never fixing code
   itself), `mp-prototype` returns data for a decision, `mp-handoff` bridges sessions via
   `.scratch/` — none of the three authors a contract or edits code.

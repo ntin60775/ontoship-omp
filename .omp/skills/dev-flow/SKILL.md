@@ -1,6 +1,6 @@
 ---
 name: dev-flow
-description: The spec-driven development loop for shipping a feature/fix fast and safely on top of a GitMark KB — one ticket at a time: worktree → implement → tests → independent review → dev-tests → prod-tests → ship (MR → dev → main). Use when starting a feature or fix, or when asked "how do we build/ship a change here".
+description: The spec-driven development loop for shipping a feature/fix fast and safely on top of a GitMark KB — one ticket (or one file plan) at a time: worktree → implement → tests → independent review → dev-tests → prod-tests → ship (MR → dev → main). Use when starting a feature or fix, or when asked "how do we build/ship a change here".
 ---
 
 # dev-flow — from ticket to production
@@ -11,26 +11,37 @@ skills**, the work happens in an **isolated git worktree**, and **only green rea
 prod**. The KB (see `kb-curate`) is the carrier of knowledge — onboarding, hand-off and
 scaling all start from it, not from the code.
 
-## Entry: ticket vs ad-hoc
+## Entry: ticket, file plan, or ad-hoc
 
 `/ship` is launched by hand with one of:
 
-1. **A plan path** (`docs/plans/<slug>/`) — pick the **first ticket** (by `NN` order)
+1. **A plan folder** (`docs/plans/<slug>/`) — pick the **first ticket** (by `NN` order)
    whose `status` is not `archived`. If all are archived, the plan is complete.
-2. **A ticket path** (`docs/plans/<slug>/NN-<ticket>.md`) — execute that ticket.
-3. **An ad-hoc description** — run the full loop without a ticket.
-4. **Empty** — most recent `docs/plans/<slug>/`, first non-archived ticket.
+2. **A file plan** (`docs/plans/<slug>.md`, `node_type: plan`) — execute the plan as a
+   **single slice**: the full loop on the plan's `Goal`/`Done`/acceptance criteria, no
+   tickets. Mark the plan `status: archived` once merged.
+3. **A ticket path** (`docs/plans/<slug>/NN-<ticket>.md`) — execute that ticket.
+4. **An ad-hoc description** — run the full loop without a ticket.
+5. **Empty** — most recent plan (a file or a folder, by `updated:`); a file plan is
+   shipped as a single slice, a folder plan via its first non-archived ticket.
+
+`docs/plans/<slug>` without an extension resolves to whichever exists: the file or the
+folder.
 
 **Verification (ticket entry):** read the ticket; check `Blocked by` tickets are all
 `archived` (if not, report blockers and stop). Check `Context` in the parent contract is
 still accurate; update if not, re-confirming with the operator. Set ticket `status:
 active`. The operator's hand launch *is* the confirmation (no second gate).
 
+**Verification (file-plan entry):** read the plan; check `Context` is still accurate;
+update if not, re-confirming with the operator. Set the plan `status: active`. The
+operator's hand launch *is* the confirmation.
+
 ## The loop
 
 1. **Research** — understand from facts, not guesses: read logs, traces, and the code
    itself. Reproduce before fixing.
-2. **Goal** — take from the ticket's `What to build` + acceptance criteria.
+2. **Goal** — take from the ticket's `What to build` + acceptance criteria (or the plan's `Goal`/`Done` for a file plan).
 3. **Isolate** — work in a dedicated **`git worktree`**: `main` stays untouched, parallel
    agents don't collide, and rollback is just dropping the worktree.
 4. **Implement** — code to the ticket's acceptance criteria inside the worktree; keep
@@ -47,9 +58,9 @@ active`. The operator's hand launch *is* the confirmation (no second gate).
    Verify behaviour where users live.
 9. **Ship** — merge **`dev → main`** and deploy (build the new image *before* stopping the
    old container, then poll the healthcheck to measure real downtime). Mark the ticket
-   `status: archived` once merged.
+   (or the file plan) `status: archived` once merged.
 
-## Stop-points (from the parent contract's `Constraints`)
+## Stop-points (from the plan contract's `Constraints`)
 
 - `stop-before-commit` — after review (step 6), stop with the uncommitted diff in the
   worktree; commit and everything after wait for the operator's "continue". Default for
@@ -61,8 +72,8 @@ A stop-point is a hard pause: the agent reports and waits, it never resumes on i
 
 ## Sequential discipline
 
-One ticket per `/ship` run. After a ticket is archived, the operator launches `/ship`
-again for the next. Never batch multiple tickets in one run.
+One ticket (or one file plan) per `/ship` run. After a ticket is archived, the operator
+launches `/ship` again for the next. Never batch multiple tickets in one run.
 
 ## Git-flow
 

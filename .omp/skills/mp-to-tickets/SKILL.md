@@ -1,6 +1,6 @@
 ---
 name: mp-to-tickets
-description: Break a plan (docs/plans/<slug>/) or the current conversation into tracer-bullet tickets with blocking edges, written as docs/plans/<slug>/NN-<ticket>.md. Use when the user says "разбей на тикеты" or runs /to-tickets.
+description: Break a plan (docs/plans/<slug>.md or docs/plans/<slug>/) or the current conversation into tracer-bullet tickets with blocking edges, written as docs/plans/<slug>/NN-<ticket>.md. Use when the user says "разбей на тикеты" or runs /to-tickets.
 disable-model-invocation: true
 ---
 
@@ -9,14 +9,31 @@ disable-model-invocation: true
 Break a plan, spec, or conversation into a set of **tickets**: tracer-bullet vertical
 slices, each declaring the tickets that **block** it.
 
-Argument: `$ARGUMENTS` — a plan path (`docs/plans/<slug>/` or its `README.md`) or a topic.
-**Empty** → use the most recent `docs/plans/<slug>/` parent contract.
+Argument: `$ARGUMENTS` — a plan path (`docs/plans/<slug>.md`, `docs/plans/<slug>/`, or
+its `README.md`) or a topic. **Empty** → use the most recent plan (a file
+`docs/plans/<slug>.md` or a folder `docs/plans/<slug>/`, by `updated:`).
 
 ## Process
 
+### 0. Migrate a file plan to a folder
+
+A plan is a **file** (`docs/plans/<slug>.md`) until this skill runs. If the target plan
+is a file, first promote it to the folder form — the folder is created **only here**:
+
+1. `mkdir docs/plans/<slug>/` and `git mv docs/plans/<slug>.md docs/plans/<slug>/README.md`
+   (preserves history).
+2. **Rewrite the plan's own outgoing links**: it moved one level deeper — relative
+   links in its frontmatter and body gain one `../` (e.g. `../../.omp/commands/ship.md`
+   → `../../../.omp/commands/ship.md`; `../ontology.md` → `../../ontology.md`).
+3. **Rewrite incoming links** from other docs that pointed at `docs/plans/<slug>.md`
+   (grep the KB for `<slug>.md`) — they now point at `docs/plans/<slug>/README.md`.
+4. Add a line to `docs/plans/README.md`'s index for the plan folder.
+
+If the target is already a folder, skip this step.
+
 ### 1. Gather context
 
-Read the parent contract (`Goal`, `Done`, `Scope`, `Context`) and the `Context` it
+Read the plan contract (`Goal`, `Done`, `Scope`, `Context`) and the `Context` it
 points at. Search the KB (`gitmark search`) for related docs and decisions. If you have
 not explored the codebase, do so to understand the current state. Ticket titles and
 descriptions use the project's domain glossary vocabulary (`CONTEXT.md`) and respect
@@ -94,10 +111,10 @@ start immediately)".
 - [ ] Acceptance criterion 2
 ```
 
-Also update the parent contract's `README.md`: add a `Tickets` section listing the
-tickets in order with their status, and set the parent `status: active` only if the
-operator confirms shipping has started (otherwise leave `draft`).
-
+Also update the plan's `README.md` (the parent contract — the migrated file, or the
+existing folder README): add a `Tickets` section listing the tickets in order with
+their status, and set `status: active` only if the operator confirms shipping has
+started (otherwise leave `draft`).
 Avoid specific file paths or code snippets in tickets: they go stale fast. Exception: if
 a prototype produced a snippet that encodes a decision more precisely than prose can
 (state machine, reducer, schema, type shape), inline it and note briefly that it came

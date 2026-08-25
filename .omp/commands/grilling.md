@@ -1,5 +1,5 @@
 ---
-description: Grill the user relentlessly about a plan, decision, or idea — rounds over the design tree until shared understanding, building the domain model (CONTEXT.md + decisions) as it goes, ending in a parent ship contract. Argument = the topic to grill.
+description: Grill the user relentlessly about a plan, decision, or idea — rounds over the design tree until shared understanding, building the domain model (CONTEXT.md + decisions) as it goes, ending in a plan contract file (docs/plans/<slug>.md). Argument = the topic to grill.
 ---
 
 Run the **mp-grill-with-docs** skill on the topic: `$ARGUMENTS`.
@@ -10,8 +10,8 @@ Run the **mp-grill-with-docs** skill on the topic: `$ARGUMENTS`.
   active — glossary terms go to `CONTEXT.md`, load-bearing choices to `docs/decisions/`
   as they crystallise.
 - When the frontier is empty and the user confirms shared understanding, it writes the
-  **parent ship contract** (`docs/plans/<slug>/README.md`, `node_type: plan`,
-  `status: draft`) and stops.
+  **plan contract** — `docs/plans/<slug>.md` (`node_type: plan`, `status: draft`) — and
+  stops. It writes a file, not a folder: the folder with tickets is created later, only
+  by `/to-tickets`.
 - It does NOT author tickets and does NOT launch `/ship` — the operator runs
-  `/to-tickets` (or says "разбей на тикеты") and then starts `/ship` by hand, one ticket
-  at a time.
+  `/to-tickets` (or says "разбей на тикеты") and then starts `/ship` by hand.

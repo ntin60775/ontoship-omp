@@ -58,8 +58,9 @@ Never edited or committed by hand.
 _Avoid_: кэш, база знаний
 
 **План (plan)**:
-A folder `docs/plans/<slug>/`: the parent ship contract (`README.md`, `node_type: plan`)
-plus its tickets. Written by `mp-grill-with-docs`.
+A file `docs/plans/<slug>.md` (`node_type: plan`) — the ship contract. Written by
+`mp-grill-with-docs`. `mp-to-tickets` promotes it to the folder `docs/plans/<slug>/`
+(contract → `README.md` + tickets) — the only step that creates the folder.
 _Avoid_: задача, тикет, спринт
 
 **Тикет (ticket)**:

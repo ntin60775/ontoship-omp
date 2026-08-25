@@ -34,7 +34,7 @@ Each document has exactly one `node_type` — its "table" in the ontology.
 | `runbook` | operational procedure ("how to X") | `docs/ops/` |
 | `gotcha` | a pitfall + how to avoid it | `docs/ops/` |
 | `decision` | an architectural/product decision (ADR) | `docs/decisions/` |
-| `plan` | a plan/design before implementation — the parent ship contract | `docs/plans/<slug>/README.md` |
+| `plan` | a plan/design before implementation — the ship contract | `docs/plans/<slug>.md` (file; `mp-to-tickets` promotes it to `docs/plans/<slug>/README.md`) |
 | `ticket` | a tracer-bullet vertical slice of a plan, one `/ship` run each | `docs/plans/<slug>/NN-<ticket>.md` |
 | `guide` | how to use something (clients, public API) | varies |
 | `index` | a folder's table of contents | any `README.md` |
@@ -92,12 +92,14 @@ DEPRECATE → `status` + `supersedes`. LINK → no orphans. REINDEX → `gitmark
 
 ## The plan as a ship contract
 
-A plan is a **folder** `docs/plans/<slug>/`: the parent contract is the folder's
-`README.md` (`node_type: plan`), and under it live the **tickets**
+A plan is a **file** `docs/plans/<slug>.md` (`node_type: plan`) until it is broken into
+tickets. `mp-to-tickets` is the only step that creates the **folder form**
+`docs/plans/<slug>/`: it moves the file to the folder's `README.md` (history
+preserved, links rewritten for the extra depth) and adds the **tickets**
 (`NN-<ticket>.md`, `node_type: ticket`) — tracer-bullet vertical slices, each declaring
 the tickets that block it.
 
-The parent contract carries the fields the entry skills produce and the dev-flow
+The plan contract carries the fields the entry skills produce and the dev-flow
 consumes:
 
 - `Goal` — why this change (one clear goal)
@@ -106,20 +108,23 @@ consumes:
 - `Constraints` — stop-points: `stop-before-commit`, `stop-after-mr`, `no-deploy`
 - `Context` — what the entry phase already established (root cause, prototype verdict,
   resolved design-tree branches)
+- `Tickets` — the decomposition, in order, with status (folder form only, added by `mp-to-tickets`)
 
 Each ticket carries: `What to build` (the end-to-end behaviour the slice makes work),
 `Blocked by` (the tickets that gate it), `Status`, and acceptance criteria.
 
-**`/ship` executes one ticket at a time, strictly sequentially.** `/ship <plan>` takes
+**`/ship` executes one ticket at a time, strictly sequentially.** `/ship <folder>` takes
 the first ticket (by `NN` order) whose `status` is not `archived`; a finished ticket is
-marked `archived`.
+marked `archived`. A **file plan** (`/ship docs/plans/<slug>.md`) is shipped as a single
+slice — the full loop on the plan's `Goal`/`Done`, no tickets.
 
-**Lifecycle:** parent `draft` (written by `mp-grill-with-docs`) → `active` (`/ship`
-started, operator-confirmed) → `archived` (all tickets done). Tickets: `draft` (written
-by `mp-to-tickets`) → `active` (being shipped) → `archived` (shipped). Only
-`mp-grill-with-docs` authors a parent contract and `mp-to-tickets` authors tickets;
-`mp-diagnose`, `mp-prototype`, `mp-handoff` feed `Context`/`Goal` but never author them —
-and never launch `/ship`: the operator starts it by hand.
+**Lifecycle:** plan `draft` (written by `mp-grill-with-docs`) → `active` (`/ship`
+started, operator-confirmed) → `archived` (shipped as a single slice, or all tickets
+done). Tickets: `draft` (written by `mp-to-tickets`) → `active` (being shipped) →
+`archived` (shipped). Only `mp-grill-with-docs` authors a plan contract and
+`mp-to-tickets` authors tickets; `mp-diagnose`, `mp-prototype`, `mp-handoff` feed
+`Context`/`Goal` but never author them — and never launch `/ship`: the operator starts
+it by hand.
 
 ## Invariants (checked by `gitmark lint`)
 

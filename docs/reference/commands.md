@@ -34,11 +34,11 @@ when the `.omp/` package is copied into another project).
 | `/kb-map` | Build a self-contained HTML map of the KB (tree + link graph) | `[output-path]` (default `docs-map.html`) | GitMark CLI `map` / `index` |
 | `/doc` | Compose or update **one** KB document per the ontology | `<topic>` | `kb-curate` skill + GitMark CLI |
 | `/onto-doc` | Build (or rebuild) the **whole** KB by fanning out curator agents | `[scope]` (empty → whole repo) | `kb-curate` skill via `Task` fan-out + GitMark CLI |
-| `/grilling` | Grill the user about a plan/decision/idea, building the domain model, ending in a parent contract | `<topic>` (empty → ask what to grill) | `mp-grill-with-docs` skill |
+| `/grilling` | Grill the user about a plan/decision/idea, building the domain model, ending in a plan contract file | `<topic>` (empty → ask what to grill) | `mp-grill-with-docs` skill |
 | `/to-tickets` | Break a plan into tracer-bullet tickets with blocking edges | `[plan path]` (empty → most recent plan) | `mp-to-tickets` skill |
 | `/handoff` | Compact the conversation into a handoff doc under `.scratch/` | `[what the next session will do]` | `mp-handoff` skill |
 | `/prototype` | Build a throwaway prototype to answer a design question | `<question>` (empty → ask) | `mp-prototype` skill |
-| `/ship` | Ship **one ticket** from a plan through the gated pipeline, strictly sequential | `[plan path]` / `[ticket path]` / `<ad-hoc>` | `dev-flow` skill |
+| `/ship` | Ship **one ticket** from a plan folder (or a whole **file plan** as a single slice) through the gated pipeline, strictly sequential | `[plan path]` / `[ticket path]` / `<ad-hoc>` | `dev-flow` skill |
 
 ---
 
@@ -120,8 +120,9 @@ when the `.omp/` package is copied into another project).
   interview over the design tree (the `grilling` primitive) with `domain-modeling`
   active: glossary terms go to `CONTEXT.md`, load-bearing choices to `docs/decisions/`
   as they crystallise. When the frontier is empty and the user confirms shared
-  understanding, it writes the **parent ship contract** (`docs/plans/<slug>/README.md`,
-  `node_type: plan`, `status: draft`) and stops.
+  understanding, it writes the **plan contract** — `docs/plans/<slug>.md`
+  (`node_type: plan`, `status: draft`) — and stops. The folder with tickets is created
+  later, only by `/to-tickets`.
 - **Args:** `$ARGUMENTS` = the plan, decision, or idea to stress-test. **Empty** → ask
   what to grill.
 - **Behavior:** the skill holds the discipline — map the design tree, ask the whole
@@ -137,11 +138,15 @@ when the `.omp/` package is copied into another project).
   conversation) into **tracer-bullet vertical slices**, each declaring the tickets that
   block it. Each ticket is sized to fit in a single fresh context window (one `/ship`
   run).
-- **Args:** `$ARGUMENTS` = a plan path (`docs/plans/<slug>/` or its `README.md`) or a
-  topic. **Empty** → use the most recent `docs/plans/<slug>/` parent contract.
-- **Behavior:** drafts the slices, gives each its blocking edges, quizzes the user on
-  granularity and edges, then writes `docs/plans/<slug>/NN-<ticket>.md` (blockers first)
-  and updates the parent contract's `Tickets` section. Lints + reindexes and stops.
+- **Args:** `$ARGUMENTS` = a plan path (`docs/plans/<slug>.md`, `docs/plans/<slug>/`, or
+  its `README.md`) or a topic. **Empty** → use the most recent plan (a file or a folder,
+  by `updated:`).
+- **Behavior:** if the plan is a **file**, first promote it to the folder form
+  (`git mv docs/plans/<slug>.md docs/plans/<slug>/README.md`, rewrite the plan's outgoing
+  links for the extra depth and the incoming links from other docs). Then drafts the
+  slices, gives each its blocking edges, quizzes the user on granularity and edges, and
+  writes `docs/plans/<slug>/NN-<ticket>.md` (blockers first) and updates the plan's
+  `Tickets` section. Lints + reindexes and stops.
 - **Drives:** `mp-to-tickets` skill.
 
 ## `/handoff` — session bridge
@@ -164,22 +169,26 @@ when the `.omp/` package is copied into another project).
 - **Args:** `$ARGUMENTS` = the design question. **Empty** → ask what to prototype.
 - **Drives:** `mp-prototype` skill.
 
-## `/ship` — ship one ticket
+## `/ship` — ship one ticket (or one file plan)
 
 - **Definition:** `.omp/commands/ship.md`
-- **What it does:** drives **one ticket** from a plan through the gated OntoShip
-  dev-flow pipeline. Launched **only by hand**, **one ticket at a time**, strictly
-  sequential.
-- **Args:** `$ARGUMENTS` = a **plan path** (`docs/plans/<slug>/`), a **ticket path**
-  (`docs/plans/<slug>/NN-<ticket>.md`), an ad-hoc description, or **empty** (most recent
-  plan, first non-archived ticket).
-- **Entry (plan path):** pick the **first ticket** (by `NN` order) whose `status` is not
-  `archived`. Check its `Blocked by` tickets are all archived (if not, report blockers
-  and stop). Check `Context` in the parent contract is still accurate; set ticket
-  `status: active`.
+- **What it does:** drives **one ticket** from a plan folder (or a whole **file plan**
+  as a single slice) through the gated OntoShip dev-flow pipeline. Launched **only by
+  hand**, **one ticket (or one file plan) at a time**, strictly sequential.
+- **Args:** `$ARGUMENTS` = a **plan folder** (`docs/plans/<slug>/`), a **file plan**
+  (`docs/plans/<slug>.md`), a **ticket path** (`docs/plans/<slug>/NN-<ticket>.md`), an
+  ad-hoc description, or **empty** (most recent plan — a file or a folder, by
+  `updated:`). `docs/plans/<slug>` without an extension resolves to whichever exists.
+- **Entry (plan folder):** pick the **first ticket** (by `NN` order) whose `status` is
+  not `archived`. Check its `Blocked by` tickets are all archived (if not, report
+  blockers and stop). Check `Context` in the parent contract is still accurate; set
+  ticket `status: active`.
+- **Entry (file plan):** execute the plan as a **single slice** — the full loop on the
+  plan's `Goal`/`Done`/acceptance criteria, no tickets. Check `Context` is still
+  accurate; set the plan `status: active`.
 - **Pipeline (per the `dev-flow` skill, end to end):**
   1. **Research** — understand from facts (logs, traces, code); reproduce before fixing.
-  2. **Goal** — take from the ticket's `What to build` + acceptance criteria.
+  2. **Goal** — take from the ticket's `What to build` + acceptance criteria (or the plan's `Goal`/`Done` for a file plan).
   3. **Isolate** — work in a dedicated `git worktree`.
   4. **Implement** — code to the ticket's acceptance criteria.
   5. **Tests** — write/adjust unit + E2E.
@@ -188,12 +197,13 @@ when the `.omp/` package is copied into another project).
   7. **Dev-tests** — MR + commits into `dev`; run the full suite. Red → fix, don't merge.
   8. **Prod-tests** — E2E/smoke against the real prod contour.
   9. **Ship** — merge `dev → main` and deploy (build-before-stop + healthcheck-poll).
-     Mark the ticket `status: archived` once merged.
-- **Stop-points (from the parent contract's `Constraints`):** `stop-before-commit`
+     Mark the ticket (or the file plan) `status: archived` once merged.
+- **Stop-points (from the plan contract's `Constraints`):** `stop-before-commit`
   (pause with uncommitted diff after review), `stop-after-mr` (pause after MR),
   `no-deploy` (skip deploy). A stop-point is a hard pause — the agent reports and waits,
   never resumes on its own.
-- **Sequential discipline:** one ticket per `/ship` run. After a ticket is archived, the
-  operator launches `/ship` again for the next. Never batch multiple tickets.
+- **Sequential discipline:** one ticket (or one file plan) per `/ship` run. After a
+  ticket is archived, the operator launches `/ship` again for the next. Never batch
+  multiple tickets.
 - **Gates:** tests + independent review are not skippable.
 - **Drives:** `dev-flow` skill.
