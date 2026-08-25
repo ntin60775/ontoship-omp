@@ -32,5 +32,5 @@ The main session consumes this and continues the `/grilling` discussion.
 
 ## Do not
 
-- Do not write the ship contract here — `mp-grill-me` authors it.
+- Do not write the ship contract here — `mp-grill-with-docs` authors it.
 - Do not edit code (code changes go through `/ship`).

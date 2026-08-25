@@ -29,7 +29,8 @@ _Avoid_: плагин, под-команда
 
 **Команда (command)**:
 A `.omp/commands/<name>.md` slash-command (`/kb`, `/kb-map`, `/doc`, `/onto-doc`,
-`/ship`) — the user-facing verbs that drive skills and the CLI.
+`/grilling`, `/to-tickets`, `/handoff`, `/prototype`, `/ship`) — the user-facing verbs
+that drive skills and the CLI.
 _Avoid_: слэш-команда Claude Code, plugin command
 
 **Точка входа (entry point)**:
@@ -47,11 +48,27 @@ one curator per doc area.
 _Avoid_: документатор, писатель
 
 **Dev-flow**:
-The gated ship pipeline: research → tasks → goal → spec → worktree → implement → tests →
-review → dev-tests → prod-tests → ship (MR → `dev` → `main`).
+The gated ship pipeline, **one ticket at a time**, strictly sequential: worktree →
+implement → tests → review → dev-tests → prod-tests → ship (MR → `dev` → `main`).
 _Avoid_: CI/CD, релизный процесс
 
 **Derived-артефакты (derived artifacts)**:
 Regenerated outputs — `.gitmark/index.db` (search index) and `*-map.html` (graph).
 Never edited or committed by hand.
 _Avoid_: кэш, база знаний
+
+**План (plan)**:
+A folder `docs/plans/<slug>/`: the parent ship contract (`README.md`, `node_type: plan`)
+plus its tickets. Written by `mp-grill-with-docs`.
+_Avoid_: задача, тикет, спринт
+
+**Тикет (ticket)**:
+A tracer-bullet vertical slice of a plan (`docs/plans/<slug>/NN-<ticket>.md`,
+`node_type: ticket`), sized to one fresh context window; one `/ship` run each, strictly
+sequential. Written by `mp-to-tickets`.
+_Avoid_: задача, story, подзадача
+
+**Доменная модель (domain model)**:
+The project's ubiquitous language — the `CONTEXT.md` glossary plus load-bearing choices
+in `docs/decisions/`. Kept current during design by the `domain-modeling` skill.
+_Avoid_: модель данных, схема БД

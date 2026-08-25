@@ -3,7 +3,7 @@ node_type: reference
 title: OntoShip architecture
 service: _platform
 status: active
-updated: 2026-08-14
+updated: 2026-08-25
 tags: [architecture, overview, omp, package]
 links:
   documents: [../../AGENTS.md]
@@ -52,17 +52,22 @@ ontoship-omp/
 │  │  ├─ kb-curate/  SKILL.md                ← curation / ontology rules
 │  │  ├─ dev-flow/   SKILL.md                ← the ship pipeline
 │  │  ├─ grilling/   SKILL.md                ← the interview primitive (rounds + frontier)
-│  │  ├─ mp-grill-me/ SKILL.md               ← interview → writes the ship contract
+│  │  ├─ domain-modeling/ SKILL.md           ← glossary + ADR discipline (model-invoked)
+│  │  ├─ mp-grill-with-docs/ SKILL.md        ← grill + domain model → parent contract
+│  │  ├─ mp-to-tickets/ SKILL.md             ← plan → tracer-bullet tickets
 │  │  ├─ mp-diagnose/ SKILL.md + scripts/    ← hard-bug diagnosis → root cause for /ship
 │  │  ├─ mp-prototype/ SKILL.md + LOGIC/UI   ← throwaway prototype → data for the decision-maker
-│  │  ├─ mp-handoff/ SKILL.md                ← session bridge (.scratch/), not KB knowledge
-│  │  └─ improve-codebase-architecture/      ← scan → HTML report → grill (SKILL.md, HTML-REPORT.md)
+│  │  └─ mp-handoff/ SKILL.md                ← session bridge (.scratch/), not KB knowledge
 │  ├─ commands/                ← slash commands (the user-facing verbs)
 │  │  ├─ kb.md        (/kb)       search the KB
 │  │  ├─ kb-map.md    (/kb-map)   build the HTML graph
 │  │  ├─ doc.md       (/doc)      compose/update ONE doc
 │  │  ├─ onto-doc.md  (/onto-doc) build the WHOLE KB (fan-out curators)
-│  │  └─ ship.md      (/ship)     run the dev-flow
+│  │  ├─ grilling.md  (/grilling)   grill + domain model → parent contract
+│  │  ├─ to-tickets.md (/to-tickets) plan → tracer-bullet tickets
+│  │  ├─ handoff.md   (/handoff)    session bridge (.scratch/)
+│  │  ├─ prototype.md (/prototype)  throwaway prototype for a design question
+│  │  └─ ship.md      (/ship)       ship ONE ticket, strictly sequential
 │  └─ rules/                   ← project rules (alwaysApply)
 │     ├─ kb-source-of-truth.md  ← md+git truth; derived never committed
 │     ├─ kb-first.md            ← search the KB before answering/writing
@@ -81,13 +86,16 @@ A user types a slash command; the command delegates to a skill; the skill calls 
 
 ```
  user
-   │  /kb · /kb-map · /doc · /onto-doc · /ship
+   │  /kb · /kb-map · /doc · /onto-doc · /grilling · /to-tickets · /handoff · /prototype · /ship
    ▼
  .omp/commands/*.md ──────────────► .omp/skills/
    │                                  ├─ kb-search ── gitmark.py ──► .md KB ──► .gitmark/index.db
    │                                  │   (the CLI engine)               └──► docs-map.html
    │                                  ├─ kb-curate  (ontology rules) ──► writes/edits .md
-   │                                  └─ dev-flow   (ship pipeline) ────► uses kb-curate for specs
+   │                                  ├─ grilling   (interview primitive)
+   │                                  ├─ domain-modeling (glossary + ADR discipline)
+   │                                  ├─ mp-grill-with-docs / mp-to-tickets (design → plan → tickets)
+   │                                  └─ dev-flow   (ship pipeline, one ticket at a time) ──► uses kb-curate
    ▼
  .omp/rules/*.md (alwaysApply)  ── project-wide constraints for the agent
 ```
@@ -99,16 +107,19 @@ A user types a slash command; the command delegates to a skill; the skill calls 
   [`ontology.md`](../../ontology.md) — what `node_type` a doc gets, where it lives, its
   frontmatter and typed links. `/doc` wraps it for one doc; `/onto-doc` fans out a
   `kb-curate` curator agent per area to build the whole KB, then lints + indexes + maps.
-- **`dev-flow`** is the spec-driven loop (`/ship`): research → tasks → goal → spec (written
-  as markdown via `kb-curate`) → isolated git worktree → implement → tests → independent
-  review → dev-tests → prod-tests → ship (MR → `dev` → `main`). Its specs become KB docs,
-  closing the loop back into the same markdown.
-- **`grilling`** is the interview primitive (rounds + frontier); `mp-grill-me` drives it
-  and ends by writing the **ship contract** (`docs/plans/<slug>.md`, `draft`).
-  `improve-codebase-architecture` walks a deepening report. `mp-diagnose` finds the root
-  cause of a hard bug (never fixing code itself), `mp-prototype` returns data for a
-  decision, `mp-handoff` bridges sessions via `.scratch/` — none of the three authors a
-  contract or edits code.
+- **`dev-flow`** is the spec-driven loop (`/ship`): **one ticket at a time**, strictly
+  sequential — worktree → implement → tests → independent review → dev-tests →
+  prod-tests → ship (MR → `dev` → `main`). A ticket is a tracer-bullet vertical slice
+  sized to one fresh context window; its specs become KB docs, closing the loop back
+  into the same markdown.
+- **`grilling`** is the interview primitive (rounds + frontier); **`domain-modeling`**
+  is the glossary + ADR discipline. `/grilling` drives `mp-grill-with-docs` (grilling +
+  domain-modeling) and ends by writing the **parent contract**
+  (`docs/plans/<slug>/README.md`, `draft`); `/to-tickets` drives `mp-to-tickets` and
+  writes the tickets under the plan folder. `improve-codebase-architecture` walks a
+  deepening report. `mp-diagnose` finds the root cause of a hard bug (never fixing code
+  itself), `mp-prototype` returns data for a decision, `mp-handoff` bridges sessions via
+  `.scratch/` — none of the three authors a contract or edits code.
 - **`.omp/rules/`** carries project-wide rules that omp injects into the agent context:
   `kb-source-of-truth` (md+git is the source; derived artifacts are regenerated, never
   committed), `kb-first` (search the KB before answering, never duplicate a doc),

@@ -3,7 +3,7 @@ node_type: index
 title: Services
 service: _platform
 status: active
-updated: 2026-06-16
+updated: 2026-08-25
 links:
   part_of: [../README.md]
 ---
@@ -18,7 +18,9 @@ Component overviews — one folder per service/skill, each with a `README.md` in
 | [kb-curate](kb-curate/README.md) | The skill that keeps the markdown KB a typed ontology (CREATE/UPDATE/DEPRECATE/LINK/REINDEX) |
 | [dev-flow](dev-flow/README.md) | The gated spec-driven ship pipeline (research → … → MR → dev → main) |
 | [grilling](grilling/README.md) | The interview primitive (rounds + frontier) |
-| [mp-grill-me](mp-grill-me/README.md) | Interview → writes the ship contract (`docs/plans/`) |
+| [domain-modeling](domain-modeling/README.md) | Glossary + ADR discipline — keeps `CONTEXT.md` and `docs/decisions/` current during design |
+| [mp-grill-with-docs](mp-grill-with-docs/README.md) | Grill + build the domain model → writes the parent contract (`docs/plans/<slug>/`) |
+| [mp-to-tickets](mp-to-tickets/README.md) | Break a plan into tracer-bullet tickets with blocking edges |
 | [mp-diagnose](mp-diagnose/README.md) | Hard-bug diagnosis loop → root cause for `/ship` |
 | [mp-prototype](mp-prototype/README.md) | Throwaway prototype → data for the decision-maker |
 | [mp-handoff](mp-handoff/README.md) | Session bridge (`.scratch/`), not KB knowledge |

@@ -310,12 +310,12 @@ def cmd_stat(root: Path) -> dict:
 # ─────────────────────────── lint (онтология) ───────────────────────────
 # Словари из docs/reference/gitmark-ontology.md (source of truth).
 NODE_TYPES = {"service", "reference", "runbook", "gotcha", "decision",
-              "plan", "guide", "report", "index", "memory"}
+              "plan", "ticket", "guide", "report", "index", "memory"}
 # Реальный словарь сервисов выводится per-repo из имён папок docs/services/*
 # (см. cmd_lint). Здесь — только кросс-срезовый sentinel.
 SERVICES = {"_platform"}
 STATUSES = {"active", "draft", "deprecated", "archived"}
-LOAD_BEARING = {"service", "reference", "runbook", "plan", "decision"}
+LOAD_BEARING = {"service", "reference", "runbook", "plan", "decision", "ticket"}
 LINK_KEYS = {"documents", "depends_on", "supersedes", "relates_to",
              "implemented_by", "part_of"}
 FM_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)

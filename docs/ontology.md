@@ -34,9 +34,9 @@ Each document has exactly one `node_type` — its "table" in the ontology.
 | `runbook` | operational procedure ("how to X") | `docs/ops/` |
 | `gotcha` | a pitfall + how to avoid it | `docs/ops/` |
 | `decision` | an architectural/product decision (ADR) | `docs/decisions/` |
-| `plan` | a plan/design before implementation — also the ship contract | `docs/plans/` |
+| `plan` | a plan/design before implementation — the parent ship contract | `docs/plans/<slug>/README.md` |
+| `ticket` | a tracer-bullet vertical slice of a plan, one `/ship` run each | `docs/plans/<slug>/NN-<ticket>.md` |
 | `guide` | how to use something (clients, public API) | varies |
-| `report` | a one-off dated analysis/audit | `docs/reviews/` |
 | `index` | a folder's table of contents | any `README.md` |
 
 Rule: if unsure, a spec is `reference`, a how-to is `guide`. Add a new type only if
@@ -92,8 +92,13 @@ DEPRECATE → `status` + `supersedes`. LINK → no orphans. REINDEX → `gitmark
 
 ## The plan as a ship contract
 
-`docs/plans/<slug>.md` doubles as the **contract** that `/ship` executes. Its body
-carries the fields the entry skills produce and the dev-flow consumes:
+A plan is a **folder** `docs/plans/<slug>/`: the parent contract is the folder's
+`README.md` (`node_type: plan`), and under it live the **tickets**
+(`NN-<ticket>.md`, `node_type: ticket`) — tracer-bullet vertical slices, each declaring
+the tickets that block it.
+
+The parent contract carries the fields the entry skills produce and the dev-flow
+consumes:
 
 - `Goal` — why this change (one clear goal)
 - `Done` — the observable done-criterion
@@ -101,12 +106,20 @@ carries the fields the entry skills produce and the dev-flow consumes:
 - `Constraints` — stop-points: `stop-before-commit`, `stop-after-mr`, `no-deploy`
 - `Context` — what the entry phase already established (root cause, prototype verdict,
   resolved design-tree branches)
-- `Tasks` — decomposition with dependencies (optional)
 
-**Lifecycle:** `status: draft` (written by `mp-grill-me`) → `status: active` (`/ship`
-started, operator-confirmed) → `status: archived` (after merge). Only `mp-grill-me`
-authors a contract; `mp-diagnose`, `mp-prototype`, `mp-handoff` feed `Context`/`Goal`
-but never author it — and never launch `/ship`: the operator starts it by hand.
+Each ticket carries: `What to build` (the end-to-end behaviour the slice makes work),
+`Blocked by` (the tickets that gate it), `Status`, and acceptance criteria.
+
+**`/ship` executes one ticket at a time, strictly sequentially.** `/ship <plan>` takes
+the first ticket (by `NN` order) whose `status` is not `archived`; a finished ticket is
+marked `archived`.
+
+**Lifecycle:** parent `draft` (written by `mp-grill-with-docs`) → `active` (`/ship`
+started, operator-confirmed) → `archived` (all tickets done). Tickets: `draft` (written
+by `mp-to-tickets`) → `active` (being shipped) → `archived` (shipped). Only
+`mp-grill-with-docs` authors a parent contract and `mp-to-tickets` authors tickets;
+`mp-diagnose`, `mp-prototype`, `mp-handoff` feed `Context`/`Goal` but never author them —
+and never launch `/ship`: the operator starts it by hand.
 
 ## Invariants (checked by `gitmark lint`)
 

@@ -3,21 +3,25 @@ node_type: reference
 title: OntoShip slash commands
 service: _platform
 status: active
-updated: 2026-08-14
+updated: 2026-08-25
 tags: [commands, slash-commands, reference]
 links:
-  documents: [../../.omp/commands/kb.md, ../../.omp/commands/kb-map.md, ../../.omp/commands/doc.md, ../../.omp/commands/onto-doc.md, ../../.omp/commands/ship.md]
+  documents: [../../.omp/commands/kb.md, ../../.omp/commands/kb-map.md, ../../.omp/commands/doc.md, ../../.omp/commands/onto-doc.md, ../../.omp/commands/grilling.md, ../../.omp/commands/to-tickets.md, ../../.omp/commands/handoff.md, ../../.omp/commands/prototype.md, ../../.omp/commands/ship.md]
   relates_to: [../services/gitmark-cli/README.md, ../services/dev-flow/README.md]
 ---
 
 # OntoShip slash commands
 
 Reference for the slash commands shipped by the **OntoShip** omp package. Each command is
-a thin `.omp/commands/*.md` definition that drives a skill or engine. Two families:
+a thin `.omp/commands/*.md` definition that drives a skill or engine. Four families:
 
 - **KB curation & search** — `/kb`, `/kb-map`, `/doc`, `/onto-doc` — drive the GitMark
   CLI (`.omp/skills/kb-search/gitmark.py`) and the `kb-curate` ontology rules.
-- **Dev-flow** — `/ship` — drives the gated `dev-flow` pipeline from idea to production.
+- **Design & knowledge** — `/grilling` (grill + build the domain model → parent
+  contract), `/to-tickets` (break a plan into tracer-bullet tickets), `/handoff`
+  (session bridge), `/prototype` (throwaway prototype for a design question).
+- **Dev-flow** — `/ship` — drives the gated `dev-flow` pipeline, **one ticket at a
+  time**, strictly sequential.
 
 The GitMark CLI is `.omp/skills/kb-search/gitmark.py` (relative to the repo root; stable
 when the `.omp/` package is copied into another project).
@@ -30,7 +34,11 @@ when the `.omp/` package is copied into another project).
 | `/kb-map` | Build a self-contained HTML map of the KB (tree + link graph) | `[output-path]` (default `docs-map.html`) | GitMark CLI `map` / `index` |
 | `/doc` | Compose or update **one** KB document per the ontology | `<topic>` | `kb-curate` skill + GitMark CLI |
 | `/onto-doc` | Build (or rebuild) the **whole** KB by fanning out curator agents | `[scope]` (empty → whole repo) | `kb-curate` skill via `Task` fan-out + GitMark CLI |
-| `/ship` | Take a feature/fix from idea to production through the gated pipeline | `<change description>` | `dev-flow` skill |
+| `/grilling` | Grill the user about a plan/decision/idea, building the domain model, ending in a parent contract | `<topic>` (empty → ask what to grill) | `mp-grill-with-docs` skill |
+| `/to-tickets` | Break a plan into tracer-bullet tickets with blocking edges | `[plan path]` (empty → most recent plan) | `mp-to-tickets` skill |
+| `/handoff` | Compact the conversation into a handoff doc under `.scratch/` | `[what the next session will do]` | `mp-handoff` skill |
+| `/prototype` | Build a throwaway prototype to answer a design question | `<question>` (empty → ask) | `mp-prototype` skill |
+| `/ship` | Ship **one ticket** from a plan through the gated pipeline, strictly sequential | `[plan path]` / `[ticket path]` / `<ad-hoc>` | `dev-flow` skill |
 
 ---
 
@@ -105,35 +113,87 @@ when the `.omp/` package is copied into another project).
      areas needing a human decision.
 - **Drives:** `kb-curate` skill via `Task` fan-out + GitMark CLI. Wraps `gitmark:onto-doc`.
 
-## `/ship` — run the dev-flow
+## `/grilling` — grill a plan, decision, or idea
+
+- **Definition:** `.omp/commands/grilling.md`
+- **What it does:** runs the `mp-grill-with-docs` skill — a relentless round-by-round
+  interview over the design tree (the `grilling` primitive) with `domain-modeling`
+  active: glossary terms go to `CONTEXT.md`, load-bearing choices to `docs/decisions/`
+  as they crystallise. When the frontier is empty and the user confirms shared
+  understanding, it writes the **parent ship contract** (`docs/plans/<slug>/README.md`,
+  `node_type: plan`, `status: draft`) and stops.
+- **Args:** `$ARGUMENTS` = the plan, decision, or idea to stress-test. **Empty** → ask
+  what to grill.
+- **Behavior:** the skill holds the discipline — map the design tree, ask the whole
+  frontier in one round (numbered, each with a recommended answer), recompute the
+  frontier after each round. The agent finds facts itself (sub-agents); the decisions
+  are the user's. Done when the frontier is empty; do not act until the user confirms.
+- **Drives:** `mp-grill-with-docs` skill (grilling + domain-modeling).
+
+## `/to-tickets` — break a plan into tickets
+
+- **Definition:** `.omp/commands/to-tickets.md`
+- **What it does:** runs the `mp-to-tickets` skill — breaks a plan (or the current
+  conversation) into **tracer-bullet vertical slices**, each declaring the tickets that
+  block it. Each ticket is sized to fit in a single fresh context window (one `/ship`
+  run).
+- **Args:** `$ARGUMENTS` = a plan path (`docs/plans/<slug>/` or its `README.md`) or a
+  topic. **Empty** → use the most recent `docs/plans/<slug>/` parent contract.
+- **Behavior:** drafts the slices, gives each its blocking edges, quizzes the user on
+  granularity and edges, then writes `docs/plans/<slug>/NN-<ticket>.md` (blockers first)
+  and updates the parent contract's `Tickets` section. Lints + reindexes and stops.
+- **Drives:** `mp-to-tickets` skill.
+
+## `/handoff` — session bridge
+
+- **Definition:** `.omp/commands/handoff.md`
+- **What it does:** runs the `mp-handoff` skill — compacts the current conversation into
+  a handoff document under `.scratch/` so a fresh agent can continue. A bridge between
+  sessions, not a KB doc: it references the KB rather than restating it.
+- **Args:** `$ARGUMENTS` = what the next session will focus on. **Empty** → summarize
+  the whole conversation.
+- **Drives:** `mp-handoff` skill.
+
+## `/prototype` — throwaway prototype
+
+- **Definition:** `.omp/commands/prototype.md`
+- **What it does:** runs the `mp-prototype` skill — builds a throwaway prototype to
+  answer a design question (logic/state → single HTML file; UI → several radically
+  different variations on one route). Returns **data and a recommendation**, never
+  commits code.
+- **Args:** `$ARGUMENTS` = the design question. **Empty** → ask what to prototype.
+- **Drives:** `mp-prototype` skill.
+
+## `/ship` — ship one ticket
 
 - **Definition:** `.omp/commands/ship.md`
-- **What it does:** drives a feature/fix to production through the gated OntoShip
-  dev-flow pipeline. Launched **only by hand**.
-- **Args:** `$ARGUMENTS` = a **contract path** (`docs/plans/<slug>.md`) or an ad-hoc
-  description; **empty** → treat the most recent `docs/plans/*.md` as the contract.
-- **Entry (contract path):** the plan is the spec — collapse research/tasks/goal/spec
-  into **verification**: read the plan, check `Context` is still accurate (update +
-  re-confirm if code drifted), set `status: active`, take `Goal`/`Done`/`Scope` from the file.
+- **What it does:** drives **one ticket** from a plan through the gated OntoShip
+  dev-flow pipeline. Launched **only by hand**, **one ticket at a time**, strictly
+  sequential.
+- **Args:** `$ARGUMENTS` = a **plan path** (`docs/plans/<slug>/`), a **ticket path**
+  (`docs/plans/<slug>/NN-<ticket>.md`), an ad-hoc description, or **empty** (most recent
+  plan, first non-archived ticket).
+- **Entry (plan path):** pick the **first ticket** (by `NN` order) whose `status` is not
+  `archived`. Check its `Blocked by` tickets are all archived (if not, report blockers
+  and stop). Check `Context` in the parent contract is still accurate; set ticket
+  `status: active`.
 - **Pipeline (per the `dev-flow` skill, end to end):**
   1. **Research** — understand from facts (logs, traces, code); reproduce before fixing.
-  2. **Tasks** — decompose into tracked tasks.
-  3. **Goal** — one clear goal + a "done" criterion.
-  4. **Spec** — write it as markdown in the KB via `kb-curate` (node_type, frontmatter,
-     typed links `documents:[src/…]`); search the KB first — don't duplicate.
-  5. **Isolate** — work in a dedicated `git worktree`.
-  6. **Implement** — code to the spec.
-  7. **Tests** — write/adjust unit + E2E.
-  8. **Independent review** — run an independent model (e.g. Codex CLI, read-only) over
+  2. **Goal** — take from the ticket's `What to build` + acceptance criteria.
+  3. **Isolate** — work in a dedicated `git worktree`.
+  4. **Implement** — code to the ticket's acceptance criteria.
+  5. **Tests** — write/adjust unit + E2E.
+  6. **Independent review** — run an independent model (e.g. Codex CLI, read-only) over
      the diff.
-  9. **Dev-tests** — MR + commits into `dev`; run the full suite. Red → fix, don't merge.
-  10. **Prod-tests** — E2E/smoke against the real prod contour.
-  11. **Ship** — merge `dev → main` and deploy (build-before-stop + healthcheck-poll).
-     Mark the plan contract `status: archived` once merged.
-- **Stop-points (from the contract's `Constraints`):** `stop-before-commit` (pause with
-  uncommitted diff after review), `stop-after-mr` (pause after MR), `no-deploy` (skip
-  deploy). A stop-point is a hard pause — the agent reports and waits, never resumes on
-  its own.
-- **Gates:** tests + independent review are not skippable; the spec is the carrier of
-  knowledge, not a throwaway ticket.
+  7. **Dev-tests** — MR + commits into `dev`; run the full suite. Red → fix, don't merge.
+  8. **Prod-tests** — E2E/smoke against the real prod contour.
+  9. **Ship** — merge `dev → main` and deploy (build-before-stop + healthcheck-poll).
+     Mark the ticket `status: archived` once merged.
+- **Stop-points (from the parent contract's `Constraints`):** `stop-before-commit`
+  (pause with uncommitted diff after review), `stop-after-mr` (pause after MR),
+  `no-deploy` (skip deploy). A stop-point is a hard pause — the agent reports and waits,
+  never resumes on its own.
+- **Sequential discipline:** one ticket per `/ship` run. After a ticket is archived, the
+  operator launches `/ship` again for the next. Never batch multiple tickets.
+- **Gates:** tests + independent review are not skippable.
 - **Drives:** `dev-flow` skill.

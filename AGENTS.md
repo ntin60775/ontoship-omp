@@ -17,12 +17,14 @@ linter) plus the spec-driven dev-flow built on top of it.
     kb-curate/         rules for maintaining the KB as a typed ontology
     dev-flow/          the gated ship pipeline
     grilling/          the interview primitive (rounds + frontier)
-    mp-grill-me/       interview → writes the ship contract (docs/plans/)
+    domain-modeling/   glossary + ADR discipline (model-invoked)
+    mp-grill-with-docs/ grill + domain model → parent contract (docs/plans/<slug>/)
+    mp-to-tickets/     plan → tracer-bullet tickets
     mp-diagnose/       hard-bug diagnosis loop → root cause for /ship
     mp-prototype/      throwaway prototype → data for the decision-maker
     mp-handoff/        session bridge (.scratch/), not KB knowledge
     improve-codebase-architecture/  architectural scan + deepening report
-  commands/            slash commands: /kb /kb-map /doc /onto-doc /ship
+  commands/            slash commands: /kb /kb-map /doc /onto-doc /grilling /to-tickets /handoff /prototype /ship
   rules/               project rules (kb-source-of-truth, kb-first, ship-gate, ship-1c)
 AGENTS.md              this entry point (read by omp)
 docs/                  the knowledge base itself (this is the KB)

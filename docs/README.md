@@ -3,7 +3,7 @@ node_type: index
 title: OntoShip knowledge base
 service: _platform
 status: active
-updated: 2026-06-16
+updated: 2026-08-25
 links:
   part_of: [../AGENTS.md]
 ---
@@ -17,17 +17,18 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 ## Reference
 
 - [architecture.md](reference/architecture.md) — how OntoShip fits together (omp package → skills → commands → KB)
-- [commands.md](reference/commands.md) — slash commands: `/kb`, `/kb-map`, `/doc`, `/onto-doc`, `/ship`
+- [commands.md](reference/commands.md) — slash commands: `/kb`, `/kb-map`, `/doc`, `/onto-doc`, `/grilling`, `/to-tickets`, `/handoff`, `/prototype`, `/ship`
 - [metrics.md](reference/metrics.md) — what OntoShip is measured by (experience-transfer metrics)
 - [ontology.md](ontology.md) — the knowledge model (node_type, properties, typed links, linter)
 
 ## Decisions
 
 - [ontoship-positioning.md](decisions/ontoship-positioning.md) — what OntoShip is for (team experience-transfer for AI-agent dev)
+- [ticket-driven-ship.md](decisions/ticket-driven-ship.md) — plan = folder with tickets; `/ship` runs one ticket at a time, strictly sequential
 
 ## Plans
 
-- [contract-driven-ship.md](plans/contract-driven-ship.md) — контракт-спек: входные навыки → ручной /ship
+- [contract-driven-ship.md](plans/contract-driven-ship.md) — контракт-спек: входные навыки → ручной /ship (superseded by the ticket-driven model)
 
 ## Services
 
@@ -35,7 +36,9 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 - [kb-curate](services/kb-curate/README.md) — KB maintenance skill
 - [dev-flow](services/dev-flow/README.md) — spec-driven ship pipeline
 - [grilling](services/grilling/README.md) — the interview primitive (rounds + frontier)
-- [mp-grill-me](services/mp-grill-me/README.md) — interview → writes the ship contract
+- [domain-modeling](services/domain-modeling/README.md) — glossary + ADR discipline during design
+- [mp-grill-with-docs](services/mp-grill-with-docs/README.md) — grill + domain model → parent contract
+- [mp-to-tickets](services/mp-to-tickets/README.md) — plan → tracer-bullet tickets
 - [mp-diagnose](services/mp-diagnose/README.md) — hard-bug diagnosis → root cause for /ship
 - [mp-prototype](services/mp-prototype/README.md) — throwaway prototype → data for the decision-maker
 - [mp-handoff](services/mp-handoff/README.md) — session bridge (.scratch/), not KB knowledge

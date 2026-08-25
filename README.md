@@ -56,9 +56,11 @@ OntoShip ships the **GitMark** package (KB + dev-flow) as a project-local **omp*
 |---|---|
 | `kb-search` | search the KB (FTS5) instead of grepping blind |
 | `kb-curate` | light ontology rules when adding/editing docs (types, frontmatter, typed links) |
-| `dev-flow` | the spec-driven loop to ship a feature: research → tasks → goal → **spec (md via `kb-curate`)** → isolated **git worktree** → implement → tests → independent review → dev-tests → prod-tests → ship (MR → `dev` → `main`). Feature to prod in ~40 min – 2 h. |
-| `grilling` | the interview primitive (rounds + frontier) — drives `mp-grill-me` and `improve-codebase-architecture` |
-| `mp-grill-me` | interview → writes the **ship contract** (`docs/plans/<slug>.md`) |
+| `dev-flow` | the spec-driven loop to ship a feature: **one ticket at a time** — worktree → implement → tests → independent review → dev-tests → prod-tests → ship (MR → `dev` → `main`). Ticket to prod in ~40 min – 2 h. |
+| `grilling` | the interview primitive (rounds + frontier) — drives `mp-grill-with-docs` and `improve-codebase-architecture` |
+| `domain-modeling` | glossary + ADR discipline — keeps `CONTEXT.md` and `docs/decisions/` current during design |
+| `mp-grill-with-docs` | grill + build the domain model → writes the **parent contract** (`docs/plans/<slug>/README.md`) |
+| `mp-to-tickets` | break a plan into **tracer-bullet tickets** with blocking edges (`docs/plans/<slug>/NN-<ticket>.md`) |
 | `mp-diagnose` | hard-bug diagnosis loop → root cause, then hand the fix to `/ship` |
 | `mp-prototype` | throwaway prototype → data + recommendation for the decision-maker |
 | `mp-handoff` | session bridge (`.scratch/`), not KB knowledge |
@@ -71,9 +73,11 @@ editing, and ships changes through one repeatable, gated flow built around the K
 |---|---|
 | `/kb` | search the KB (FTS5) and answer from the top hits |
 | `/kb-map` | build the self-contained HTML graph of the KB and open it |
-| `/doc` | compose/update **one** KB doc following the ontology (wraps `kb-curate`) |
-| `/onto-doc` | build the **whole** KB — fans out kb-curate curator agents per area, then lint + index + map |
-| `/ship` | run the dev-flow from a plan contract or an ad-hoc description — launched only by hand |
+| `/grilling` | grill the user about a plan/decision/idea, building the domain model, ending in a parent contract |
+| `/to-tickets` | break a plan into tracer-bullet tickets with blocking edges |
+| `/handoff` | compact the conversation into a handoff doc under `.scratch/` |
+| `/prototype` | build a throwaway prototype to answer a design question |
+| `/ship` | ship **one ticket** from a plan through the gated pipeline — launched only by hand, strictly sequential |
 
 ### What to write after a command (for best results)
 
@@ -96,16 +100,36 @@ node_type+folder, writes frontmatter + typed links, and indexes it.
 (`/onto-doc services/api services/billing`, or `/onto-doc only reference docs`).
 - Surveys the codebase, splits it into doc areas, and **dispatches a curator agent per area**
   (parallel), then lints + reindexes + regenerates the graph.
-- Use it on a fresh repo to stand up docs/ from nothing, or to backfill coverage.
+**`/grilling <topic>`** — the plan, decision, or idea to stress-test.
+- Good: `/grilling the plan to move billing to webhooks`, `/grilling whether to drop Firecracker-per-session`.
+- The agent asks the whole frontier in one round (numbered, with recommended answers) and
+  finds facts itself; the decisions are yours. As terms crystallise it writes them to
+  `CONTEXT.md` / `docs/decisions/`. Done when the frontier is empty — it then writes the
+  **parent contract** (`docs/plans/<slug>/README.md`) and stops.
 
-**`/ship <contract | what + why + done>`** — three ways in (see `docs/reference/commands.md`):
-- **contract path** — `/ship docs/plans/<slug>.md`: the plan is the spec; steps 1–4 collapse
-  into verification; `Constraints` set stop-points (`stop-before-commit`, `stop-after-mr`, `no-deploy`).
-- **ad-hoc description** — describe **what** to do, **why** (goal), and the **done-criteria**:
-  `/ship add a 60 rpm rate-limit to /api/search; goal: stop abuse; done = HTTP 429 over the limit + a unit test`.
-- **empty** — treat the most recent `docs/plans/*.md` as the contract.
+**`/to-tickets [plan]`** — break a plan into tracer-bullet tickets.
+- Good: `/to-tickets docs/plans/billing-webhooks/`, or just `/to-tickets` for the most recent plan.
+- Each ticket is sized to one fresh context window (one `/ship` run) and declares its
+  blocking edges.
 
-`/ship` is launched **only by hand**; the entry skills (`mp-grill-me`, …) never start it.
+**`/handoff [what next]`** — compact the conversation into `.scratch/handoff-<slug>.md`
+so a fresh agent can continue.
+
+**`/prototype <question>`** — build a throwaway prototype to answer a design question
+(logic/state → single HTML file; UI → several variations). Returns data + a
+recommendation, never commits code.
+
+**`/ship <plan | ticket | what + why + done>`** — ship **one ticket** (see
+`docs/reference/commands.md`):
+- **plan path** — `/ship docs/plans/<slug>/`: takes the **first non-archived ticket**
+  (by `NN` order); checks its blockers are done.
+- **ticket path** — `/ship docs/plans/<slug>/02-<ticket>.md`: that specific ticket.
+- **ad-hoc description** — describe **what** to do, **why** (goal), and the
+  **done-criteria**.
+- **empty** — most recent plan, first non-archived ticket.
+
+`/ship` is launched **only by hand**, **one ticket at a time**; the entry skills
+(`mp-grill-with-docs`, `mp-to-tickets`, …) never start it.
 
 > **Looking for `destructive-guard`?** The `PreToolUse` safety hook that intercepts
 > destructive commands (`rm -rf`, `git reset --hard`, `terraform destroy`, `DROP TABLE`…)

@@ -5,7 +5,7 @@ service: _platform
 status: archived
 updated: 2026-08-17
 links:
-  documents: [../../.omp/commands/ship.md, ../../.omp/skills/dev-flow/SKILL.md, ../../.omp/skills/mp-grill-me/SKILL.md, ../../.omp/skills/grilling/SKILL.md]
+  documents: [../../.omp/commands/ship.md, ../../.omp/skills/dev-flow/SKILL.md, ../../.omp/skills/grilling/SKILL.md]
   depends_on: [../ontology.md]
 ---
 

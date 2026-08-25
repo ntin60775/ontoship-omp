@@ -3,7 +3,7 @@ node_type: service
 title: dev-flow — spec-driven ship pipeline
 service: dev-flow
 status: active
-updated: 2026-06-16
+updated: 2026-08-25
 tags: [dev-flow, pipeline, worktree, spec, ship]
 links:
   documents: [../../../.omp/skills/dev-flow/SKILL.md, ../../../.omp/commands/ship.md]
@@ -12,12 +12,13 @@ links:
 
 # dev-flow — spec-driven ship pipeline
 
-`dev-flow` is OntoShip's gated pipeline for taking a feature or fix from idea to
+`dev-flow` is OntoShip's gated pipeline for taking a **ticket** from a plan to
 production with an AI agent, fast and safely — typically **40 minutes to 2 hours** end
-to end. The defining ideas: the **spec is plain markdown written into the KB**, the work
-happens in an **isolated git worktree**, and **only green reaches prod**. The KB (the
-GitMark knowledge base, see [kb-curate](../kb-curate/README.md)) is the carrier of
-knowledge: onboarding, hand-off, and scaling all start from it, not from the code.
+to end, **one ticket at a time**, strictly sequential. The defining ideas: the **spec is
+plain markdown written into the KB**, the work happens in an **isolated git worktree**,
+and **only green reaches prod**. The KB (the GitMark knowledge base, see
+[kb-curate](../kb-curate/README.md)) is the carrier of knowledge: onboarding, hand-off,
+and scaling all start from it, not from the code.
 
 It is defined by the [`dev-flow` skill](../../../.omp/skills/dev-flow/SKILL.md) and invoked
 through the [`/ship` command](../../../.omp/commands/ship.md).
@@ -29,7 +30,7 @@ The pipeline is a sequence of stages where the later stages — review and tests
 durable artifacts (tasks, a spec, a diff, test results) rather than throwaway state.
 
 ```
-research → tasks → goal → spec → worktree → implement → tests
+research → goal → worktree → implement → tests
         → independent review → dev-tests → prod-tests → ship (MR → dev → main → prod)
 ```
 
@@ -38,58 +39,55 @@ Understand the problem from **facts, not guesses**: read logs, traces, and the c
 itself. Reproduce the bug or pin down the requirement before touching anything. This is
 where wrong assumptions are cheapest to kill.
 
-### 2. Tasks
-Turn the research into a list of **tracked tasks with dependencies** so nothing gets
-lost. Decomposition makes the scope explicit and orderable.
+### 2. Goal
+Take the goal and the concrete **"done" criterion** from the ticket's `What to build`
+and acceptance criteria. A single goal keeps the implementation honest and gives the
+gates something to check against.
 
-### 3. Goal
-Crystallize **one clear goal** and a concrete **"done" criterion** from the tasks. A
-single goal keeps the implementation honest and gives the gates something to check
-against.
+### 3. Spec (the ticket)
+The ticket **is** the spec: a `node_type: ticket` document in the KB
+(`docs/plans/<slug>/NN-<ticket>.md`) — typed, linked to its parent contract
+(`part_of`) and its blockers (`depends_on`), searchable, linkable, and graphable
+(`gitmark map`). It is **durable knowledge, not a throwaway**: a tracer-bullet vertical
+slice sized to one fresh context window. This is where dev-flow builds directly on the
+GitMark KB — the ticket becomes a first-class node in the ontology rather than a comment
+that evaporates after merge.
 
-### 4. Spec
-Write the spec as **markdown in the KB via [`kb-curate`](../kb-curate/README.md)** —
-following the ontology: a `node_type`, frontmatter, and typed links
-(`links.documents: [src/…]`) tying the spec to the code it governs. Search the KB first
-(`kb-search`) so you don't duplicate an existing doc. The spec is **durable knowledge,
-not a throwaway ticket**: searchable, linkable, and graphable (`gitmark map`). This is
-where dev-flow builds directly on the GitMark KB — the spec becomes a first-class node
-in the ontology rather than a comment that evaporates after merge.
-
-### 5. Isolate (git worktree)
+### 4. Isolate (git worktree)
 Do the work in a **dedicated `git worktree`**. `main` stays untouched, parallel agents
 working on other changes don't collide, and rollback is just dropping the worktree.
 Isolation is the default precisely so that experimentation is cheap and reversible.
 
-### 6. Implement
-Code to the spec inside the worktree, keeping doc↔code linked (`implemented_by`) so the
-KB stays an accurate map of the codebase as the change lands.
+### 5. Implement
+Code to the ticket's acceptance criteria inside the worktree, keeping doc↔code linked
+(`implemented_by`) so the KB stays an accurate map of the codebase as the change lands.
 
-### 7. Tests
-Write or adjust **unit + E2E** tests for the feature. The test is **part of the
+### 6. Tests
+Write or adjust **unit + E2E** tests for the ticket. The test is **part of the
 feature, not an afterthought** — it is the executable form of the "done" criterion.
 
-### 8. Independent review (gate)
+### 7. Independent review (gate)
 Run an **independent model** (e.g. Codex CLI, read-only) over the diff for logic and
 security bugs before any rollout. A second model catches what the author's model
 misses — on a real production codebase this pass caught **191 bugs** before they reached
 prod. This is a gate because the cost of a missed logic/security bug in prod dwarfs the
 cost of the review.
 
-### 9. Dev-tests (gate)
+### 8. Dev-tests (gate)
 Open an **MR with the commits into the `dev` branch** and run the **full suite** there.
 Red → fix in the worktree, **don't merge**. The gate is the branch: nothing flows to
 `main` until `dev` is green.
 
-### 10. Prod-tests (gate)
+### 9. Prod-tests (gate)
 Run **E2E / smoke tests against the real prod contour** — not only mocks or dev. Verify
 behaviour where users actually live, because dev environments lie. This gate guards the
 final merge.
 
-### 11. Ship
+### 10. Ship
 Merge **`dev → main`** and deploy. Build the new image **before** stopping the old
 container, then **poll the healthcheck** to measure real downtime. This ordering
-minimizes the window where the service is unavailable.
+minimizes the window where the service is unavailable. Mark the ticket `status:
+archived` once merged.
 
 ## Git-flow
 
@@ -116,22 +114,25 @@ onboarding, hand-off, and scaling start from the KB rather than from reading the
 
 ## How a user invokes it
 
-Run the [`/ship`](../../../.omp/commands/ship.md) command — launched **only by hand**:
+Run the [`/ship`](../../../.omp/commands/ship.md) command — launched **only by hand**,
+**one ticket at a time**:
 
 ```
-/ship docs/plans/<slug>.md            # a plan contract (the spec)
-/ship <feature or fix description>    # ad-hoc — full loop
-/ship                                 # empty — most recent plan
+/ship docs/plans/<slug>/            # a plan — takes the first non-archived ticket
+/ship docs/plans/<slug>/02-x.md     # a specific ticket
+/ship <feature or fix description>  # ad-hoc — full loop
+/ship                               # empty — most recent plan, first non-archived ticket
 ```
 
-With a contract, research/tasks/goal/spec collapse into **verification** (see the
-`dev-flow` skill's "Entry" section): read the plan, confirm `Context` is current, set
-`status: active`, take `Goal`/`Done`/`Scope` from the file. The contract's `Constraints`
-set **stop-points** — `stop-before-commit`, `stop-after-mr`, `no-deploy` — hard pauses
-where the agent reports and waits for the operator. `/ship` drives the change through
-every stage, keeping the gates (tests + independent review) and never skipping the spec.
-For a one-line change the stages can be collapsed, but the gates stay — they are where
-the 191 bugs were caught.
+With a plan, `/ship` picks the **first ticket** (by `NN` order) whose `status` is not
+`archived`, checks its `Blocked by` tickets are all archived (if not, report blockers
+and stop), confirms `Context` in the parent contract is current, and sets the ticket
+`status: active`. The parent contract's `Constraints` set **stop-points** —
+`stop-before-commit`, `stop-after-mr`, `no-deploy` — hard pauses where the agent
+reports and waits for the operator. After a ticket is archived, the operator launches
+`/ship` again for the next. `/ship` drives the ticket through every stage, keeping the
+gates (tests + independent review). For a one-line change the stages can be collapsed,
+but the gates stay — they are where the 191 bugs were caught.
 
 ## Principles
 

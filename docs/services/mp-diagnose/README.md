@@ -7,7 +7,7 @@ updated: 2026-08-17
 tags: [service, mp-diagnose, diagnosis]
 links:
   documents: [../../../.omp/skills/mp-diagnose/SKILL.md]
-  relates_to: [../../services/mp-grill-me/README.md]
+  relates_to: [../../services/mp-grill-with-docs/README.md]
 ---
 
 # mp-diagnose — hard-bug diagnosis loop
@@ -15,4 +15,4 @@ links:
 A discipline for hard bugs and performance regressions: build a tight red/green feedback
 loop, reproduce, minimise, hypothesise, instrument — then **report the root cause, don't
 fix the code here**. The fix goes through `dev-flow` (`/ship`), so `mp-diagnose` hands the
-root cause, minimal repro, and recommended fix to `mp-grill-me` → contract → `/ship`.
+root cause, minimal repro, and recommended fix to `/grilling` (mp-grill-with-docs) → parent contract → `/to-tickets` → `/ship`.

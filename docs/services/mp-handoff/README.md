@@ -7,7 +7,7 @@ updated: 2026-08-17
 tags: [service, mp-handoff, handoff]
 links:
   documents: [../../../.omp/skills/mp-handoff/SKILL.md]
-  relates_to: [../../services/mp-grill-me/README.md]
+  relates_to: [../../services/mp-grill-with-docs/README.md]
 ---
 
 # mp-handoff — session bridge

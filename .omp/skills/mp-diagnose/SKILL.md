@@ -73,5 +73,6 @@ Diagnosis ends at the root cause. **Do not fix the code here** — code changes 
 - **Prevention** — what would have stopped this bug (architectural note → hand to
   `improve-codebase-architecture`).
 
-Then hand off: `/mp-grill-me` turns this into a contract, then `/ship docs/plans/<slug>.md`.
-After the fix lands, add a `gotcha` in the KB (root cause + how to avoid).
+Then hand off: `/grilling` (mp-grill-with-docs) turns this into a parent contract, then
+`/to-tickets`, then `/ship` one ticket at a time. After the fix lands, add a `gotcha` in
+the KB (root cause + how to avoid).
