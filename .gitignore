@@ -12,4 +12,7 @@ __pycache__/
 # Agent HTML artifacts — ephemeral presentation layer, source of truth stays in files
 .artifacts/
 
+# Session-ephemeral artifacts (handoff docs, code-review reports) — never KB knowledge
+.scratch/
+
 .DS_Store

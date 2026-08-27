@@ -1,6 +1,6 @@
 ---
 name: dev-flow
-description: The spec-driven development loop for shipping a feature/fix fast and safely on top of a GitMark KB — one ticket (or one file plan) at a time: worktree → implement → tests → independent review → dev-tests → prod-tests → ship (MR → dev → main). Use when starting a feature or fix, or when asked "how do we build/ship a change here".
+description: 'The spec-driven development loop for shipping a feature/fix fast and safely on top of a GitMark KB — one ticket (or one file plan) at a time: worktree → implement → tests → independent review → dev-tests → prod-tests → ship (MR → dev → main). Use when starting a feature or fix, or when asked "how do we build/ship a change here".'
 ---
 
 # dev-flow — from ticket to production

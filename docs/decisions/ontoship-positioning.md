@@ -7,7 +7,7 @@ updated: 2026-06-18
 tags: [positioning, strategy, dev-flow, handoff, adr]
 links:
   relates_to: [../reference/architecture.md, ../services/dev-flow/README.md, ../services/gitmark-cli/README.md]
-  depends_on: [metrics.md]
+  depends_on: [../reference/metrics.md]
 ---
 
 # Decision: what OntoShip is for
@@ -65,7 +65,7 @@ method being transferred.
 ## Valid criticism to address (accepted)
 
 1. **No defined/measured metric** — the #1 gap. Without it there's no optimization target.
-   → see [metrics.md](metrics.md). Reframed around *transfer*, not search quality.
+   → see [metrics.md](../reference/metrics.md). Reframed around *transfer*, not search quality.
 2. **No related-works / positioning** — vs graphify / OKF / agents.md / skills. Add to
    README (convergent evolution, when-to-use). *Lower priority given the internal goal,
    but still the honest framing.*
@@ -84,6 +84,6 @@ layer and hung the verdict on the whole.
 
 ## Next actions (priority order)
 
-1. **Define + measure the transfer metric** on 3 projects — see [metrics.md](metrics.md).
+1. **Define + measure the transfer metric** on 3 projects — see [metrics.md](../reference/metrics.md).
 2. **Related-works** paragraph in README (graphify / OKF / agents.md / skills).
 3. **AST-scaffold prototype** (`gitmark scaffold`) so structure is derived, not hand-authored.
