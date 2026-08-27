@@ -7,7 +7,7 @@ updated: 2026-08-25
 tags: [service, grilling, interview]
 links:
   documents: [../../../.omp/skills/grilling/SKILL.md]
-  relates_to: [../../services/mp-grill-with-docs/README.md, ../../services/domain-modeling/README.md, ../../services/improve-codebase-architecture/README.md]
+  relates_to: [../../services/mp-grill-with-docs/README.md, ../../services/domain-modeling/README.md, ../../services/mp-improve-codebase-architecture/README.md]
 ---
 
 # grilling — the interview primitive
@@ -21,9 +21,9 @@ Two entry points drive it:
 - **`/grilling`** — the slash command (`.omp/commands/grilling.md`): runs
   `mp-grill-with-docs` — a relentless interview over a plan, decision, or idea with
   `domain-modeling` active, ending in a plan contract file;
-- **improve-codebase-architecture** — after scanning a codebase and presenting an HTML
+- **mp-improve-codebase-architecture** — after scanning a codebase and presenting an HTML
   report, grills through whichever deepening opportunity the user picks.
 
 `grilling` is the engine; `mp-grill-with-docs` (grilling + domain-modeling) and
-`improve-codebase-architecture` are the user-facing wrappers. Invoke it when the user
+`mp-improve-codebase-architecture` are the user-facing wrappers. Invoke it when the user
 wants to stress-test their thinking or says "grill me".

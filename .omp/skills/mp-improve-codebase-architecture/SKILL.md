@@ -1,6 +1,6 @@
 ---
-name: improve-codebase-architecture
-description: Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick.
+name: mp-improve-codebase-architecture
+description: Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick — ending in an OntoShip plan contract (docs/plans/<slug>.md). Driven by the /architecture command.
 disable-model-invocation: true
 ---
 
@@ -87,3 +87,14 @@ Side effects happen inline as decisions crystallize — record them in the KB vi
 - **Want to explore alternative interfaces for the deepened module?** Spawn two sub-agents in parallel, each designing a different interface for the module, then compare and pick.
 
 Run `gitmark lint` and `gitmark index` at the end of any KB write.
+
+### 4. Close the loop in the KB
+
+The grilling loop is `mp-grill-with-docs`: when the frontier is empty and the user
+confirms shared understanding, it writes the **plan contract** —
+`docs/plans/<slug>.md` (`node_type: plan`, `status: draft`) — then `gitmark lint` +
+`gitmark index`.
+
+Stop there. Do NOT refactor, do NOT author tickets, do NOT launch `/ship`: the operator
+runs `/to-tickets` (optional) and then starts `/ship` by hand. Delivery of code happens
+only through `/ship`.

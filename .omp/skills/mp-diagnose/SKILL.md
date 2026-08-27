@@ -71,7 +71,7 @@ Diagnosis ends at the root cause. **Do not fix the code here** — code changes 
 - **Minimal repro** — the smallest scenario that still goes red (becomes the regression test).
 - **Recommended fix** — what the change should be, and where the correct test seam is.
 - **Prevention** — what would have stopped this bug (architectural note → hand to
-  `improve-codebase-architecture`).
+  `mp-improve-codebase-architecture`).
 
 Then hand off: `/grilling` (mp-grill-with-docs) turns this into a plan contract, then
 `/to-tickets`, then `/ship` one ticket (or the file plan) at a time. After the fix
