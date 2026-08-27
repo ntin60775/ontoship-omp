@@ -3,7 +3,7 @@ node_type: index
 title: OntoShip knowledge base
 service: _platform
 status: active
-updated: 2026-08-25
+updated: 2026-08-27
 links:
   part_of: [../AGENTS.md]
 ---
@@ -17,7 +17,7 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 ## Reference
 
 - [architecture.md](reference/architecture.md) — how OntoShip fits together (omp package → skills → commands → KB)
-- [commands.md](reference/commands.md) — slash commands: `/kb`, `/kb-map`, `/doc`, `/onto-doc`, `/grilling`, `/to-tickets`, `/handoff`, `/prototype`, `/ship`
+- [commands.md](reference/commands.md) — slash commands: `/kb`, `/kb-map`, `/doc`, `/onto-doc`, `/grilling`, `/architecture`, `/code-review`, `/to-tickets`, `/handoff`, `/prototype`, `/ship`
 - [metrics.md](reference/metrics.md) — what OntoShip is measured by (experience-transfer metrics)
 - [ontology.md](ontology.md) — the knowledge model (node_type, properties, typed links, linter)
 
@@ -30,6 +30,7 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 
 - [contract-driven-ship.md](plans/contract-driven-ship.md) — контракт-спек: входные навыки → ручной /ship (superseded by the ticket-driven model)
 - [plan-file-first.md](plans/plan-file-first.md) — план-файл по умолчанию; папка + тикеты только после `/to-tickets`
+- [command-inventory.md](plans/command-inventory.md) — генерируемый реестр команд/навыков; эфемера вне индекса
 
 ## Services
 
@@ -43,7 +44,8 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 - [mp-diagnose](services/mp-diagnose/README.md) — hard-bug diagnosis → root cause for /ship
 - [mp-prototype](services/mp-prototype/README.md) — throwaway prototype → data for the decision-maker
 - [mp-handoff](services/mp-handoff/README.md) — session bridge (.scratch/), not KB knowledge
-- [improve-codebase-architecture](services/improve-codebase-architecture/README.md) — architectural scan + HTML report + grill
+- [mp-code-review](services/mp-code-review/README.md) — two-axis code review (Standards + Spec) → report in .scratch/
+- [mp-improve-codebase-architecture](services/mp-improve-codebase-architecture/README.md) — architectural scan + HTML report + grill
 - [destructive-guard](services/destructive-guard/README.md) — destructive-command guard hook (archived: moved to its own repo, not part of the omp package)
 
 ## Ops

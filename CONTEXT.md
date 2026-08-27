@@ -29,8 +29,8 @@ _Avoid_: плагин, под-команда
 
 **Команда (command)**:
 A `.omp/commands/<name>.md` slash-command (`/kb`, `/kb-map`, `/doc`, `/onto-doc`,
-`/grilling`, `/to-tickets`, `/handoff`, `/prototype`, `/ship`) — the user-facing verbs
-that drive skills and the CLI.
+`/grilling`, `/architecture`, `/code-review`, `/to-tickets`, `/handoff`, `/prototype`,
+`/ship`) — the user-facing verbs that drive skills and the CLI.
 _Avoid_: слэш-команда Claude Code, plugin command
 
 **Точка входа (entry point)**:
@@ -51,6 +51,18 @@ _Avoid_: документатор, писатель
 The gated ship pipeline, **one ticket at a time**, strictly sequential: worktree →
 implement → tests → review → dev-tests → prod-tests → ship (MR → `dev` → `main`).
 _Avoid_: CI/CD, релизный процесс
+
+**Код-ревью (code review)**:
+An on-demand, read-only review of a diff along two separate axes — **Standards** (the
+repo's documented standards plus a fixed smell baseline) and **Spec** (the originating
+plan or ticket) — reported side by side, never merged. Distinct from **review** below:
+the gate inside a `/ship` run, which checks the author's own diff before rollout.
+_Avoid_: аудит, ревью кода как часть шипа
+
+**Ревью-гейт (review gate)**:
+Step 6 of Dev-flow: an independent model reads the diff of the change being shipped.
+A gate in the pipeline, not a standalone report.
+_Avoid_: код-ревью
 
 **Derived-артефакты (derived artifacts)**:
 Regenerated outputs — `.gitmark/index.db` (search index) and `*-map.html` (graph).

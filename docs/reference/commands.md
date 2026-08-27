@@ -3,10 +3,10 @@ node_type: reference
 title: OntoShip slash commands
 service: _platform
 status: active
-updated: 2026-08-25
+updated: 2026-08-27
 tags: [commands, slash-commands, reference]
 links:
-  documents: [../../.omp/commands/kb.md, ../../.omp/commands/kb-map.md, ../../.omp/commands/doc.md, ../../.omp/commands/onto-doc.md, ../../.omp/commands/grilling.md, ../../.omp/commands/to-tickets.md, ../../.omp/commands/handoff.md, ../../.omp/commands/prototype.md, ../../.omp/commands/ship.md]
+  documents: [../../.omp/commands/kb.md, ../../.omp/commands/kb-map.md, ../../.omp/commands/doc.md, ../../.omp/commands/onto-doc.md, ../../.omp/commands/grilling.md, ../../.omp/commands/architecture.md, ../../.omp/commands/code-review.md, ../../.omp/commands/to-tickets.md, ../../.omp/commands/handoff.md, ../../.omp/commands/prototype.md, ../../.omp/commands/ship.md]
   relates_to: [../services/gitmark-cli/README.md, ../services/dev-flow/README.md]
 ---
 
@@ -18,8 +18,11 @@ a thin `.omp/commands/*.md` definition that drives a skill or engine. Four famil
 - **KB curation & search** — `/kb`, `/kb-map`, `/doc`, `/onto-doc` — drive the GitMark
   CLI (`.omp/skills/kb-search/gitmark.py`) and the `kb-curate` ontology rules.
 - **Design & knowledge** — `/grilling` (grill + build the domain model → parent
-  contract), `/to-tickets` (break a plan into tracer-bullet tickets), `/handoff`
+  contract), `/architecture` (scan for deepening opportunities → HTML report → grill the
+  chosen candidate), `/to-tickets` (break a plan into tracer-bullet tickets), `/handoff`
   (session bridge), `/prototype` (throwaway prototype for a design question).
+- **Review** — `/code-review` (two-axis Standards/Spec review of a diff → report in
+  `.scratch/`, read-only).
 - **Dev-flow** — `/ship` — drives the gated `dev-flow` pipeline, **one ticket at a
   time**, strictly sequential.
 
@@ -35,6 +38,8 @@ when the `.omp/` package is copied into another project).
 | `/doc` | Compose or update **one** KB document per the ontology | `<topic>` | `kb-curate` skill + GitMark CLI |
 | `/onto-doc` | Build (or rebuild) the **whole** KB by fanning out curator agents | `[scope]` (empty → whole repo) | `kb-curate` skill via `Task` fan-out + GitMark CLI |
 | `/grilling` | Grill the user about a plan/decision/idea, building the domain model, ending in a plan contract file | `<topic>` (empty → ask what to grill) | `mp-grill-with-docs` skill |
+| `/architecture` | Scan for deepening opportunities, show an HTML report, grill the chosen candidate into a plan contract | `[direction]` (empty → infer hot spots from git history) | `mp-improve-codebase-architecture` skill |
+| `/code-review` | Review the diff since a fixed point on two axes (Standards + Spec) via parallel sub-agents; report side by side | `<fixed-point>` (empty → ask) | `mp-code-review` skill |
 | `/to-tickets` | Break a plan into tracer-bullet tickets with blocking edges | `[plan path]` (empty → most recent plan) | `mp-to-tickets` skill |
 | `/handoff` | Compact the conversation into a handoff doc under `.scratch/` | `[what the next session will do]` | `mp-handoff` skill |
 | `/prototype` | Build a throwaway prototype to answer a design question | `<question>` (empty → ask) | `mp-prototype` skill |
@@ -130,6 +135,56 @@ when the `.omp/` package is copied into another project).
   frontier after each round. The agent finds facts itself (sub-agents); the decisions
   are the user's. Done when the frontier is empty; do not act until the user confirms.
 - **Drives:** `mp-grill-with-docs` skill (grilling + domain-modeling).
+
+## `/architecture` — deepen the architecture
+
+- **Definition:** `.omp/commands/architecture.md`
+- **What it does:** runs the `mp-improve-codebase-architecture` skill — surfaces
+  architectural friction and proposes **deepening opportunities** (refactors that turn
+  shallow modules into deep ones) using a fixed vocabulary (module, interface, depth,
+  seam, adapter, leverage, locality) and the deletion test.
+- **Args:** `$ARGUMENTS` = an optional direction (a module, subsystem, or pain point).
+  **Empty** → the skill infers hot spots by walking `git log` (YAGNI: weight where change
+  is landing).
+- **Behavior:**
+  1. **KB first** — `gitmark search` for `CONTEXT.md` vocabulary and `docs/decisions/`;
+     recorded decisions are not re-litigated.
+  2. **Scan** via a sub-agent for friction; apply the deletion test to suspects.
+  3. **HTML report** — self-contained, written to the OS temp dir (never into the repo),
+     one card per candidate with before/after and a recommendation badge, plus a top
+     recommendation. Then: "Which of these would you like to explore?"
+  4. **Grill the chosen candidate** — the `/grilling` loop (`mp-grill-with-docs`) walks
+     the decision tree; terms go to `CONTEXT.md`, choices to `docs/decisions/`; the
+     outcome is the **plan contract** `docs/plans/<slug>.md`.
+- **Stops there:** no refactoring, no tickets, no `/ship` — the operator runs
+  `/to-tickets` and starts `/ship` by hand.
+- **Drives:** `mp-improve-codebase-architecture` skill → `mp-grill-with-docs`.
+
+## `/code-review` — two-axis review of a diff
+
+- **Definition:** `.omp/commands/code-review.md`
+- **What it does:** runs the `mp-code-review` skill — reviews the diff between `HEAD` and
+  a fixed point along two deliberately separate axes, each handled by its own parallel
+  sub-agent:
+  - **Standards** — conformance to the repo's documented standards (`.omp/rules/`,
+    `AGENTS.md`, `CONTEXT.md` vocabulary, `docs/decisions/`) plus a fixed Fowler smell
+    baseline (12 smells). A documented repo standard overrides the baseline; smells are
+    always judgement calls, never hard violations.
+  - **Spec** — faithfulness to the originating plan contract / ticket in `docs/plans/`
+    (missing requirements, scope creep, wrong implementation). No spec → the axis skips
+    and reports it.
+- **Args:** `$ARGUMENTS` = the fixed point (a SHA, branch, tag, `main`, `HEAD~5`).
+  **Empty** → ask for it. The skill verifies the ref resolves and the diff is non-empty
+  before spawning sub-agents.
+- **Behavior:** pin the fixed point → find the spec in the KB → collect standards sources
+  → spawn both sub-agents in parallel → aggregate the two reports **side by side, never
+  merged or reranked across axes** → write the report to
+  `.scratch/code-review-<timestamp>.md`.
+- **Boundaries:** read-only — no fixes, no plan contract, no tickets, no `/ship`. The
+  report is ephemeral (`.scratch/`), not a KB doc. If the operator decides to fix, the
+  findings go to `/grilling` → `/to-tickets` → `/ship`; a durable trap becomes a `gotcha`.
+- **Drives:** `mp-code-review` skill.
+
 
 ## `/to-tickets` — break a plan into tickets
 

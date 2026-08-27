@@ -3,7 +3,7 @@ node_type: index
 title: Services
 service: _platform
 status: active
-updated: 2026-08-25
+updated: 2026-08-27
 links:
   part_of: [../README.md]
 ---
@@ -24,5 +24,6 @@ Component overviews — one folder per service/skill, each with a `README.md` in
 | [mp-diagnose](mp-diagnose/README.md) | Hard-bug diagnosis loop → root cause for `/ship` |
 | [mp-prototype](mp-prototype/README.md) | Throwaway prototype → data for the decision-maker |
 | [mp-handoff](mp-handoff/README.md) | Session bridge (`.scratch/`), not KB knowledge |
-| [improve-codebase-architecture](improve-codebase-architecture/README.md) | Architectural scan + deepening report |
+| [mp-code-review](mp-code-review/README.md) | Two-axis review of a diff (Standards + Spec) via parallel sub-agents → report in `.scratch/` |
+| [mp-improve-codebase-architecture](mp-improve-codebase-architecture/README.md) | Architectural scan + deepening report |
 | [destructive-guard](destructive-guard/README.md) | PreToolUse hook — archived: moved to its own repo, not part of the omp package |

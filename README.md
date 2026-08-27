@@ -50,21 +50,23 @@ OntoShip ships the **GitMark** package (KB + dev-flow) as a project-local **omp*
 (The **`destructive-guard`** safety hook now lives in its own repo →
 [vakovalskii/destructive-guard](https://github.com/vakovalskii/destructive-guard).)
 
-**`gitmark`** — nine skills and five commands:
+**`gitmark`** — skills and commands (the authoritative list lives in
+[`docs/reference/commands.md`](docs/reference/commands.md)):
 
 | skill | what |
 |---|---|
 | `kb-search` | search the KB (FTS5) instead of grepping blind |
 | `kb-curate` | light ontology rules when adding/editing docs (types, frontmatter, typed links) |
 | `dev-flow` | the spec-driven loop to ship a feature: **one ticket at a time** (or one file plan as a single slice) — worktree → implement → tests → independent review → dev-tests → prod-tests → ship (MR → `dev` → `main`). Ticket to prod in ~40 min – 2 h. |
-| `grilling` | the interview primitive (rounds + frontier) — drives `mp-grill-with-docs` and `improve-codebase-architecture` |
+| `grilling` | the interview primitive (rounds + frontier) — drives `mp-grill-with-docs` and `mp-improve-codebase-architecture` |
 | `domain-modeling` | glossary + ADR discipline — keeps `CONTEXT.md` and `docs/decisions/` current during design |
 | `mp-grill-with-docs` | grill + build the domain model → writes the **plan contract** file (`docs/plans/<slug>.md`) |
 | `mp-to-tickets` | promote a plan file to the plan folder and break it into **tracer-bullet tickets** with blocking edges (`docs/plans/<slug>/NN-<ticket>.md`) |
 | `mp-diagnose` | hard-bug diagnosis loop → root cause, then hand the fix to `/ship` |
 | `mp-prototype` | throwaway prototype → data + recommendation for the decision-maker |
 | `mp-handoff` | session bridge (`.scratch/`), not KB knowledge |
-| `improve-codebase-architecture` | scan a codebase for deepening opportunities, render an HTML report, then grill through one |
+| `mp-code-review` | two-axis review of a diff (**Standards** + **Spec**) via parallel sub-agents → report in `.scratch/`, read-only |
+| `mp-improve-codebase-architecture` | scan a codebase for deepening opportunities, render an HTML report, then grill through one |
 
 So the agent searches the KB instead of grepping, follows light curation rules when
 editing, and ships changes through one repeatable, gated flow built around the KB.
@@ -74,6 +76,8 @@ editing, and ships changes through one repeatable, gated flow built around the K
 | `/kb` | search the KB (FTS5) and answer from the top hits |
 | `/kb-map` | build the self-contained HTML graph of the KB and open it |
 | `/grilling` | grill the user about a plan/decision/idea, building the domain model, ending in a plan contract file |
+| `/architecture` | scan for deepening opportunities → HTML report → grill the chosen candidate into a plan contract |
+| `/code-review` | review the diff since a fixed point on two axes (Standards + Spec), reported side by side |
 | `/to-tickets` | break a plan into tracer-bullet tickets with blocking edges |
 | `/handoff` | compact the conversation into a handoff doc under `.scratch/` |
 | `/prototype` | build a throwaway prototype to answer a design question |
@@ -100,12 +104,27 @@ node_type+folder, writes frontmatter + typed links, and indexes it.
 (`/onto-doc services/api services/billing`, or `/onto-doc only reference docs`).
 - Surveys the codebase, splits it into doc areas, and **dispatches a curator agent per area**
   (parallel), then lints + reindexes + regenerates the graph.
+
 **`/grilling <topic>`** — the plan, decision, or idea to stress-test.
 - Good: `/grilling the plan to move billing to webhooks`, `/grilling whether to drop Firecracker-per-session`.
 - The agent asks the whole frontier in one round (numbered, with recommended answers) and
   finds facts itself; the decisions are yours. As terms crystallise it writes them to
   `CONTEXT.md` / `docs/decisions/`. Done when the frontier is empty — it then writes the
   **plan contract** as a file (`docs/plans/<slug>.md`) and stops.
+
+**`/architecture [direction]`** — an optional module, subsystem, or pain point to scan.
+- Empty → the skill infers hot spots from `git log` (YAGNI: weight where change is landing).
+- Output: a self-contained HTML report (temp dir, never the repo) of **deepening
+  candidates** with before/after diagrams. Pick one → it grills you through it and writes
+  the **plan contract**; it never refactors or ships.
+
+**`/code-review <fixed-point>`** — the commit/branch/tag the diff is measured from.
+- Good: `/code-review main`, `/code-review HEAD~5`, `/code-review docs/plans/billing-webhooks.md`
+  (the skill also accepts the spec path as the argument).
+- Two axes — **Standards** (repo rules + Fowler smell baseline) and **Spec** (the
+  originating plan/ticket) — run as parallel sub-agents and reported side by side, never
+  merged. Output: a report in the chat + `.scratch/code-review-<timestamp>.md`. Read-only:
+  fixing goes through `/grilling` → `/to-tickets` → `/ship`.
 
 **`/to-tickets [plan]`** — break a plan into tracer-bullet tickets.
 - Good: `/to-tickets docs/plans/billing-webhooks.md`, or just `/to-tickets` for the most recent plan.
@@ -169,8 +188,9 @@ fuzzy/substring/non-Latin matching — detected automatically, degrades graceful
    python3 .omp/skills/kb-search/gitmark.py index
    python3 .omp/skills/kb-search/gitmark.py search "<your domain>" -k 3
    ```
-4. **Ignore derived artifacts** — add `.gitmark/` and `*-map.html` to `.gitignore`
-   (they are regenerated from md, never committed).
+4. **Ignore derived and ephemeral artifacts** — add `.gitmark/`, `*-map.html`, and
+   `.scratch/` to `.gitignore` (the first two are regenerated from md; `.scratch/` holds
+   session-ephemeral handoff and review reports, never KB knowledge).
 
 Full checklist with expected results:
 [`docs/ops/deploy-ontoship.md`](docs/ops/deploy-ontoship.md).

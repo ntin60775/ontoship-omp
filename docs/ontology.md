@@ -122,9 +122,11 @@ slice — the full loop on the plan's `Goal`/`Done`, no tickets.
 started, operator-confirmed) → `archived` (shipped as a single slice, or all tickets
 done). Tickets: `draft` (written by `mp-to-tickets`) → `active` (being shipped) →
 `archived` (shipped). Only `mp-grill-with-docs` authors a plan contract and
-`mp-to-tickets` authors tickets; `mp-diagnose`, `mp-prototype`, `mp-handoff` feed
-`Context`/`Goal` but never author them — and never launch `/ship`: the operator starts
-it by hand.
+`mp-to-tickets` authors tickets; `mp-diagnose`, `mp-prototype`, `mp-handoff`,
+`mp-code-review`, `mp-improve-codebase-architecture` feed `Context`/`Goal` but never author
+them — and never launch `/ship`: the operator starts it by hand. Their own output
+(root cause, prototype data, handoff, review report, deepening report) is **ephemeral**:
+`.scratch/` or the OS temp dir, never a KB doc.
 
 ## Invariants (checked by `gitmark lint`)
 

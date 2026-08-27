@@ -3,11 +3,11 @@ node_type: reference
 title: OntoShip architecture
 service: _platform
 status: active
-updated: 2026-08-25
+updated: 2026-08-27
 tags: [architecture, overview, omp, package]
 links:
   documents: [../../AGENTS.md]
-  relates_to: [../../ontology.md, ../services/gitmark-cli/README.md, ../services/dev-flow/README.md, commands.md]
+  relates_to: [../ontology.md, ../services/gitmark-cli/README.md, ../services/dev-flow/README.md, commands.md]
 ---
 
 # OntoShip architecture
@@ -57,13 +57,17 @@ ontoship-omp/
 │  │  ├─ mp-to-tickets/ SKILL.md             ← plan → tracer-bullet tickets
 │  │  ├─ mp-diagnose/ SKILL.md + scripts/    ← hard-bug diagnosis → root cause for /ship
 │  │  ├─ mp-prototype/ SKILL.md + LOGIC/UI   ← throwaway prototype → data for the decision-maker
-│  │  └─ mp-handoff/ SKILL.md                ← session bridge (.scratch/), not KB knowledge
+│  │  ├─ mp-handoff/ SKILL.md                ← session bridge (.scratch/), not KB knowledge
+│  │  ├─ mp-code-review/ SKILL.md            ← two-axis review (Standards + Spec) → report in .scratch/
+│  │  └─ mp-improve-codebase-architecture/ SKILL.md + HTML-REPORT.md ← deepening scan + report
 │  ├─ commands/                ← slash commands (the user-facing verbs)
 │  │  ├─ kb.md        (/kb)       search the KB
 │  │  ├─ kb-map.md    (/kb-map)   build the HTML graph
 │  │  ├─ doc.md       (/doc)      compose/update ONE doc
 │  │  ├─ onto-doc.md  (/onto-doc) build the WHOLE KB (fan-out curators)
 │  │  ├─ grilling.md  (/grilling)   grill + domain model → plan contract file
+│  │  ├─ architecture.md (/architecture) deepening scan → HTML report → grill candidate
+│  │  ├─ code-review.md (/code-review) two-axis review of a diff → report
 │  │  ├─ to-tickets.md (/to-tickets) plan → tracer-bullet tickets
 │  │  ├─ handoff.md   (/handoff)    session bridge (.scratch/)
 │  │  ├─ prototype.md (/prototype)  throwaway prototype for a design question
@@ -86,7 +90,7 @@ A user types a slash command; the command delegates to a skill; the skill calls 
 
 ```
  user
-   │  /kb · /kb-map · /doc · /onto-doc · /grilling · /to-tickets · /handoff · /prototype · /ship
+   │  /kb · /kb-map · /doc · /onto-doc · /grilling · /architecture · /code-review · /to-tickets · /handoff · /prototype · /ship
    ▼
  .omp/commands/*.md ──────────────► .omp/skills/
    │                                  ├─ kb-search ── gitmark.py ──► .md KB ──► .gitmark/index.db
@@ -95,6 +99,7 @@ A user types a slash command; the command delegates to a skill; the skill calls 
    │                                  ├─ grilling   (interview primitive)
    │                                  ├─ domain-modeling (glossary + ADR discipline)
    │                                  ├─ mp-grill-with-docs / mp-to-tickets (design → plan → tickets)
+   │                                  ├─ mp-code-review / mp-improve-codebase-architecture (review & scan → findings)
    │                                  └─ dev-flow   (ship pipeline, one ticket at a time) ──► uses kb-curate
    ▼
  .omp/rules/*.md (alwaysApply)  ── project-wide constraints for the agent
@@ -104,7 +109,7 @@ A user types a slash command; the command delegates to a skill; the skill calls 
   Python-stdlib CLI (`index`, `search`, `map`, `serve`, `stat`, `lint`, `version`).
   `/kb` and `/kb-map` are thin wrappers over it.
 - **`kb-curate`** holds the curation rules derived from
-  [`ontology.md`](../../ontology.md) — what `node_type` a doc gets, where it lives, its
+  [`ontology.md`](../ontology.md) — what `node_type` a doc gets, where it lives, its
   frontmatter and typed links. `/doc` wraps it for one doc; `/onto-doc` fans out a
   `kb-curate` curator agent per area to build the whole KB, then lints + indexes + maps.
 - **`dev-flow`** is the spec-driven loop (`/ship`): **one ticket at a time** (or one
@@ -117,10 +122,14 @@ A user types a slash command; the command delegates to a skill; the skill calls 
   domain-modeling) and ends by writing the **plan contract** as a file
   (`docs/plans/<slug>.md`, `draft`); `/to-tickets` drives `mp-to-tickets`, which
   promotes the file to the plan folder and writes the tickets under it.
-  `improve-codebase-architecture` walks a
-  deepening report. `mp-diagnose` finds the root cause of a hard bug (never fixing code
-  itself), `mp-prototype` returns data for a decision, `mp-handoff` bridges sessions via
-  `.scratch/` — none of the three authors a contract or edits code.
+  `/architecture` drives `mp-improve-codebase-architecture`, which walks a deepening
+  report and hands the chosen candidate to `/grilling`. `/code-review` drives
+  `mp-code-review`: a two-axis (Standards + Spec) read-only review of a diff via parallel
+  sub-agents, reported side by side and written to `.scratch/` — distinct from the
+  `dev-flow` review gate, which reviews the author's own diff inside a ship run.
+  `mp-diagnose` finds the root cause of a hard bug (never fixing code itself),
+  `mp-prototype` returns data for a decision, `mp-handoff` bridges sessions via
+  `.scratch/` — none of these authors a contract on its own or edits code.
 - **`.omp/rules/`** carries project-wide rules that omp injects into the agent context:
   `kb-source-of-truth` (md+git is the source; derived artifacts are regenerated, never
   committed), `kb-first` (search the KB before answering, never duplicate a doc),
@@ -129,7 +138,7 @@ A user types a slash command; the command delegates to a skill; the skill calls 
 
 ## See also
 
-- [`ontology.md`](../../ontology.md) — the knowledge model (object types, typed links, invariants).
+- [`ontology.md`](../ontology.md) — the knowledge model (object types, typed links, invariants).
 - [`commands.md`](commands.md) — the slash-command reference.
 - Per-component detail: [gitmark CLI](../services/gitmark-cli/README.md) ·
   [dev-flow](../services/dev-flow/README.md).
