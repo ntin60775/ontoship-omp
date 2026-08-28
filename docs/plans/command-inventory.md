@@ -2,7 +2,7 @@
 node_type: plan
 title: Реестр команд — генерируемый, единый источник, с I7 и исключением эфемеры
 service: _platform
-status: active
+status: archived
 updated: 2026-08-29
 links:
   depends_on: [../ontology.md]
