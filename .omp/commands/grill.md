@@ -1,5 +1,7 @@
 ---
 description: "Grill the user relentlessly about a plan, decision, or idea — rounds over the design tree until shared understanding, WITHOUT writing anything to the KB (no CONTEXT.md, no decisions, no plan contract). Русские триггеры: погрилл, погриль меня, грилл. Argument = the topic to grill."
+args: "<topic> (empty → ask what to grill)"
+drives: "grilling skill"
 ---
 
 Run the **grilling** skill on the topic: `$ARGUMENTS`.

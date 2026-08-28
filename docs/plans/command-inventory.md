@@ -2,8 +2,8 @@
 node_type: plan
 title: Реестр команд — генерируемый, единый источник, с I7 и исключением эфемеры
 service: _platform
-status: draft
-updated: 2026-08-27
+status: active
+updated: 2026-08-29
 links:
   depends_on: [../ontology.md]
   documents: [../../.omp/skills/kb-search/gitmark.py, ../reference/commands.md, ../../README.md]

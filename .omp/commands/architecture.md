@@ -1,5 +1,7 @@
 ---
 description: Scan the codebase for deepening opportunities, present them as a visual HTML report, then grill through the chosen candidate — ending in a plan contract file (docs/plans/<slug>.md). Argument = optional direction (module, subsystem, or pain point).
+args: "[direction] (empty → infer hot spots from git history)"
+drives: "mp-improve-codebase-architecture skill"
 ---
 
 Run the **mp-improve-codebase-architecture** skill on the direction: `$ARGUMENTS`.

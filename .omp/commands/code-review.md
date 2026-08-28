@@ -1,5 +1,7 @@
 ---
 description: Two-axis review of the diff since a fixed point — Standards (repo rules + Fowler smell baseline) and Spec (originating plan/ticket), run as parallel sub-agents, reported side by side. Argument = the fixed point (commit, branch, tag, merge-base).
+args: "<fixed-point> (empty → ask)"
+drives: "mp-code-review skill"
 ---
 
 Run the **mp-code-review** skill on the diff since: `$ARGUMENTS`.

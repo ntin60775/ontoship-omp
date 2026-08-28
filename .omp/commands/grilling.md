@@ -1,5 +1,7 @@
 ---
 description: Grill the user relentlessly about a plan, decision, or idea — rounds over the design tree until shared understanding, building the domain model (CONTEXT.md + decisions) as it goes, ending in a plan contract file (docs/plans/<slug>.md). Argument = the topic to grill.
+args: "<topic> (empty → ask what to grill)"
+drives: "mp-grill-with-docs skill"
 ---
 
 Run the **mp-grill-with-docs** skill on the topic: `$ARGUMENTS`.

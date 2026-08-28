@@ -1,5 +1,7 @@
 ---
 description: Run the OntoShip dev-flow on one ticket from a plan (docs/plans/<slug>/) or a whole file plan (docs/plans/<slug>.md) or an ad-hoc description — worktree → implement → tests → review → dev-tests → prod-tests → ship. One ticket (or one file plan) per run, strictly sequential. Launched only by hand.
+args: "[plan path] / [ticket path] / <ad-hoc> (empty → most recent plan)"
+drives: "dev-flow skill"
 ---
 
 Drive one ticket through the **OntoShip dev-flow**.

@@ -1,5 +1,7 @@
 ---
 description: Build the OntoShip KB graph (gitmark map) — collapsible tree + rendered markdown + force/radial link graph as a self-contained HTML — and point the user to it.
+args: "[output-path] (default docs-map.html)"
+drives: "GitMark CLI map / index"
 ---
 
 Generate and surface the knowledge-base map.

@@ -30,7 +30,9 @@ $G search "<query>"      # bm25 + trigram(substring) + fuzzy(3-gram); -k N, --js
 $G map -o docs-map.html  # self-contained HTML: tree + rendered md + radial graph
 $G serve -p 8799         # local http server to view the map
 $G stat                  # files/chunks/links/index state
-$G lint [paths…]         # ontology check (frontmatter/links/README/broken links)
+$G lint [paths…]         # ontology check (frontmatter/links/README/broken links/registry I7)
+$G inventory             # regenerate the command/skill registry tables (docs/reference/commands.md)
+$G inventory --check     # exit 1 on registry desync (same as lint I7)
 $G version
 ```
 

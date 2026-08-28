@@ -136,6 +136,9 @@ them — and never launch `/ship`: the operator starts it by hand. Their own out
 - **I4.** No broken links (a markdown link to a missing file).
 - **I5.** Every `docs/**` folder has a `README.md` index.
 - **I6.** A `supersedes` target has `status: deprecated|archived`.
+- **I7.** The command registry is in sync: every `.omp/commands/*.md` has `args:`/`drives:`
+  frontmatter, a row in the generated summary table and a `## /cmd` section in
+  `docs/reference/commands.md` — and vice versa (checked by `gitmark inventory --check`).
 
 ## Why this, not a wiki/Notion
 

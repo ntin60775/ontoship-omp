@@ -13,7 +13,8 @@ Source of truth = markdown. Всё производное (поисковый и
     gitmark map   [-o docs/docs-map.html]     self-contained HTML: дерево+рендер+граф
     gitmark serve [-p 8799]                   локальный http для просмотра HTML
     gitmark stat                              статистика индекса/БЗ
-    gitmark lint  [paths…] [--strict]         проверить онтологию (типы/связи/README/битые ссылки)
+    gitmark lint  [paths…] [--strict]         проверить онтологию (типы/связи/README/битые ссылки/реестр I7)
+    gitmark inventory [--check]               перегенерировать сводные таблицы реестра команд/навыков
     gitmark version
 
 Markdown-рендер в `map` использует lib `markdown` если установлена (опционально),
@@ -53,9 +54,41 @@ def repo_root(start: Path) -> Path:
     return p
 
 
+def parse_gitignore(root: Path):
+    """Рукописное подмножество .gitignore: имена папок с концевым '/', точные имена и
+    '*'-шаблоны без '/'. Без негативов и '**' — подмножество по дизайну.
+    → (dir_pats, file_pats)."""
+    dir_pats, file_pats = [], []
+    gi = root / ".gitignore"
+    if not gi.exists():
+        return dir_pats, file_pats
+    for raw in gi.read_text(encoding="utf-8", errors="replace").splitlines():
+        s = raw.strip()
+        if not s or s.startswith("#") or s.startswith("!"):
+            continue
+        if s.endswith("/"):
+            dir_pats.append(s.rstrip("/"))
+        elif "/" not in s:
+            file_pats.append(s)
+    return dir_pats, file_pats
+
+
+def _wild_match(name: str, pat: str) -> bool:
+    """'*' в шаблоне gitignore матчит любую подстроку."""
+    if "*" not in pat:
+        return name == pat
+    return re.fullmatch(re.escape(pat).replace(r"\*", ".*"), name) is not None
+
+
 def iter_md(root: Path):
+    dir_pats, file_pats = parse_gitignore(root)
     for p in sorted(root.rglob("*.md")):
-        if any(part in EXCLUDE_DIRS for part in p.relative_to(root).parts):
+        rel = p.relative_to(root)
+        if any(part in EXCLUDE_DIRS for part in rel.parts):
+            continue
+        if any(part in dir_pats for part in rel.parts[:-1]):
+            continue
+        if any(_wild_match(rel.name, f) for f in file_pats):
             continue
         yield p
 
@@ -359,7 +392,7 @@ def parse_frontmatter(text: str) -> dict | None:
 
 
 def cmd_lint(root: Path, paths: list | None = None) -> dict:
-    """Проверка инвариантов онтологии I1–I6. Возвращает {errors, warnings, checked}."""
+    """Проверка инвариантов онтологии I1–I7. Возвращает {errors, warnings, checked}."""
     docs = list(iter_md(root))
     known = {_nfc(p.relative_to(root).as_posix()) for p in docs}
     # граф связей: кто на кого ссылается (для I3 — сироты)
@@ -438,10 +471,143 @@ def cmd_lint(root: Path, paths: list | None = None) -> dict:
                 if tfm.get("status") not in ("deprecated", "archived"):
                     issues.append(("WARN", "I6", rel, f"supersedes {tgt}, но он не deprecated/archived"))
 
+    # I7 — реестр команд синхронен с .omp/ (ERR: рассинхрон ловится машиной)
+    for path, msg in inventory_issues(root):
+        issues.append(("ERR", "I7", path, msg))
+
     errs = [i for i in issues if i[0] == "ERR"]
     warns = [i for i in issues if i[0] == "WARN"]
     return {"issues": issues, "errors": errs, "warnings": warns,
             "checked": len(docs)}
+
+
+# ─────────────────────────── inventory (реестр команд/навыков) ───────────────────────────
+COMMANDS_DIR = ".omp/commands"
+SKILLS_DIR = ".omp/skills"
+REGISTRY_REL = "docs/reference/commands.md"
+
+
+def _cell(s) -> str:
+    """Экранируем '|' для ячейки markdown-таблицы."""
+    return str(s or "").replace("|", "\\|").strip()
+
+
+def _scan_commands(root: Path) -> list:
+    """Команды из .omp/commands/*.md: {name, description, args, drives, path}."""
+    out = []
+    d = root / COMMANDS_DIR
+    if not d.is_dir():
+        return out
+    for p in sorted(d.glob("*.md")):
+        fm = parse_frontmatter(p.read_text("utf-8", errors="replace")) or {}
+        out.append({"name": p.stem, "description": fm.get("description", ""),
+                    "args": fm.get("args", ""), "drives": fm.get("drives", ""),
+                    "path": p.relative_to(root).as_posix()})
+    return out
+
+
+def _scan_skills(root: Path) -> list:
+    """Навыки из .omp/skills/*/SKILL.md: {name, description, path}."""
+    out = []
+    d = root / SKILLS_DIR
+    if not d.is_dir():
+        return out
+    for p in sorted(d.glob("*/SKILL.md")):
+        fm = parse_frontmatter(p.read_text("utf-8", errors="replace")) or {}
+        out.append({"name": fm.get("name", p.parent.name),
+                    "description": fm.get("description", ""),
+                    "path": p.relative_to(root).as_posix()})
+    return out
+
+
+def _commands_table(commands: list) -> str:
+    rows = ["| Command | What it does | Args | Drives |", "|---|---|---|---|"]
+    for c in commands:
+        rows.append(f"| `/{c['name']}` | {_cell(c['description'])} | "
+                    f"{_cell(c['args'])} | {_cell(c['drives'])} |")
+    return "\n".join(rows)
+
+
+def _skills_table(skills: list) -> str:
+    rows = ["| Skill | What it does |", "|---|---|"]
+    for s in skills:
+        rows.append(f"| `{s['name']}` | {_cell(s['description'])} |")
+    return "\n".join(rows)
+
+
+def _marker_pair(what: str):
+    return (f"<!-- BEGIN inventory:{what} -->", f"<!-- END inventory:{what} -->")
+
+
+def _replace_between(text: str, begin: str, end: str, body: str):
+    """Заменяет содержимое между маркерами. → (new_text, ok)."""
+    i, j = text.find(begin), text.find(end)
+    if i < 0 or j < 0 or j < i:
+        return text, False
+    return text[:i + len(begin)] + "\n" + body + "\n" + text[j:], True
+
+
+def inventory_issues(root: Path) -> list:
+    """I7: рассинхрон реестра. → список (path, msg). Пусто = синхронно."""
+    issues = []
+    reg = root / REGISTRY_REL
+    commands, skills = _scan_commands(root), _scan_skills(root)
+    if not reg.exists():
+        return [(REGISTRY_REL, "реестр не найден")]
+    text = reg.read_text("utf-8", errors="replace")
+    # args:/drives: обязательны во frontmatter каждой команды
+    for c in commands:
+        if not c["args"]:
+            issues.append((c["path"], "нет `args:` во frontmatter"))
+        if not c["drives"]:
+            issues.append((c["path"], "нет `drives:` во frontmatter"))
+    # таблицы между маркерами совпадают с генерацией
+    for what, table in (("commands", _commands_table(commands)),
+                        ("skills", _skills_table(skills))):
+        b, e = _marker_pair(what)
+        i, j = text.find(b), text.find(e)
+        if i < 0 or j < 0:
+            issues.append((REGISTRY_REL, f"нет маркеров inventory:{what}"))
+            continue
+        if text[i + len(b):j].strip("\n") != table:
+            issues.append((REGISTRY_REL,
+                           f"таблица inventory:{what} рассинхронизирована — `gitmark inventory`"))
+    # секции `## /cmd` ↔ файлы команд (в одну пару)
+    sections = set(re.findall(r"^##\s+`?/([\w-]+)", text, re.MULTILINE))
+    names = {c["name"] for c in commands}
+    for n in sorted(names - sections):
+        issues.append((REGISTRY_REL, f"нет секции `## /{n}` для {COMMANDS_DIR}/{n}.md"))
+    for n in sorted(sections - names):
+        issues.append((REGISTRY_REL, f"секция `## /{n}` без файла {COMMANDS_DIR}/{n}.md"))
+    return issues
+
+
+def cmd_inventory(root: Path, check: bool = False) -> dict:
+    """Перегенерация (--check: только доклад) сводных таблиц реестра."""
+    if check:
+        commands, skills = _scan_commands(root), _scan_skills(root)
+        return {"issues": inventory_issues(root),
+                "commands": len(commands), "skills": len(skills)}
+    commands, skills = _scan_commands(root), _scan_skills(root)
+    reg = root / REGISTRY_REL
+    if not reg.exists():
+        print(f"ОШИБКА: {REGISTRY_REL} не найден — реестр ещё не создан", file=sys.stderr)
+        sys.exit(2)
+    text = reg.read_text("utf-8", errors="replace")
+    changed = []
+    for what, table in (("commands", _commands_table(commands)),
+                        ("skills", _skills_table(skills))):
+        b, e = _marker_pair(what)
+        new, ok = _replace_between(text, b, e, table)
+        if not ok:
+            print(f"ОШИБКА: в {REGISTRY_REL} нет маркеров {b} … {e}", file=sys.stderr)
+            sys.exit(2)
+        if new != text:
+            changed.append(what)
+        text = new
+    if changed:
+        reg.write_text(text, encoding="utf-8")
+    return {"changed": changed, "commands": len(commands), "skills": len(skills)}
 
 
 # ─────────────────────────── map (HTML обзор + граф) ───────────────────────────
@@ -569,9 +735,11 @@ def main(argv=None):
     mp = sub.add_parser("map", help="HTML обзор+граф"); mp.add_argument("-o", "--out", default=None)
     sv = sub.add_parser("serve", help="локальный http"); sv.add_argument("-p", "--port", type=int, default=8799)
     sub.add_parser("stat", help="статистика")
-    lp = sub.add_parser("lint", help="проверить онтологию (I1–I6)")
+    lp = sub.add_parser("lint", help="проверить онтологию (I1–I7)")
     lp.add_argument("paths", nargs="*", help="ограничить файлами (по умолчанию — все docs/)")
     lp.add_argument("--strict", action="store_true", help="exit 1 при любых ERR")
+    inv = sub.add_parser("inventory", help="перегенерировать сводные таблицы реестра команд/навыков")
+    inv.add_argument("--check", action="store_true", help="только доложить рассинхрон (exit 1)")
     sub.add_parser("version", help="версия")
     a = ap.parse_args(argv)
     root = Path(a.root).resolve() if a.root else repo_root(Path.cwd())
@@ -618,6 +786,18 @@ def main(argv=None):
         print(f"\n{mark}  ({r['checked']} файлов · {summary})")
         if a.strict and ne:
             sys.exit(1)
+    elif a.cmd == "inventory":
+        r = cmd_inventory(root, a.check)
+        if a.check:
+            if r["issues"]:
+                for path, msg in r["issues"]:
+                    print(f"\033[31mERR\033[0m \033[90mI7\033[0m {path} — {msg}")
+                print(f"\n\033[31mрассинхрон: {len(r['issues'])}\033[0m — `gitmark inventory`")
+                sys.exit(1)
+            print(f"\033[32m✓ реестр синхронен\033[0m  ({r['commands']} команд · {r['skills']} навыков)")
+        else:
+            what = ", ".join(r["changed"]) if r["changed"] else "без изменений"
+            print(f"✓ inventory: {r['commands']} команд · {r['skills']} навыков → {REGISTRY_REL} ({what})")
     elif a.cmd == "version":
         print(f"gitmark {VERSION}")
 

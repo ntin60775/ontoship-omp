@@ -36,6 +36,7 @@ service, database, embeddings, or vendor to run:
 |---|---|---|---|
 | `index.db` (SQLite FTS5) | the `.md` files | `.gitmark/` (gitignored) | `gitmark index` |
 | `docs-map.html` (tree + graph) | the `.md` files + their links | wherever you point it | `gitmark map` |
+| the registry tables in `docs/reference/commands.md` | `.omp/commands/*.md` + `.omp/skills/*/SKILL.md` frontmatter | between the `inventory:*` markers | `gitmark inventory` |
 
 The entry point is `AGENTS.md`; every folder's `README.md` is its index.
 Because derived artifacts never live in git, the KB can never drift from its index — you
@@ -107,7 +108,7 @@ A user types a slash command; the command delegates to a skill; the skill calls 
 ```
 
 - **`kb-search`** is the heart: `.omp/skills/kb-search/gitmark.py` is the single
-  Python-stdlib CLI (`index`, `search`, `map`, `serve`, `stat`, `lint`, `version`).
+  Python-stdlib CLI (`index`, `search`, `map`, `serve`, `stat`, `lint`, `inventory`, `version`).
   `/kb` and `/kb-map` are thin wrappers over it.
 - **`kb-curate`** holds the curation rules derived from
   [`ontology.md`](../ontology.md) — what `node_type` a doc gets, where it lives, its

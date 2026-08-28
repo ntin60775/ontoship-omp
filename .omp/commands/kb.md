@@ -1,5 +1,7 @@
 ---
 description: Search the project knowledge base via GitMark (FTS5 bm25 + trigram/fuzzy). Argument = query; no argument shows stat.
+args: "<query> (empty → stat + usage)"
+drives: "GitMark CLI search / stat / index"
 ---
 
 Search the project's markdown knowledge base (all `.md`: docs/, README files, etc.).

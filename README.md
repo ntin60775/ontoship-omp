@@ -50,39 +50,12 @@ OntoShip ships the **GitMark** package (KB + dev-flow) as a project-local **omp*
 (The **`destructive-guard`** safety hook now lives in its own repo →
 [vakovalskii/destructive-guard](https://github.com/vakovalskii/destructive-guard).)
 
-**`gitmark`** — skills and commands (the authoritative list lives in
-[`docs/reference/commands.md`](docs/reference/commands.md)):
-
-| skill | what |
-|---|---|
-| `kb-search` | search the KB (FTS5) instead of grepping blind |
-| `kb-curate` | light ontology rules when adding/editing docs (types, frontmatter, typed links) |
-| `dev-flow` | the spec-driven loop to ship a feature: **one ticket at a time** (or one file plan as a single slice) — worktree → implement → tests → independent review → dev-tests → prod-tests → ship (MR → `dev` → `main`). Ticket to prod in ~40 min – 2 h. |
-| `grilling` | the interview primitive (rounds + frontier) — drives `mp-grill-with-docs` and `mp-improve-codebase-architecture` |
-| `domain-modeling` | glossary + ADR discipline — keeps `CONTEXT.md` and `docs/decisions/` current during design |
-| `mp-grill-with-docs` | grill + build the domain model → writes the **plan contract** file (`docs/plans/<slug>.md`) |
-| `mp-to-tickets` | promote a plan file to the plan folder and break it into **tracer-bullet tickets** with blocking edges (`docs/plans/<slug>/NN-<ticket>.md`) |
-| `mp-diagnose` | hard-bug diagnosis loop → root cause, then hand the fix to `/ship` |
-| `mp-prototype` | throwaway prototype → data + recommendation for the decision-maker |
-| `mp-handoff` | session bridge (`.scratch/`), not KB knowledge |
-| `mp-code-review` | two-axis review of a diff (**Standards** + **Spec**) via parallel sub-agents → report in `.scratch/`, read-only |
-| `mp-improve-codebase-architecture` | scan a codebase for deepening opportunities, render an HTML report, then grill through one |
+**`gitmark`** — skills and commands: the single registry (generated from the `.omp/`
+frontmatter by `gitmark inventory`, checked by `gitmark lint` as I7) lives in
+[`docs/reference/commands.md`](docs/reference/commands.md) — no duplicate lists here.
 
 So the agent searches the KB instead of grepping, follows light curation rules when
 editing, and ships changes through one repeatable, gated flow built around the KB.
-
-| command | what |
-|---|---|
-| `/kb` | search the KB (FTS5) and answer from the top hits |
-| `/kb-map` | build the self-contained HTML graph of the KB and open it |
-| `/grill` | plain grill — the same interview rounds, writing nothing to the KB (optical entry) |
-| `/grilling` | grill the user about a plan/decision/idea, building the domain model, ending in a plan contract file |
-| `/architecture` | scan for deepening opportunities → HTML report → grill the chosen candidate into a plan contract |
-| `/code-review` | review the diff since a fixed point on two axes (Standards + Spec), reported side by side |
-| `/to-tickets` | break a plan into tracer-bullet tickets with blocking edges |
-| `/handoff` | compact the conversation into a handoff doc under `.scratch/` |
-| `/prototype` | build a throwaway prototype to answer a design question |
-| `/ship` | ship **one ticket** from a plan folder (or a whole **file plan** as a single slice) through the gated pipeline — launched only by hand, strictly sequential |
 
 ### What to write after a command (for best results)
 

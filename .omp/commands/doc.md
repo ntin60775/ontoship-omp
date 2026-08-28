@@ -1,5 +1,7 @@
 ---
 description: Compose or update a knowledge-base document for the given topic following the OntoShip ontology (node_type, frontmatter, typed links, folder README index). Wraps the kb-curate skill.
+args: "<topic>"
+drives: "kb-curate skill + GitMark CLI"
 ---
 
 Compose or update a KB document for: `$ARGUMENTS`

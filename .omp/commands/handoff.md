@@ -1,5 +1,7 @@
 ---
 description: Compact the current conversation into a handoff document under .scratch/ so another agent can continue the work. Argument = what the next session will be used for.
+args: "[what the next session will do]"
+drives: "mp-handoff skill"
 ---
 
 Run the **mp-handoff** skill.

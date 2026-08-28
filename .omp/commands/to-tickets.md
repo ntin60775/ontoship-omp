@@ -1,5 +1,7 @@
 ---
 description: Break a plan (docs/plans/<slug>.md or docs/plans/<slug>/) or the current conversation into tracer-bullet tickets with blocking edges under the plan folder. Argument = plan path or topic; empty = most recent plan.
+args: "[plan path] (empty → most recent plan)"
+drives: "mp-to-tickets skill"
 ---
 
 Run the **mp-to-tickets** skill.

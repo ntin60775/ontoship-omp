@@ -1,5 +1,7 @@
 ---
 description: Build a throwaway prototype to answer a design question — logic/state (single HTML file) or UI (radically different variations on one route). Returns data + a recommendation, never commits code. Argument = the question.
+args: "<question> (empty → ask)"
+drives: "mp-prototype skill"
 ---
 
 Run the **mp-prototype** skill on the question: `$ARGUMENTS`.

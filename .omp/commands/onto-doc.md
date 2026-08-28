@@ -1,5 +1,7 @@
 ---
 description: Build the ENTIRE knowledge base for this repo — survey the codebase, then dispatch kb-curate curator agents per area to produce docs/ (per-service READMEs, reference specs, runbooks, decisions, entry point) following the OntoShip ontology, then lint + index + map. Use to bootstrap or rebuild a project's whole KB.
+args: "[scope] (empty → whole repo)"
+drives: "kb-curate skill via Task fan-out + GitMark CLI"
 ---
 
 Build (or rebuild) the **whole OntoShip KB** for this repository by fanning out curator agents.
