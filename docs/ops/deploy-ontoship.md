@@ -3,7 +3,7 @@ node_type: runbook
 title: Deploy OntoShip into a project
 service: _platform
 status: active
-updated: 2026-08-15
+updated: 2026-08-28
 tags: [runbook, deploy, install, omp-package, gitmark]
 links:
   documents: [../../AGENTS.md, ../../.omp/skills/kb-search/gitmark.py, ../../.omp/scripts/deploy-check.sh]
@@ -34,7 +34,7 @@ cp <path-to-ontoship-omp>/AGENTS.md <your-repo>/
 
 **Expected:** `<your-repo>/` has `.omp/skills/`, `.omp/commands/`, `.omp/rules/` and
 `AGENTS.md`; omp picks up the slash commands (`/kb`, `/kb-map`, `/doc`, `/onto-doc`,
-`/grilling`, `/architecture`, `/code-review`, `/to-tickets`, `/handoff`, `/prototype`, `/ship`) and the always-on rules
+`/grill`, `/grilling`, `/architecture`, `/code-review`, `/to-tickets`, `/handoff`, `/prototype`, `/ship`) and the always-on rules
 (`kb-first`, `kb-source-of-truth`, `ship-gate`); the `ship-1c` rule ships opt-in (enable
 it only in a 1C project).
 

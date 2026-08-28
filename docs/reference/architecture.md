@@ -3,7 +3,7 @@ node_type: reference
 title: OntoShip architecture
 service: _platform
 status: active
-updated: 2026-08-27
+updated: 2026-08-28
 tags: [architecture, overview, omp, package]
 links:
   documents: [../../AGENTS.md]
@@ -65,6 +65,7 @@ ontoship-omp/
 │  │  ├─ kb-map.md    (/kb-map)   build the HTML graph
 │  │  ├─ doc.md       (/doc)      compose/update ONE doc
 │  │  ├─ onto-doc.md  (/onto-doc) build the WHOLE KB (fan-out curators)
+│  │  ├─ grill.md     (/grill)      plain grill — no KB output
 │  │  ├─ grilling.md  (/grilling)   grill + domain model → plan contract file
 │  │  ├─ architecture.md (/architecture) deepening scan → HTML report → grill candidate
 │  │  ├─ code-review.md (/code-review) two-axis review of a diff → report
@@ -90,7 +91,7 @@ A user types a slash command; the command delegates to a skill; the skill calls 
 
 ```
  user
-   │  /kb · /kb-map · /doc · /onto-doc · /grilling · /architecture · /code-review · /to-tickets · /handoff · /prototype · /ship
+   │  /kb · /kb-map · /doc · /onto-doc · /grill · /grilling · /architecture · /code-review · /to-tickets · /handoff · /prototype · /ship
    ▼
  .omp/commands/*.md ──────────────► .omp/skills/
    │                                  ├─ kb-search ── gitmark.py ──► .md KB ──► .gitmark/index.db
@@ -118,7 +119,8 @@ A user types a slash command; the command delegates to a skill; the skill calls 
   a tracer-bullet vertical slice sized to one fresh context window; its specs become KB
   docs, closing the loop back into the same markdown.
 - **`grilling`** is the interview primitive (rounds + frontier); **`domain-modeling`**
-  is the glossary + ADR discipline. `/grilling` drives `mp-grill-with-docs` (grilling +
+  is the glossary + ADR discipline. `/grill` drives the plain primitive (optical entry —
+  nothing written); `/grilling` drives `mp-grill-with-docs` (grilling +
   domain-modeling) and ends by writing the **plan contract** as a file
   (`docs/plans/<slug>.md`, `draft`); `/to-tickets` drives `mp-to-tickets`, which
   promotes the file to the plan folder and writes the tickets under it.

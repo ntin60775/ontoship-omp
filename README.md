@@ -75,6 +75,7 @@ editing, and ships changes through one repeatable, gated flow built around the K
 |---|---|
 | `/kb` | search the KB (FTS5) and answer from the top hits |
 | `/kb-map` | build the self-contained HTML graph of the KB and open it |
+| `/grill` | plain grill — the same interview rounds, writing nothing to the KB (optical entry) |
 | `/grilling` | grill the user about a plan/decision/idea, building the domain model, ending in a plan contract file |
 | `/architecture` | scan for deepening opportunities → HTML report → grill the chosen candidate into a plan contract |
 | `/code-review` | review the diff since a fixed point on two axes (Standards + Spec), reported side by side |
@@ -104,6 +105,14 @@ node_type+folder, writes frontmatter + typed links, and indexes it.
 (`/onto-doc services/api services/billing`, or `/onto-doc only reference docs`).
 - Surveys the codebase, splits it into doc areas, and **dispatches a curator agent per area**
   (parallel), then lints + reindexes + regenerates the graph.
+
+**`/grill <topic>`** — the plan, decision, or idea to stress-test, **without** any KB
+output. (Русские триггеры: «погрилл», «грилл» — работают и в прозе.)
+- Good: `/grill whether to cache compiled prompts`, `/grill this half-formed migration idea`.
+- Same discipline as `/grilling` (rounds over the design tree, the whole frontier per
+  round, recommended answers) but it writes NOTHING: no `CONTEXT.md`, no decisions, no
+  plan contract — the resolution lives in the session only. When the conclusions are
+  worth keeping, re-run `/grilling` on the same thread.
 
 **`/grilling <topic>`** — the plan, decision, or idea to stress-test.
 - Good: `/grilling the plan to move billing to webhooks`, `/grilling whether to drop Firecracker-per-session`.

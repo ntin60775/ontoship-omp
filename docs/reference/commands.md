@@ -3,10 +3,10 @@ node_type: reference
 title: OntoShip slash commands
 service: _platform
 status: active
-updated: 2026-08-27
+updated: 2026-08-28
 tags: [commands, slash-commands, reference]
 links:
-  documents: [../../.omp/commands/kb.md, ../../.omp/commands/kb-map.md, ../../.omp/commands/doc.md, ../../.omp/commands/onto-doc.md, ../../.omp/commands/grilling.md, ../../.omp/commands/architecture.md, ../../.omp/commands/code-review.md, ../../.omp/commands/to-tickets.md, ../../.omp/commands/handoff.md, ../../.omp/commands/prototype.md, ../../.omp/commands/ship.md]
+  documents: [../../.omp/commands/kb.md, ../../.omp/commands/kb-map.md, ../../.omp/commands/doc.md, ../../.omp/commands/onto-doc.md, ../../.omp/commands/grill.md, ../../.omp/commands/grilling.md, ../../.omp/commands/architecture.md, ../../.omp/commands/code-review.md, ../../.omp/commands/to-tickets.md, ../../.omp/commands/handoff.md, ../../.omp/commands/prototype.md, ../../.omp/commands/ship.md]
   relates_to: [../services/gitmark-cli/README.md, ../services/dev-flow/README.md]
 ---
 
@@ -17,7 +17,8 @@ a thin `.omp/commands/*.md` definition that drives a skill or engine. Four famil
 
 - **KB curation & search** — `/kb`, `/kb-map`, `/doc`, `/onto-doc` — drive the GitMark
   CLI (`.omp/skills/kb-search/gitmark.py`) and the `kb-curate` ontology rules.
-- **Design & knowledge** — `/grilling` (grill + build the domain model → parent
+- **Design & knowledge** — `/grill` (plain grill — the same interview, no KB output),
+  `/grilling` (grill + build the domain model → parent
   contract), `/architecture` (scan for deepening opportunities → HTML report → grill the
   chosen candidate), `/to-tickets` (break a plan into tracer-bullet tickets), `/handoff`
   (session bridge), `/prototype` (throwaway prototype for a design question).
@@ -37,6 +38,7 @@ when the `.omp/` package is copied into another project).
 | `/kb-map` | Build a self-contained HTML map of the KB (tree + link graph) | `[output-path]` (default `docs-map.html`) | GitMark CLI `map` / `index` |
 | `/doc` | Compose or update **one** KB document per the ontology | `<topic>` | `kb-curate` skill + GitMark CLI |
 | `/onto-doc` | Build (or rebuild) the **whole** KB by fanning out curator agents | `[scope]` (empty → whole repo) | `kb-curate` skill via `Task` fan-out + GitMark CLI |
+| `/grill` | Plain grill — the same interview rounds over the design tree, writing nothing to the KB | `<topic>` (empty → ask what to grill) | `grilling` skill |
 | `/grilling` | Grill the user about a plan/decision/idea, building the domain model, ending in a plan contract file | `<topic>` (empty → ask what to grill) | `mp-grill-with-docs` skill |
 | `/architecture` | Scan for deepening opportunities, show an HTML report, grill the chosen candidate into a plan contract | `[direction]` (empty → infer hot spots from git history) | `mp-improve-codebase-architecture` skill |
 | `/code-review` | Review the diff since a fixed point on two axes (Standards + Spec) via parallel sub-agents; report side by side | `<fixed-point>` (empty → ask) | `mp-code-review` skill |
@@ -117,6 +119,25 @@ when the `.omp/` package is copied into another project).
   6. **Report** — docs created/updated, coverage before→after, lint result, map path,
      areas needing a human decision.
 - **Drives:** `kb-curate` skill via `Task` fan-out + GitMark CLI. Wraps `gitmark:onto-doc`.
+
+## `/grill` — plain grill, no KB output
+
+- **Definition:** `.omp/commands/grill.md`
+- **What it does:** runs the `grilling` skill directly — the same relentless
+  round-by-round interview over the design tree (the whole frontier per round,
+  numbered, each with a recommended answer; the agent finds facts itself, the
+  decisions are the user's), but **without** `domain-modeling`. It writes nothing
+  durable: no `CONTEXT.md` terms, no `docs/decisions/`, no plan contract. This is the
+  **optical entry** — think out loud when nothing is worth recording yet.
+- **Args:** `$ARGUMENTS` = the plan, decision, or idea to stress-test. **Empty** → ask
+  what to grill. Russian triggers («погрилл», «грилл») live in the command description.
+- **Behavior:** map the design tree, ask the whole frontier in one round, recompute the
+  frontier after each round; done when the frontier is empty and the user confirms
+  shared understanding — then stop (no file is written).
+- **When to use `/grilling` instead:** if the conclusions deserve the KB, re-run
+  `/grilling` (`mp-grill-with-docs`) on the same thread — it builds the domain model
+  inline and ends in a plan contract (`docs/plans/<slug>.md`).
+- **Drives:** `grilling` skill (the interview primitive, no domain-modeling).
 
 ## `/grilling` — grill a plan, decision, or idea
 

@@ -17,7 +17,7 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 ## Reference
 
 - [architecture.md](reference/architecture.md) — how OntoShip fits together (omp package → skills → commands → KB)
-- [commands.md](reference/commands.md) — slash commands: `/kb`, `/kb-map`, `/doc`, `/onto-doc`, `/grilling`, `/architecture`, `/code-review`, `/to-tickets`, `/handoff`, `/prototype`, `/ship`
+- [commands.md](reference/commands.md) — slash commands: `/kb`, `/kb-map`, `/doc`, `/onto-doc`, `/grill`, `/grilling`, `/architecture`, `/code-review`, `/to-tickets`, `/handoff`, `/prototype`, `/ship`
 - [metrics.md](reference/metrics.md) — what OntoShip is measured by (experience-transfer metrics)
 - [ontology.md](ontology.md) — the knowledge model (node_type, properties, typed links, linter)
 

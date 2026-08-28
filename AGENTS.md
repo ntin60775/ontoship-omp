@@ -26,7 +26,7 @@ linter) plus the spec-driven dev-flow built on top of it.
     mp-code-review/    two-axis review (Standards + Spec) → report in .scratch/
     mp-improve-codebase-architecture/  architectural scan + deepening report
                                      (driven by /architecture)
-  commands/            slash commands: /kb /kb-map /doc /onto-doc /grilling /architecture /code-review /to-tickets /handoff /prototype /ship
+  commands/            slash commands: /kb /kb-map /doc /onto-doc /grill /grilling /architecture /code-review /to-tickets /handoff /prototype /ship
   rules/               project rules (kb-source-of-truth, kb-first, ship-gate, ship-1c)
 AGENTS.md              this entry point (read by omp)
 docs/                  the knowledge base itself (this is the KB)

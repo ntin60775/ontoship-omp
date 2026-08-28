@@ -29,8 +29,8 @@ _Avoid_: плагин, под-команда
 
 **Команда (command)**:
 A `.omp/commands/<name>.md` slash-command (`/kb`, `/kb-map`, `/doc`, `/onto-doc`,
-`/grilling`, `/architecture`, `/code-review`, `/to-tickets`, `/handoff`, `/prototype`,
-`/ship`) — the user-facing verbs that drive skills and the CLI.
+`/grill`, `/grilling`, `/architecture`, `/code-review`, `/to-tickets`, `/handoff`,
+`/prototype`, `/ship`) — the user-facing verbs that drive skills and the CLI.
 _Avoid_: слэш-команда Claude Code, plugin command
 
 **Точка входа (entry point)**:

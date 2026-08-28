@@ -30,7 +30,8 @@ I7), а не охотой по файлам. Побочно: `gitmark` пере�
 - `gitmark.py inventory --check` — exit≠0 при любом рассинхроне: файл команды без
   строки в таблице / без секции `## /cmd`; строка или секция без файла; отсутствующие
   `args:`/`drives:` во frontmatter. На чистом репо — exit 0.
-- Во всех 11 `.omp/commands/*.md` frontmatter дополнен полями `args:` и `drives:`.
+- Во всех 12 `.omp/commands/*.md` frontmatter дополнен полями `args:` и `drives:`
+  (счётчик актуализирован 2026-08-28: добавлен `/grill` из grill-command-pair).
 - `lint` включает **I7** (то же, что `--check`, в отчёте линта); на текущем репо — чисто.
 - `index`/`search`/`lint`/`map` исключают пути из `.gitignore` (подмножество: точные
   имена папок со `/`, записи `*.ext`); отчёт в `.scratch/` не находится поиском.
@@ -49,7 +50,7 @@ I7), а не охотой по файлам. Побочно: `gitmark` пере�
 
 - `.omp/skills/kb-search/gitmark.py` — субкоманда `inventory` (+`--check`), парсер
   `.gitignore`, I7 в `lint`, исключение игнорируемых путей в `index`/`search`/`lint`/`map`.
-- `.omp/commands/*.md` (11 файлов) — только frontmatter (`args:`, `drives:`), тела не трогать.
+- `.omp/commands/*.md` (12 файлов) — только frontmatter (`args:`, `drives:`), тела не трогать.
 - `docs/reference/commands.md` — маркеры + генерируемые таблицы; рукописные секции
   `## /cmd` остаются рукописными (генерится только таблица).
 - `README.md` — убрать дубли-таблицы, оставить ссылку.

@@ -3,10 +3,10 @@ node_type: service
 title: grilling — the interview primitive
 service: _platform
 status: active
-updated: 2026-08-25
+updated: 2026-08-28
 tags: [service, grilling, interview]
 links:
-  documents: [../../../.omp/skills/grilling/SKILL.md]
+  documents: [../../../.omp/skills/grilling/SKILL.md, ../../../.omp/commands/grill.md, ../../../.omp/commands/grilling.md]
   relates_to: [../../services/mp-grill-with-docs/README.md, ../../services/domain-modeling/README.md, ../../services/mp-improve-codebase-architecture/README.md]
 ---
 
@@ -16,8 +16,10 @@ The interview primitive behind the "grill me" skills: the agent questions the us
 relentlessly about a plan, decision, or idea — round by round — until both reach shared
 understanding, resolving each branch of the decision tree.
 
-Two entry points drive it:
+Three entry points drive it:
 
+- **`/grill`** — the slash command (`.omp/commands/grill.md`): the **plain** primitive —
+  the same rounds and frontier, `domain-modeling` off, nothing written to the KB;
 - **`/grilling`** — the slash command (`.omp/commands/grilling.md`): runs
   `mp-grill-with-docs` — a relentless interview over a plan, decision, or idea with
   `domain-modeling` active, ending in a plan contract file;
