@@ -40,7 +40,8 @@ confirmation.
 3. **Isolate** — work in a dedicated `git worktree`.
 4. **Implement** — code to the ticket's acceptance criteria.
 5. **Tests** — write/adjust unit + E2E.
-6. **Independent review** — run an independent model (e.g. Codex CLI, read-only) over the diff.
+6. **Independent review** — run an independent omp sub-agent (read-only) over the diff,
+   on the `@reviewer` model role (fallback `@slow`).
 7. **Dev-tests** — MR + commits into `dev`; run the full suite. Red → fix, don't merge.
 8. **Prod-tests** — E2E/smoke against the real prod contour.
 9. **Ship** — merge `dev → main` and deploy (build-before-stop + healthcheck-poll).

@@ -93,7 +93,7 @@ when the `.omp/` package is copied into another project).
   4. **Add ≥1 typed link** (to code or a sibling doc) — no orphans.
   5. **Add a line to the folder `README.md`** index.
   6. **Lint + reindex** — `gitmark.py lint` then `gitmark.py index`.
-- **Drives:** `kb-curate` skill + GitMark CLI. Wraps `gitmark:doc`.
+- **Drives:** `kb-curate` skill + GitMark CLI.
 
 ## `/onto-doc` — build the whole KB
 
@@ -118,7 +118,7 @@ when the `.omp/` package is copied into another project).
      frontmatter), then `gitmark.py index`, then `gitmark.py map -o docs-map.html`.
   6. **Report** — docs created/updated, coverage before→after, lint result, map path,
      areas needing a human decision.
-- **Drives:** `kb-curate` skill via `Task` fan-out + GitMark CLI. Wraps `gitmark:onto-doc`.
+- **Drives:** `kb-curate` skill via `Task` fan-out + GitMark CLI.
 
 ## `/grill` — plain grill, no KB output
 
@@ -268,8 +268,8 @@ when the `.omp/` package is copied into another project).
   3. **Isolate** — work in a dedicated `git worktree`.
   4. **Implement** — code to the ticket's acceptance criteria.
   5. **Tests** — write/adjust unit + E2E.
-  6. **Independent review** — run an independent model (e.g. Codex CLI, read-only) over
-     the diff.
+  6. **Independent review** — run an independent omp sub-agent (read-only) over the
+     diff, on the `@reviewer` model role (fallback `@slow`).
   7. **Dev-tests** — MR + commits into `dev`; run the full suite. Red → fix, don't merge.
   8. **Prod-tests** — E2E/smoke against the real prod contour.
   9. **Ship** — merge `dev → main` and deploy (build-before-stop + healthcheck-poll).

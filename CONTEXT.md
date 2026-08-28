@@ -60,7 +60,8 @@ the gate inside a `/ship` run, which checks the author's own diff before rollout
 _Avoid_: аудит, ревью кода как часть шипа
 
 **Ревью-гейт (review gate)**:
-Step 6 of Dev-flow: an independent model reads the diff of the change being shipped.
+Step 6 of Dev-flow: an independent omp sub-agent (read-only, on the `@reviewer` model
+role, fallback `@slow`) reads the diff of the change being shipped.
 A gate in the pipeline, not a standalone report.
 _Avoid_: код-ревью
 

@@ -38,6 +38,10 @@ cp <path-to-ontoship-omp>/AGENTS.md <your-repo>/
 (`kb-first`, `kb-source-of-truth`, `ship-gate`); the `ship-1c` rule ships opt-in (enable
 it only in a 1C project).
 
+> **Optional:** the dev-flow review gate prefers a dedicated `reviewer` model role —
+> add `modelRoles.reviewer: <provider/model>` to `~/.omp/agent/config.yml` (or
+> `<repo>/.omp/config.yml`); without it the gate falls back to `@slow`.
+
 ### 2. Bootstrap the KB
 
 `AGENTS.md` links to `docs/`, which a fresh project doesn't have yet:

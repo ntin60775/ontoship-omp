@@ -68,11 +68,12 @@ Write or adjust **unit + E2E** tests for the ticket. The test is **part of the
 feature, not an afterthought** — it is the executable form of the "done" criterion.
 
 ### 7. Independent review (gate)
-Run an **independent model** (e.g. Codex CLI, read-only) over the diff for logic and
-security bugs before any rollout. A second model catches what the author's model
-misses — on a real production codebase this pass caught **191 bugs** before they reached
-prod. This is a gate because the cost of a missed logic/security bug in prod dwarfs the
-cost of the review.
+Run an **independent omp sub-agent** (read-only) over the diff for logic and
+security bugs before any rollout, on the `@reviewer` model role when configured
+(`modelRoles.reviewer`), falling back to `@slow`. A second model catches what the
+author's model misses — on a real production codebase this pass caught **191 bugs**
+before they reached prod. This is a gate because the cost of a missed logic/security
+bug in prod dwarfs the cost of the review.
 
 ### 8. Dev-tests (gate)
 Open an **MR with the commits into the `dev` branch** and run the **full suite** there.

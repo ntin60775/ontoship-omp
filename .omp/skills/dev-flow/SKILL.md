@@ -48,10 +48,11 @@ operator's hand launch *is* the confirmation.
    doc↔code linked (`implemented_by`).
 5. **Tests** — write/adjust unit + E2E for the ticket. The test is part of the feature,
    not an afterthought.
-6. **Independent review** — run an **independent model** (e.g. Codex CLI, read-only) over
-   the diff for logic and security bugs before rollout. A second model catches what the
-   author's model misses — on a real production codebase this pass caught **191 bugs**
-   before they reached prod.
+6. **Independent review** — run an **independent omp sub-agent** (read-only) over the
+   diff for logic and security bugs before rollout, on the `@reviewer` model role when
+   configured (`modelRoles.reviewer`), falling back to `@slow`. A second model catches
+   what the author's model misses — on a real production codebase this pass caught
+   **191 bugs** before they reached prod.
 7. **Dev-tests** — open an **MR with the commits into the `dev` branch**; run the full
    suite there. Red → fix in the worktree, don't merge.
 8. **Prod-tests** — E2E/smoke against the **real prod contour**, not only mocks or dev.
