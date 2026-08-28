@@ -6,7 +6,7 @@ Run the **grilling** skill on the topic: `$ARGUMENTS`.
 
 - `$ARGUMENTS` = the plan, decision, or idea to stress-test. **Empty** → ask what to grill.
 - The skill holds the discipline: design tree, rounds, frontier — the agent finds facts
-  itself (sub-agents), the decisions are the user's. Done when the frontier is empty and
+  itself (read-only scout sub-agents), the decisions are the user's. Done when the frontier is empty and
   the user confirms shared understanding.
 - This is the **plain** grill — an optical entry, not an alternative output. It writes
   NOTHING durable: no `CONTEXT.md` terms, no `docs/decisions/`, no plan contract. The

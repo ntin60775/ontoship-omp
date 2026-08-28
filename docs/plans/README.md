@@ -27,3 +27,4 @@ each declaring the tickets that block it.
 - [plan-file-first.md](plan-file-first.md) — plan file by default; folder + tickets only after `/to-tickets`
 - [command-inventory.md](command-inventory.md) — генерируемый реестр команд/навыков (`gitmark inventory` + I7), исключение эфемеры из индекса
 - [grill-command-pair.md](grill-command-pair.md) — пара grilling-команд: `/grill` (обычный, оптический вход) + `/grilling` (с доками); зависит от command-inventory
+- [grilling-omp-native.md](grilling-omp-native.md) — omp-нативный язык в примитиве `grilling`: поиск фактов — read-only `scout`

@@ -27,5 +27,6 @@ Three entry points drive it:
   report, grills through whichever deepening opportunity the user picks.
 
 `grilling` is the engine; `mp-grill-with-docs` (grilling + domain-modeling) and
-`mp-improve-codebase-architecture` are the user-facing wrappers. Invoke it when the user
-wants to stress-test their thinking or says "grill me".
+`mp-improve-codebase-architecture` are the user-facing wrappers. Facts the interview
+needs are looked up by read-only **scout** sub-agents (omp); the decisions stay the
+user's. Invoke it when the user wants to stress-test their thinking or says "grill me".

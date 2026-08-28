@@ -153,8 +153,8 @@ when the `.omp/` package is copied into another project).
   what to grill.
 - **Behavior:** the skill holds the discipline — map the design tree, ask the whole
   frontier in one round (numbered, each with a recommended answer), recompute the
-  frontier after each round. The agent finds facts itself (sub-agents); the decisions
-  are the user's. Done when the frontier is empty; do not act until the user confirms.
+  frontier after each round. The agent finds facts itself (read-only scout sub-agents);
+  the decisions are the user's. Done when the frontier is empty; do not act until the user confirms.
 - **Drives:** `mp-grill-with-docs` skill (grilling + domain-modeling).
 
 ## `/architecture` — deepen the architecture
