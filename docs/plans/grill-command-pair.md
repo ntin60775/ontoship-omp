@@ -2,11 +2,11 @@
 node_type: plan
 title: Пара grilling-команд — /grill (обычный) + /grilling (с доками)
 service: _platform
-status: active
+status: archived
 updated: 2026-08-28
 links:
   depends_on: [../decisions/ticket-driven-ship.md, command-inventory.md, ../ontology.md]
-  documents: [../../.omp/commands/grilling.md, ../../.omp/skills/grilling/SKILL.md, ../../.omp/skills/mp-grill-with-docs/SKILL.md]
+  documents: [../../.omp/commands/grill.md, ../../.omp/commands/grilling.md, ../../.omp/skills/grilling/SKILL.md, ../../.omp/skills/mp-grill-with-docs/SKILL.md]
   relates_to: [../reference/commands.md, ../services/grilling/README.md]
 ---
 
