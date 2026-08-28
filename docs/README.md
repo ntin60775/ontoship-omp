@@ -3,7 +3,7 @@ node_type: index
 title: OntoShip knowledge base
 service: _platform
 status: active
-updated: 2026-08-27
+updated: 2026-08-28
 links:
   part_of: [../AGENTS.md]
 ---
@@ -31,6 +31,7 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 - [contract-driven-ship.md](plans/contract-driven-ship.md) — контракт-спек: входные навыки → ручной /ship (superseded by the ticket-driven model)
 - [plan-file-first.md](plans/plan-file-first.md) — план-файл по умолчанию; папка + тикеты только после `/to-tickets`
 - [command-inventory.md](plans/command-inventory.md) — генерируемый реестр команд/навыков; эфемера вне индекса
+- [grill-command-pair.md](plans/grill-command-pair.md) — пара grilling-команд: `/grill` (обычный) + `/grilling` (с доками)
 
 ## Services
 

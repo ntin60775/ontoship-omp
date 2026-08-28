@@ -3,7 +3,7 @@ node_type: index
 title: Plans — plan contracts + tickets
 service: _platform
 status: active
-updated: 2026-08-27
+updated: 2026-08-28
 ---
 
 # Plans
@@ -26,3 +26,4 @@ each declaring the tickets that block it.
 - [contract-driven-ship.md](contract-driven-ship.md) — contract-spec: entry skills → hand `/ship` (superseded by the ticket-driven model)
 - [plan-file-first.md](plan-file-first.md) — plan file by default; folder + tickets only after `/to-tickets`
 - [command-inventory.md](command-inventory.md) — генерируемый реестр команд/навыков (`gitmark inventory` + I7), исключение эфемеры из индекса
+- [grill-command-pair.md](grill-command-pair.md) — пара grilling-команд: `/grill` (обычный, оптический вход) + `/grilling` (с доками); зависит от command-inventory

@@ -85,3 +85,16 @@ _Avoid_: задача, story, подзадача
 The project's ubiquitous language — the `CONTEXT.md` glossary plus load-bearing choices
 in `docs/decisions/`. Kept current during design by the `domain-modeling` skill.
 _Avoid_: модель данных, схема БД
+
+**Грилл (grill)**:
+The plain interview over a design tree — rounds and a frontier, no durable output.
+The lightweight entry: think out loud, decide nothing is worth recording yet. When the
+conclusions do deserve the KB, the operator re-runs the documented variant on the same
+thread.
+_Avoid_: допрос, собеседование
+
+**Грилл с доками (grill with docs)**:
+The same interview with the domain model active: terms crystallise into the glossary,
+load-bearing choices into decisions, and the confirmed outcome becomes a **План**. The
+only grilling that leaves durable artifacts.
+_Avoid_: grilling-полный, grill-me
