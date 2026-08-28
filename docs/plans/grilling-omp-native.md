@@ -2,7 +2,7 @@
 node_type: plan
 title: omp-нативный язык в примитиве grilling — read-only scout для поиска фактов
 service: _platform
-status: active
+status: archived
 updated: 2026-08-28
 links:
   depends_on: [../decisions/omp-only-package.md, ../decisions/ticket-driven-ship.md]
