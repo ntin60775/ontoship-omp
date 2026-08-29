@@ -68,7 +68,7 @@ Write or adjust **unit + E2E** tests for the ticket. The test is **part of the
 feature, not an afterthought** — it is the executable form of the "done" criterion.
 
 ### 7. Independent review (gate)
-Run an **independent omp sub-agent** (read-only) over the diff for logic and
+Run the bundled **`reviewer`** omp sub-agent (read-only) over the diff for logic and
 security bugs before any rollout, on the `@reviewer` model role when configured
 (`modelRoles.reviewer`), falling back to `@slow`. A second model catches what the
 author's model misses — on a real production codebase this pass caught **191 bugs**
