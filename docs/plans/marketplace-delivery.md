@@ -2,14 +2,20 @@
 node_type: plan
 title: Поставка OntoShip через omp-маркетплейс (каталог-репо + git-subdir)
 service: _platform
-status: draft
-updated: 2026-08-29
+status: deprecated
+updated: 2026-08-30
 links:
   depends_on: [../decisions/omp-only-package.md, ../ops/deploy-ontoship.md]
   documents: [../../.omp/skills/kb-search/SKILL.md, ../../.omp/commands, ../../.omp/rules]
 ---
 
 # Контракт: поставка обновлений через omp-маркетплейс
+
+> **Перенесён 2026-08-30:** разработка продолжается в
+> [`ntin60775/sot-omp-marketplace`](https://github.com/ntin60775/sot-omp-marketplace)
+> (`docs/plans/marketplace-delivery.md`): репо-каталог стал домом плагина
+> (`plugins/ontoship/`, `source: "./plugins/ontoship"`), этот репо — первый
+> клиент маркетплейса. Ниже — историческая черновик-версия контракта.
 
 ## Goal
 
