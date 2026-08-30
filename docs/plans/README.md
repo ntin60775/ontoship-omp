@@ -3,7 +3,7 @@ node_type: index
 title: Plans — plan contracts + tickets
 service: _platform
 status: active
-updated: 2026-08-28
+updated: 2026-08-29
 ---
 
 # Plans
@@ -28,3 +28,4 @@ each declaring the tickets that block it.
 - [command-inventory.md](command-inventory.md) — генерируемый реестр команд/навыков (`gitmark inventory` + I7), исключение эфемеры из индекса
 - [grill-command-pair.md](grill-command-pair.md) — пара grilling-команд: `/grill` (обычный, оптический вход) + `/grilling` (с доками); зависит от command-inventory
 - [grilling-omp-native.md](grilling-omp-native.md) — omp-нативный язык в примитиве `grilling`: поиск фактов — read-only `scout`
+- [marketplace-delivery.md](marketplace-delivery.md) — поставка обновлений OntoShip через личный omp-маркетплейс (каталог-репо + git-subdir, skill:// для CLI)
