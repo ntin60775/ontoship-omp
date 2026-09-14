@@ -34,8 +34,8 @@ each declaring the tickets that block it.
    (оба тикета влиты: `436d88a`, `5ca10ab`, `cc2ce88`).
 4. [deploy-check-guard-pycache.md](deploy-check-guard-pycache.md) — багфикс стража
    (`__pycache__` давал ложный FAIL) — **вне очереди**, идёт сразу после 3.
-5. [kb-docs-vs-plugin-delivery.md](kb-docs-vs-plugin-delivery.md) — после 1, 2, 3 (правит
-   runbook и спецификацию движка поверх устоявшегося поведения).
+5. [kb-docs-vs-plugin-delivery.md](kb-docs-vs-plugin-delivery.md) — **archived**
+   (влит в `main`, `9667e52`).
 6. [consumer-bootstrap/](consumer-bootstrap/README.md) — после 5 и 1 (приёмка «с нуля»
    заканчивается зелёным `deploy-check`).
 

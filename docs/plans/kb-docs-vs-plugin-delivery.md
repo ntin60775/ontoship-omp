@@ -2,7 +2,7 @@
 node_type: plan
 title: Доки пакета против ADR доставки плагинами
 service: _platform
-status: draft
+status: archived
 updated: 2026-09-14
 links:
   depends_on: [deploy-check-marketplace-paths/README.md, payload-refs-undelivered-docs.md, registry-and-version-in-consumer/README.md]
