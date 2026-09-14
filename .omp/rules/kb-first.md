@@ -9,7 +9,7 @@ This repo ships a searchable knowledge base (`docs/` + READMEs). Before answerin
 question about the project, its services, or its code — **search the KB first**:
 
 ```bash
-python3 .omp/skills/kb-search/gitmark.py search "<topic>" -k 8
+python3 skill://kb-search/gitmark.py search "<topic>" -k 8
 ```
 
 - `file:line · heading · snippet` results; open the 1–2 most relevant files.
