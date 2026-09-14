@@ -2,7 +2,7 @@
 node_type: ticket
 title: Сценарий «с нуля» в runbook и его прогон
 service: _platform
-status: draft
+status: archived
 updated: 2026-09-14
 links:
   part_of: [README.md]

@@ -2,7 +2,7 @@
 node_type: plan
 title: Bootstrap потребителя — entry point и установка «с нуля»
 service: _platform
-status: draft
+status: archived
 updated: 2026-09-14
 links:
   depends_on: [../deploy-check-marketplace-paths/README.md, ../kb-docs-vs-plugin-delivery.md]
@@ -97,6 +97,6 @@ links:
 Порядок — по зависимостям; `/ship` — строго по одному, последовательно.
 
 1. [01-init-command.md](01-init-command.md) — команда инициализации и шаблон блока —
-   draft, без блокировщиков.
+   **archived** (влит в `main`, `d476dd4`).
 2. [02-from-scratch-runbook.md](02-from-scratch-runbook.md) — сценарий «с нуля» в runbook и
-   его прогон — draft, blocked by 01.
+   его прогон — **archived** (влит в `main`, `b65bd2b`).

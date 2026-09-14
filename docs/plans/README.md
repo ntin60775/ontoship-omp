@@ -36,8 +36,8 @@ each declaring the tickets that block it.
    (`__pycache__` давал ложный FAIL) — **вне очереди**, идёт сразу после 3.
 5. [kb-docs-vs-plugin-delivery.md](kb-docs-vs-plugin-delivery.md) — **archived**
    (влит в `main`, `9667e52`).
-6. [consumer-bootstrap/](consumer-bootstrap/README.md) — после 5 и 1 (приёмка «с нуля»
-   заканчивается зелёным `deploy-check`).
+6. [consumer-bootstrap/](consumer-bootstrap/README.md) — **archived** (оба тикета влиты:
+   `d476dd4`, `b65bd2b`).
 
 - [deploy-check-marketplace-paths/](deploy-check-marketplace-paths/README.md) — пути движка при плагинной установке: самоотносительный корень в deploy-check.sh + `skill://` в payload, проверка-страж (папка, 3 тикета)
 - [payload-refs-undelivered-docs.md](payload-refs-undelivered-docs.md) — payload не ссылается на KB-доки, которых плагин не везёт: схема приёмки и модель онтологии — файлами в payload
