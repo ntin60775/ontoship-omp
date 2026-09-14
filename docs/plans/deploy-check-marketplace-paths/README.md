@@ -2,7 +2,7 @@
 node_type: plan
 title: Пути движка в пакете — маркетплейс-установка (deploy-check.sh + payload)
 service: _platform
-status: draft
+status: active
 updated: 2026-09-14
 links:
   documents: [../../../.omp/scripts/deploy-check.sh]
@@ -144,7 +144,7 @@ links:
 Порядок — по зависимостям; `/ship` — строго по одному, последовательно.
 
 1. [01-payload-engine-refs.md](01-payload-engine-refs.md) — ссылки на движок в payload
-   на `skill://` — draft, без блокировщиков.
+   на `skill://` — **archived** (влит в `main`, `b571dd6`).
 2. [02-deploy-check-rework.md](02-deploy-check-rework.md) — самоотносительный корень,
    проверка-страж, смоук-поиск — draft, blocked by 01.
 3. [03-runbook-and-kb-sync.md](03-runbook-and-kb-sync.md) — runbook развёртывания и

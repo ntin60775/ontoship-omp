@@ -2,7 +2,7 @@
 node_type: ticket
 title: Ссылки на движок в payload — на skill://
 service: _platform
-status: draft
+status: archived
 updated: 2026-09-14
 links:
   part_of: [README.md]
