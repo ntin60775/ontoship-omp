@@ -32,7 +32,7 @@ python3 skill://kb-search/gitmark.py stat                 # files/chunks/links/i
 python3 skill://kb-search/gitmark.py lint [paths…]        # ontology check (frontmatter/links/README/broken links/registry I7)
 python3 skill://kb-search/gitmark.py inventory            # regenerate the command/skill registry tables (docs/reference/commands.md)
 python3 skill://kb-search/gitmark.py inventory --check    # exit 1 on registry desync (same as lint I7)
-python3 skill://kb-search/gitmark.py version
+python3 skill://kb-search/gitmark.py version      # версия пакета из его манифеста
 ```
 
 > The URI must be a **command argument**: `skill://` is resolved by the agent's shell, and

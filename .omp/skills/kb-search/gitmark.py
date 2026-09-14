@@ -54,6 +54,23 @@ def repo_root(start: Path) -> Path:
     return p
 
 
+# Корень пакета — от расположения самого движка (<пакет>/skills/kb-search/gitmark.py).
+# Работает и в плоской установке (<проект>/.omp/), и в плагинной: каталог плагина в
+# project- или user-scope кэше, путь к кэшу не хардкодится и манифесты не читаются.
+PKG_ROOT = Path(__file__).resolve().parents[2]
+
+
+def pkg_version() -> str:
+    """Версия пакета: из манифеста рядом с движком (<пакет>/package.json), иначе константа.
+    Манифест — информационный: версию для upgrade задаёт запись каталога маркетплейса."""
+    try:
+        data = json.loads((PKG_ROOT / "package.json").read_text("utf-8"))
+    except (OSError, ValueError):
+        return VERSION
+    v = data.get("version")
+    return v.strip() if isinstance(v, str) and v.strip() else VERSION
+
+
 def parse_gitignore(root: Path):
     """Рукописное подмножество .gitignore: имена папок с концевым '/', точные имена и
     '*'-шаблоны без '/'. Без негативов и '**' — подмножество по дизайну.
@@ -223,7 +240,7 @@ def cmd_index(root: Path, force: bool = False) -> dict:
                 seen.add((rel, dst))
                 con.execute("INSERT INTO links VALUES(?,?)", (rel, dst))
     con.execute("INSERT OR REPLACE INTO meta VALUES('trigram', ?)", ("1" if has_tri else "0",))
-    con.execute("INSERT OR REPLACE INTO meta VALUES('version', ?)", (VERSION,))
+    con.execute("INSERT OR REPLACE INTO meta VALUES('version', ?)", (pkg_version(),))
     con.commit()
     n_links = con.execute("SELECT count(*) FROM links").fetchone()[0]
     con.close()
@@ -485,10 +502,6 @@ def cmd_lint(root: Path, paths: list | None = None) -> dict:
 COMMANDS_DIR = ".omp/commands"
 SKILLS_DIR = ".omp/skills"
 REGISTRY_REL = "docs/reference/commands.md"
-# Корень пакета — от расположения самого движка (<пакет>/skills/kb-search/gitmark.py).
-# Работает и в плоской установке (<проект>/.omp/), и в плагинной: каталог плагина в
-# project- или user-scope кэше, путь к кэшу не хардкодится и манифесты не читаются.
-PKG_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _rel(p: Path, root: Path) -> str:
@@ -828,7 +841,7 @@ def main(argv=None):
             what = ", ".join(r["changed"]) if r["changed"] else "без изменений"
             print(f"✓ inventory: {r['commands']} команд · {r['skills']} навыков → {REGISTRY_REL} ({what})")
     elif a.cmd == "version":
-        print(f"gitmark {VERSION}")
+        print(f"gitmark {pkg_version()}")
 
 
 # HTML-шаблон map (дерево + рендер + радиальный граф). __DATA__/__ROOTNAME__ инжектятся.
