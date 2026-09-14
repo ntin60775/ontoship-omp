@@ -33,7 +33,7 @@ each declaring the tickets that block it.
 3. [registry-and-version-in-consumer/](registry-and-version-in-consumer/README.md) — **archived**
    (оба тикета влиты: `436d88a`, `5ca10ab`, `cc2ce88`).
 4. [deploy-check-guard-pycache.md](deploy-check-guard-pycache.md) — багфикс стража
-   (`__pycache__` давал ложный FAIL) — **вне очереди**, идёт сразу после 3.
+   (`__pycache__` давал ложный FAIL) — **archived** (влит в `main`, `a6237c7`).
 5. [kb-docs-vs-plugin-delivery.md](kb-docs-vs-plugin-delivery.md) — **archived**
    (влит в `main`, `9667e52`).
 6. [consumer-bootstrap/](consumer-bootstrap/README.md) — **archived** (оба тикета влиты:
