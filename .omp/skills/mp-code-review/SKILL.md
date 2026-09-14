@@ -63,7 +63,8 @@ OntoShip keeps the spec in the KB, not in an external issue tracker. Look in thi
 
 Anything in the repo that documents how code should be written:
 
-- `.omp/rules/*.md` and the root `AGENTS.md` (the package's own rules ship with the repo);
+- the package's rules — they are `alwaysApply`, so their text is already in your context —
+  and the project's root `AGENTS.md`;
 - `CODING_STANDARDS.md` / `CONTRIBUTING.md` if present;
 - `CONTEXT.md` — the ubiquitous language: naming that drifts from a defined term is a
   standards finding;

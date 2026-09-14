@@ -8,8 +8,9 @@ Run the **mp-code-review** skill on the diff since: `$ARGUMENTS`.
 
 - `$ARGUMENTS` = the fixed point (`main`, a SHA, a tag, `HEAD~5`, …). **Empty** → ask for it.
 - The skill holds the discipline: pin the fixed point and confirm the diff is non-empty,
-  find the spec in the KB (`docs/plans/`), collect the standards sources
-  (`.omp/rules/`, `AGENTS.md`, `CONTEXT.md`, `docs/decisions/`), then run **both axes as
+  find the spec in the KB (`docs/plans/`), collect the standards sources (the package's
+  rules — `alwaysApply`, already in context — plus `AGENTS.md`, `CONTEXT.md`,
+  `docs/decisions/`), then run **both axes as
   parallel sub-agents** and report them side by side — never merged, never reranked
   across axes.
 - Output: a report in the chat plus `.scratch/code-review-<timestamp>.md` (ephemeral, not

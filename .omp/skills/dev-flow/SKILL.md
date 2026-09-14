@@ -65,7 +65,7 @@ operator's hand launch *is* the confirmation.
 
 - `stop-before-commit` — after review (step 6), stop with the uncommitted diff in the
   worktree; commit and everything after wait for the operator's "continue". Default for
-  1C projects (see the `ship-1c` rule).
+  1C projects.
 - `stop-after-mr` — after opening the MR (step 7), stop for the operator's review.
 - `no-deploy` — skip the deploy in step 9.
 
