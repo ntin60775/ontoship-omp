@@ -39,8 +39,8 @@ auto-detection (see below); it precedes the subcommand. Defined in `main()`
 | `serve [-p PORT]` | Local `http.server` over `docs/` (falls back to repo root) to view the map. Default port 8799. |
 | `stat` | Index statistics: files, folders/areas, chunks, links, bytes, trigram on/off. |
 | `lint [paths…] [--strict]` | Check ontology invariants I1–I7 (frontmatter/types/vocab/links/README/orphans/registry). `--strict` exits 1 on any ERR. |
-| `inventory [--check]` | Regenerate the two generated summary tables (commands + skills) between the `<!-- BEGIN/END inventory:* -->` markers in `docs/reference/commands.md`, from the frontmatter of `.omp/commands/*.md` and `.omp/skills/*/SKILL.md`. Idempotent. `--check` reports any desync and exits 1 (the same check `lint` reports as I7). |
-| `version` | Print `gitmark <VERSION>` (currently `0.1.0`, gitmark.py:33). |
+| `inventory [--check]` | Regenerate the two generated summary tables (commands + skills) between the `<!-- BEGIN/END inventory:* -->` markers in `docs/reference/commands.md`, from the frontmatter of the commands and skills of **both** the project (`<проект>/.omp/commands|skills`) and the package that owns the engine (`<пакет>/commands|skills`) — union, project wins on a name collision. Idempotent. `--check` reports any desync and exits 1 (the same check `lint` reports as I7). |
+| `version` | Print `gitmark <version>`: читается из манифеста пакета (`<пакет>/package.json` рядом с движком), фолбэк — константа `VERSION`. |
 
 Note: `index` accepts `--force` but the flag is currently inert — each `index` run already
 deletes and rebuilds the tables unconditionally (gitmark.py:190-193).
@@ -87,7 +87,7 @@ require it to exist and tell you to run `gitmark index` if it's missing.
    basename match. Resolved `(src, dst)` pairs (deduped, excluding self-links) go into the
    `links` table. This populates the doc→doc edges the graph and the linter's orphan check
    use.
-6. `meta` records whether trigram is available and the engine version.
+6. `meta` records whether trigram is available and the package version (from the manifest).
 
 **Trigram availability** is probed at runtime by trying to create an fts5 table with
 `tokenize='trigram'` (`_has_trigram`, gitmark.py:162-168). If the SQLite build lacks the
@@ -107,7 +107,8 @@ Created in `cmd_index()`:
 - `files(path TEXT PRIMARY KEY, title TEXT, area TEXT, size INT, chunks INT)` — one row per
   file (size is UTF-8 byte length).
 - `links(src TEXT, dst TEXT)` — resolved doc→doc edges.
-- `meta(k TEXT PRIMARY KEY, v TEXT)` — key/value: `trigram` (`"1"`/`"0"`) and `version`.
+- `meta(k TEXT PRIMARY KEY, v TEXT)` — key/value: `trigram` (`"1"`/`"0"`) and `version`
+  (package version from the manifest).
 
 ## How search ranks
 
