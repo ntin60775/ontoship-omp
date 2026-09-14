@@ -19,7 +19,23 @@ on top of it.
 
 The package is platform-native for **omp**: omp's native provider picks up `.omp/skills/`
 (skills), `.omp/commands/` (slash commands), and `.omp/rules/` (project rules) from the
-project root automatically. No marketplace, no manifest, no installation step.
+project root automatically.
+
+**Delivery is two-channel** — the ADR lives in the catalog repo
+(`sot-omp-marketplace/docs/decisions/plugin-delivery.md`) and is not duplicated here:
+
+- **plugin** (standard) — the catalog `sot-omp-marketplace` publishes plugin `ontoship`
+  from this repo (`git-subdir`, `path: ".omp"`, pinned `ref`); the installer puts it in
+  `<project>/.omp/plugins/node_modules/ontoship`, a symlink into the versioned cache
+  `~/.omp/plugins/cache/plugins/…`. Commands resolve with the plugin prefix
+  (`/ontoship:kb`, `/ontoship:ship`, …), rules are always-on.
+- **local copy** (development, air-gapped) — `.omp/` plus `AGENTS.md` copied into the repo;
+  commands resolve by their short names (`/kb`, `/ship`, …).
+
+The plugin delivers **only** `.omp/`: `AGENTS.md` and `docs/` belong to the project and an
+upgrade never touches them. Installing the plugin over an existing flat copy means removing
+that copy — otherwise the native provider (priority 100) shadows the plugin (90) and the
+two drift apart.
 
 > **destructive-guard** (the PreToolUse safety hook) is **not** part of this package —
 > it lives in its own repo:
@@ -78,7 +94,7 @@ ontoship-omp/
 │     ├─ kb-source-of-truth.md  ← md+git truth; derived never committed
 │     ├─ kb-first.md            ← search the KB before answering/writing
 │     ├─ ship-gate.md           ← code only via dev-flow; /ship human-only
-│     └─ ship-1c.md             ← opt-in: 1C projects stop before commit
+│     └─ acceptance-rounds.md   ← acceptance rounds after the main cycle (round = ticket)
 └─ docs/                      ← the KB itself (dogfooded)
    ├─ ontology.md             ← the knowledge model (types, links, invariants)
    ├─ services/               ← per-component READMEs (gitmark-cli, dev-flow, …)
@@ -137,7 +153,8 @@ A user types a slash command; the command delegates to a skill; the skill calls 
   `kb-source-of-truth` (md+git is the source; derived artifacts are regenerated, never
   committed), `kb-first` (search the KB before answering, never duplicate a doc),
   `ship-gate` (code changes only via dev-flow; `/ship` is launched only by hand), and
-  `ship-1c` (opt-in for 1C projects: stop before commit for human diff review).
+  `acceptance-rounds` (remarks after the main cycle: one round = one ticket; archived
+  tickets are never reopened).
 
 ## See also
 

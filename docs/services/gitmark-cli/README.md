@@ -22,8 +22,10 @@ It enforces and operates over the OntoShip ontology (object types, properties, t
 links). For the model itself — `node_type`, frontmatter, link types, invariants I1–I6 —
 see [ontology.md](../../ontology.md); this doc describes the engine, not the model.
 
-Script: `.omp/skills/kb-search/gitmark.py`. The usage skill is
-`.omp/skills/kb-search/SKILL.md`.
+Script: `.omp/skills/kb-search/gitmark.py` — this repo's path (local copy). In a plugin
+install the engine sits in the plugin:
+`<project>/.omp/plugins/node_modules/ontoship/skills/kb-search/gitmark.py`. The usage skill
+is `.omp/skills/kb-search/SKILL.md` (same channel logic).
 
 ## Subcommands
 
@@ -185,3 +187,10 @@ $G inventory                   # regenerate the summary tables in docs/reference
 $G inventory --check           # exit 1 on any registry desync (I7)
 $G serve -p 8799               # serve the map at http://127.0.0.1:8799/docs-map.html
 ```
+
+Paths above are this repo's (local copy); in a plugin install the engine lives at
+`.omp/plugins/node_modules/ontoship/skills/kb-search/gitmark.py`.
+
+> A shell variable is fine for a **filesystem** path. It is **not** fine for a `skill://`
+> URI: those are resolved by the agent's shell only as a command argument, so
+> `G="python3 skill://kb-search/gitmark.py"` fails with `Errno 2`.

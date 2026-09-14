@@ -58,8 +58,7 @@ cp <path-to-ontoship-omp>/AGENTS.md <your-repo>/
 `.omp/scripts/` and `AGENTS.md`; omp picks up the slash commands (`/kb`, `/kb-map`, `/doc`,
 `/onto-doc`, `/grill`, `/grilling`, `/architecture`, `/code-review`, `/to-tickets`,
 `/handoff`, `/prototype`, `/ship`) and the always-on rules (`kb-first`,
-`kb-source-of-truth`, `ship-gate`); the `ship-1c` rule ships opt-in (enable
-it only in a 1C project).
+`kb-source-of-truth`, `ship-gate`, `acceptance-rounds`).
 
 > **Optional:** the dev-flow review gate prefers a dedicated `reviewer` model role —
 > add `modelRoles.reviewer: <provider/model>` to `~/.omp/agent/config.yml` (or
