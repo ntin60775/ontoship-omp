@@ -2,7 +2,7 @@
 node_type: plan
 title: Инвариант I8 — модель онтологии в проекте и в пакете не расходится
 service: _platform
-status: draft
+status: archived
 updated: 2026-09-14
 links:
   documents: [../../.omp/skills/kb-search/gitmark.py, ../ontology.md]

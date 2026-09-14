@@ -38,6 +38,8 @@ each declaring the tickets that block it.
    (влит в `main`, `9667e52`).
 6. [consumer-bootstrap/](consumer-bootstrap/README.md) — **archived** (оба тикета влиты:
    `d476dd4`, `b65bd2b`).
+7. [ontology-twin-invariant-i8.md](ontology-twin-invariant-i8.md) — **archived**
+   (инвариант I8, влит в `main`, `556529b`; в поставку 0.3.0 не входит).
 
 - [deploy-check-marketplace-paths/](deploy-check-marketplace-paths/README.md) — пути движка при плагинной установке: самоотносительный корень в deploy-check.sh + `skill://` в payload, проверка-страж (папка, 3 тикета)
 - [payload-refs-undelivered-docs.md](payload-refs-undelivered-docs.md) — payload не ссылается на KB-доки, которых плагин не везёт: схема приёмки и модель онтологии — файлами в payload
