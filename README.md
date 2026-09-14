@@ -43,7 +43,7 @@ right file instead of grepping blind.
 | `serve` | tiny local HTTP server to view the map |
 | `stat` | index/KB stats |
 | `lint` | *(optional)* ontology checks: broken links, frontmatter, folder READMEs |
-| `version` | — |
+| `version` | package version, read from `.omp/package.json` next to the engine (falls back to a built-in constant) |
 
 OntoShip ships the **GitMark** package (KB + dev-flow) as a project-local **omp** package
 (`.omp/` with skills, commands, and rules).
@@ -180,16 +180,19 @@ plugin (90), and the two drift apart.
 
 Then, in either channel:
 
-1. **Bootstrap the KB** — `AGENTS.md` links to `docs/`, which a fresh project doesn't
+1. **Initialize the entry point** — `/ontoship:init` (with a local copy: `/init`) creates or
+   updates the managed block in `AGENTS.md` and adds the `.gitignore` lines the rules
+   require. It is idempotent and never writes outside its block.
+2. **Bootstrap the KB** — `AGENTS.md` links to `docs/`, which a fresh project doesn't
    have yet:
-   - **new project** — run `/onto-doc`: it surveys the codebase and builds the whole KB
-     (master index + per-service READMEs + reference + decisions), then lints and
+   - **new project** — run `/ontoship:onto-doc`: it surveys the codebase and builds the
+     whole KB (master index + per-service READMEs + reference + decisions), then lints and
      indexes it;
-   - **existing KB** — keep your `docs/` as-is and grow it with `/doc`.
-2. **Ignore derived and ephemeral artifacts** — add `.gitmark/`, `*-map.html`, and
+   - **existing KB** — keep your `docs/` as-is and grow it with `/ontoship:doc`.
+3. **Ignore derived and ephemeral artifacts** — add `.gitmark/`, `*-map.html`, and
    `.scratch/` to `.gitignore` (the first two are regenerated from md; `.scratch/` holds
    session-ephemeral handoff and review reports, never KB knowledge).
-3. **Verify the install** — the package ships the check script: in a plugin install
+4. **Verify the install** — the package ships the check script: in a plugin install
    `bash .omp/plugins/node_modules/ontoship/scripts/deploy-check.sh`, with a local copy
    `bash .omp/scripts/deploy-check.sh`. Exit `0` — all good, `2` — warnings only,
    `1` — broken (fix the reported `[FAIL]` items).

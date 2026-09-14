@@ -19,7 +19,10 @@ so the collection stays a typed ontology instead of decaying into a pile of file
 
 The semantic model it enforces lives in [`docs/ontology.md`](../../ontology.md): every
 `.md` document is a typed **object** (`node_type`) with **properties** (frontmatter) and
-**typed links** — the Palantir-Foundry idea applied to documentation over code. This skill
+**typed links** — the Palantir-Foundry idea applied to documentation over code. The same
+model ships with the package as `.omp/skills/kb-curate/ontology.md` (reachable as
+`skill://kb-curate/ontology.md`), so a project that has no `docs/` of its own still gets it —
+its own copy, when present, wins for the project vocabulary. This skill
 is the **operational checklist** that puts that model into practice. Principle: *md+git is
 the source of truth, with an ontology on top.*
 
@@ -75,7 +78,7 @@ These map to the kinetic layer ("Actions") of the ontology.
 ### REINDEX — always at the end
 
 ```bash
-python3 .omp/skills/kb-search/gitmark.py lint     # invariants I1–I6
+python3 .omp/skills/kb-search/gitmark.py lint     # invariants I1–I7
 python3 .omp/skills/kb-search/gitmark.py index    # rebuild search
 ```
 
@@ -94,4 +97,4 @@ The skill never invents values — it draws from fixed vocabularies defined in t
 - **`service`**: a controlled vocabulary defined per project.
 
 See [`docs/ontology.md`](../../ontology.md) for the full type/link/property tables and the
-`gitmark lint` invariants (I1–I6) — this README intentionally does not duplicate them.
+`gitmark lint` invariants (I1–I7) — this README intentionally does not duplicate them.

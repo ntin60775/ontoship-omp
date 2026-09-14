@@ -18,6 +18,13 @@ links:
 > document is an **object** with a **type** and **properties**, and markdown links are
 > **typed links**. The result is an ontology not of data, but of **knowledge over code**.
 
+> **Shipped copy.** The same model travels with the package as
+> `.omp/skills/kb-curate/ontology.md` (a consumer project may have no `docs/` of its own);
+> the `kb-curate` skill points at it via `skill://kb-curate/ontology.md`. This file is the
+> source: the body **from the `Why:` paragraph onward is byte-identical in both copies** —
+> when the model changes, edit here and mirror the same lines into the shipped copy
+> (only the header notes differ).
+
 Why: so the KB doesn't rot into a pile of files. Type + properties + links make it
 navigable, checkable (via the linter), and graphable (`gitmark map`).
 

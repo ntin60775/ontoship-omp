@@ -17,7 +17,7 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 ## Reference
 
 - [architecture.md](reference/architecture.md) — how OntoShip fits together (omp package → skills → commands → KB)
-- [commands.md](reference/commands.md) — slash commands: `/kb`, `/kb-map`, `/doc`, `/onto-doc`, `/grill`, `/grilling`, `/architecture`, `/code-review`, `/to-tickets`, `/handoff`, `/prototype`, `/ship`
+- [commands.md](reference/commands.md) — slash commands: `/init`, `/kb`, `/kb-map`, `/doc`, `/onto-doc`, `/grill`, `/grilling`, `/architecture`, `/code-review`, `/to-tickets`, `/handoff`, `/prototype`, `/ship`
 - [metrics.md](reference/metrics.md) — what OntoShip is measured by (experience-transfer metrics)
 - [ontology.md](ontology.md) — the knowledge model (node_type, properties, typed links, linter)
 
@@ -59,6 +59,6 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 # from the repo root
 python3 .omp/skills/kb-search/gitmark.py index            # build .gitmark/index.db
 python3 .omp/skills/kb-search/gitmark.py search "query"   # FTS5 + trigram search
-python3 .omp/skills/kb-search/gitmark.py lint             # check the ontology (I1–I6)
+python3 .omp/skills/kb-search/gitmark.py lint             # check the ontology (I1–I7)
 python3 .omp/skills/kb-search/gitmark.py map -o docs-map.html   # HTML overview + graph
 ```

@@ -91,6 +91,24 @@ container, then **poll the healthcheck** to measure real downtime. This ordering
 minimizes the window where the service is unavailable. Mark the ticket (or the file
 plan) `status: archived` once merged.
 
+## After the ship — acceptance rounds
+
+Merging closes the **main cycle**, not the work: the operator's remarks arrive in waves, and
+a wave may touch already-merged work. The always-on rule `acceptance-rounds` routes them
+(full schema: `skill://dev-flow/acceptance-rounds.md`, shipped with the package):
+
+- remarks on the **uncommitted diff of the current ticket** (the `stop-before-commit` stage) —
+  fixed in the same worktree and the same run, no new ticket;
+- remarks on **merged work of an active plan** — a new round ticket
+  `docs/plans/<slug>/NN-acceptance-round-K.md` in that plan, one `/ship` run per round; the
+  remarks are written into the ticket as numbered "was / should be" items **before** the run;
+- remarks **after the plan is archived** — a fresh bugfix contract (`mp-diagnose` →
+  plan or file plan), not a small patch on top of the archived ticket.
+
+Archived tickets are never reopened, and the plan stays `active` until acceptance converges.
+Round gates are the full gates: worktree → fixes → regression of the *affected* scenarios →
+incremental review of the delta → `stop-before-commit`.
+
 ## Git-flow
 
 ```

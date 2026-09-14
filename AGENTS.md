@@ -14,8 +14,8 @@ linter) plus the spec-driven dev-flow built on top of it.
 .omp/
   skills/
     kb-search/         the gitmark CLI engine (gitmark.py) + SKILL.md
-    kb-curate/         rules for maintaining the KB as a typed ontology
-    dev-flow/          the gated ship pipeline
+    kb-curate/         rules for maintaining the KB as a typed ontology (+ ontology.md, the shipped model)
+    dev-flow/          the gated ship pipeline (+ acceptance-rounds.md, the shipped acceptance schema)
     grilling/          the interview primitive (rounds + frontier)
     domain-modeling/   glossary + ADR discipline (model-invoked)
     mp-grill-with-docs/ grill + domain model → plan contract (docs/plans/<slug>.md)
@@ -26,8 +26,10 @@ linter) plus the spec-driven dev-flow built on top of it.
     mp-code-review/    two-axis review (Standards + Spec) → report in .scratch/
     mp-improve-codebase-architecture/  architectural scan + deepening report
                                      (driven by /architecture)
-  commands/            slash commands: /kb /kb-map /doc /onto-doc /grill /grilling /architecture /code-review /to-tickets /handoff /prototype /ship
+  commands/            slash commands: /init /kb /kb-map /doc /onto-doc /grill /grilling /architecture /code-review /to-tickets /handoff /prototype /ship
   rules/               project rules (kb-source-of-truth, kb-first, ship-gate, acceptance-rounds)
+  scripts/             deploy-check.sh — deployment check (resolves the package root itself)
+  package.json         the package manifest: name, version (`gitmark version` reads it)
 AGENTS.md              this entry point (read by omp)
 docs/                  the knowledge base itself (this is the KB)
 ```

@@ -17,20 +17,42 @@ lints, and renders the KB.
 _Avoid_: the search plugin, the tool
 
 **Пакет (package)**:
-The `.omp/` directory (skills + commands + rules) plus the `AGENTS.md` entry point,
-copied into a project to enable OntoShip. omp's native provider discovers it from the
-project root.
-_Avoid_: плагин, marketplace, plugin
+The `.omp/` directory — skills, commands, rules, `scripts/` and the `package.json` manifest.
+It is what gets delivered into a project; `AGENTS.md` and `docs/` are **not** part of it —
+they belong to the project.
+_Avoid_: плагин, репозиторий, дистрибутив
+
+**Канал доставки (delivery channel)**:
+How the package reaches a project — **plugin** of the `sot-omp-marketplace` catalog
+(standard: `<project>/.omp/plugins/node_modules/ontoship`, a tag-pinned source; commands
+resolve with the `/ontoship:` prefix) or a **local copy** of `.omp/` (development and
+air-gapped use; commands resolve by their short names). Installing the plugin over a local
+copy means removing the copy — the native provider shadows the plugin.
+_Avoid_: способ установки, метод доставки
+
+**Payload**:
+The contents of `.omp/` as shipped — every rule, command, skill, script and the manifest,
+as opposed to the project's own files and to the KB of the source repository.
+_Avoid_: плагин, пакет (когда речь именно о содержимом)
+
+**Управляемый блок (managed block)**:
+The section of a project's `AGENTS.md` between `<!-- BEGIN ontoship -->` and
+`<!-- END ontoship -->`, owned by `/init`. The command replaces only what is inside the
+markers and never writes outside them; project edits belong outside the block.
+_Avoid_: шаблон AGENTS.md, сгенерированный AGENTS.md
 
 **Скилл (skill)**:
-A `.omp/skills/<name>/SKILL.md` capability the agent invokes: `kb-search`, `kb-curate`,
-`dev-flow`.
+A `.omp/skills/<name>/SKILL.md` capability the agent invokes — twelve of them:
+`kb-search`, `kb-curate`, `dev-flow`, `grilling`, `domain-modeling`, `mp-grill-with-docs`,
+`mp-to-tickets`, `mp-diagnose`, `mp-prototype`, `mp-handoff`, `mp-code-review`,
+`mp-improve-codebase-architecture`.
 _Avoid_: плагин, под-команда
 
 **Команда (command)**:
-A `.omp/commands/<name>.md` slash-command (`/kb`, `/kb-map`, `/doc`, `/onto-doc`,
+A `.omp/commands/<name>.md` slash-command (`/init`, `/kb`, `/kb-map`, `/doc`, `/onto-doc`,
 `/grill`, `/grilling`, `/architecture`, `/code-review`, `/to-tickets`, `/handoff`,
-`/prototype`, `/ship`) — the user-facing verbs that drive skills and the CLI.
+`/prototype`, `/ship`) — the user-facing verbs that drive skills and the CLI. In a plugin
+install they resolve with the `/ontoship:` prefix.
 _Avoid_: слэш-команда Claude Code, plugin command
 
 **Точка входа (entry point)**:
@@ -39,7 +61,8 @@ _Avoid_: CLAUDE.md
 
 **Онтология (ontology)**:
 The knowledge model over the KB — `node_type`, frontmatter properties, typed links,
-invariants I1–I6 (see `docs/ontology.md`).
+invariants I1–I7 (see `docs/ontology.md`; the same model ships with the package as
+`.omp/skills/kb-curate/ontology.md`, so a project without its own copy still has it).
 _Avoid_: модель данных, схема
 
 **Куратор (curator)**:

@@ -11,6 +11,13 @@ links:
 
 # Decision: OntoShip is an omp-only package
 
+> **Delivery superseded (2026-09-11).** The decision below (omp-only, no Claude Code
+> specifics) stands, but the *installation* it describes is no longer the standard channel:
+> the package is published as a plugin of the `sot-omp-marketplace` catalog and installed
+> with `omp plugin install` (see `docs/reference/architecture.md` → «Delivery is two-channel»;
+> the ADR itself lives in the catalog repo). Copying `.omp/` + `AGENTS.md` by hand remains
+> the **local-copy channel** for development and air-gapped use.
+
 > ADR capturing the platform decision: the fork `ontoship-omp` is **fully adapted to the
 > omp agent** and excludes all other platforms (Claude Code and its marketplace format).
 > See also [architecture](../reference/architecture.md) and

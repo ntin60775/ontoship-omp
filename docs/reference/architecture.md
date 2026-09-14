@@ -66,8 +66,8 @@ ontoship-omp/
 ├─ .omp/                       ← the omp package
 │  ├─ skills/                  ← the capabilities
 │  │  ├─ kb-search/  SKILL.md + gitmark.py   ← the CLI engine (zero-dep, stdlib)
-│  │  ├─ kb-curate/  SKILL.md                ← curation / ontology rules
-│  │  ├─ dev-flow/   SKILL.md                ← the ship pipeline
+│  │  ├─ kb-curate/  SKILL.md + ontology.md  ← curation / ontology rules + the shipped model
+│  │  ├─ dev-flow/   SKILL.md + acceptance-rounds.md ← the ship pipeline + acceptance schema
 │  │  ├─ grilling/   SKILL.md                ← the interview primitive (rounds + frontier)
 │  │  ├─ domain-modeling/ SKILL.md           ← glossary + ADR discipline (model-invoked)
 │  │  ├─ mp-grill-with-docs/ SKILL.md        ← grill + domain model → plan contract (docs/plans/<slug>.md)
@@ -78,6 +78,7 @@ ontoship-omp/
 │  │  ├─ mp-code-review/ SKILL.md            ← two-axis review (Standards + Spec) → report in .scratch/
 │  │  └─ mp-improve-codebase-architecture/ SKILL.md + HTML-REPORT.md ← deepening scan + report
 │  ├─ commands/                ← slash commands (the user-facing verbs)
+│  │  ├─ init.md      (/init)     bootstrap the entry point (managed block + gitignore)
 │  │  ├─ kb.md        (/kb)       search the KB
 │  │  ├─ kb-map.md    (/kb-map)   build the HTML graph
 │  │  ├─ doc.md       (/doc)      compose/update ONE doc
@@ -90,11 +91,13 @@ ontoship-omp/
 │  │  ├─ handoff.md   (/handoff)    session bridge (.scratch/)
 │  │  ├─ prototype.md (/prototype)  throwaway prototype for a design question
 │  │  └─ ship.md      (/ship)       ship ONE ticket (or one file plan), strictly sequential
-│  └─ rules/                   ← project rules (alwaysApply)
-│     ├─ kb-source-of-truth.md  ← md+git truth; derived never committed
-│     ├─ kb-first.md            ← search the KB before answering/writing
-│     ├─ ship-gate.md           ← code only via dev-flow; /ship human-only
-│     └─ acceptance-rounds.md   ← acceptance rounds after the main cycle (round = ticket)
+│  ├─ rules/                   ← project rules (alwaysApply)
+│  │  ├─ kb-source-of-truth.md  ← md+git truth; derived never committed
+│  │  ├─ kb-first.md            ← search the KB before answering/writing
+│  │  ├─ ship-gate.md           ← code only via dev-flow; /ship human-only
+│  │  └─ acceptance-rounds.md   ← acceptance rounds after the main cycle (round = ticket)
+│  ├─ scripts/                 ← deploy-check.sh: resolves the package root from its own path
+│  └─ package.json             ← the manifest (`gitmark version` reads it; catalog pins the tag)
 └─ docs/                      ← the KB itself (dogfooded)
    ├─ ontology.md             ← the knowledge model (types, links, invariants)
    ├─ services/               ← per-component READMEs (gitmark-cli, dev-flow, …)
