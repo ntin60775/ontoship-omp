@@ -146,6 +146,6 @@ links:
 1. [01-payload-engine-refs.md](01-payload-engine-refs.md) — ссылки на движок в payload
    на `skill://` — **archived** (влит в `main`, `b571dd6`).
 2. [02-deploy-check-rework.md](02-deploy-check-rework.md) — самоотносительный корень,
-   проверка-страж, смоук-поиск — draft, blocked by 01.
+   проверка-страж, смоук-поиск — **archived** (влит в `main`, `1cae6d2`).
 3. [03-runbook-and-kb-sync.md](03-runbook-and-kb-sync.md) — runbook развёртывания и
    KB-синк — draft, blocked by 02.
