@@ -26,8 +26,11 @@ for p in "$pkg/skills/kb-search/gitmark.py" "$pkg/commands/kb.md" \
   [[ -e "$p" ]] || { echo "[FAIL] отсутствует: $p"; rc=1; }
 done
 
-# 2. Страж: payload не должен ссылаться на мёртвый плоский путь движка
-stale="$(grep -rl '\.omp/skills/kb-search/gitmark\.py' \
+# 2. Страж: payload не должен ссылаться на мёртвый плоский путь движка.
+#    Ищем только в текстовых файлах payload: байткод (__pycache__/*.pyc) хранит строки
+#    исходника и давал ложный FAIL в любой установке, где движок уже запускался.
+stale="$(grep -rl --include='*.md' --include='*.py' --include='*.sh' --exclude-dir='__pycache__' \
+         '\.omp/skills/kb-search/gitmark\.py' \
          "$pkg/rules" "$pkg/commands" "$pkg/skills" 2>/dev/null)"
 [[ -z "$stale" ]] || {
   echo "[FAIL] мёртвый путь движка в payload (нужен skill://kb-search/gitmark.py):"
