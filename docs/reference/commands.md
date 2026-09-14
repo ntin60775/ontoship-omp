@@ -13,8 +13,10 @@ links:
 # OntoShip slash commands
 
 Reference for the slash commands shipped by the **OntoShip** omp package. Each command is
-a thin `.omp/commands/*.md` definition that drives a skill or engine. Four families:
+a thin `.omp/commands/*.md` definition that drives a skill or engine. Five families:
 
+- **Setup** — `/init` — bootstrap the project entry point: the managed block in `AGENTS.md`,
+  the `.gitignore` lines the rules require, then hand over to `/onto-doc`.
 - **KB curation & search** — `/kb`, `/kb-map`, `/doc`, `/onto-doc` — drive the GitMark
   CLI (`.omp/skills/kb-search/gitmark.py`) and the `kb-curate` ontology rules.
 - **Design & knowledge** — `/grill` (plain grill — the same interview, no KB output),
@@ -27,8 +29,11 @@ a thin `.omp/commands/*.md` definition that drives a skill or engine. Four famil
 - **Dev-flow** — `/ship` — drives the gated `dev-flow` pipeline, **one ticket at a
   time**, strictly sequential.
 
-The GitMark CLI is `.omp/skills/kb-search/gitmark.py` (relative to the repo root; stable
-when the `.omp/` package is copied into another project).
+The GitMark CLI is `.omp/skills/kb-search/gitmark.py` in this repo (local copy); in a plugin
+install it sits inside the plugin —
+`.omp/plugins/node_modules/ontoship/skills/kb-search/gitmark.py`. The agent reaches it as
+`skill://kb-search/gitmark.py`, which resolves in both channels; a human shell needs the real
+path.
 
 ## Summary
 
@@ -41,6 +46,7 @@ when the `.omp/` package is copied into another project).
 | `/grill` | Grill the user relentlessly about a plan, decision, or idea — rounds over the design tree until shared understanding, WITHOUT writing anything to the KB (no CONTEXT.md, no decisions, no plan contract). Русские триггеры: погрилл, погриль меня, грилл. Argument = the topic to grill. | <topic> (empty → ask what to grill) | grilling skill |
 | `/grilling` | Grill the user relentlessly about a plan, decision, or idea — rounds over the design tree until shared understanding, building the domain model (CONTEXT.md + decisions) as it goes, ending in a plan contract file (docs/plans/<slug>.md). Argument = the topic to grill. | <topic> (empty → ask what to grill) | mp-grill-with-docs skill |
 | `/handoff` | Compact the current conversation into a handoff document under .scratch/ so another agent can continue the work. Argument = what the next session will be used for. | [what the next session will do] | mp-handoff skill |
+| `/init` | Initialize the OntoShip entry point in this project — create or update the managed block in AGENTS.md, add the .gitignore lines the rules require, then hand over to /onto-doc. Idempotent; touches nothing outside its own block. | (no arguments) | kb-curate skill (entry point) → /onto-doc |
 | `/kb-map` | Build the OntoShip KB graph (gitmark map) — collapsible tree + rendered markdown + force/radial link graph as a self-contained HTML — and point the user to it. | [output-path] (default docs-map.html) | GitMark CLI map / index |
 | `/kb` | Search the project knowledge base via GitMark (FTS5 bm25 + trigram/fuzzy). Argument = query; no argument shows stat. | <query> (empty → stat + usage) | GitMark CLI search / stat / index |
 | `/onto-doc` | Build the ENTIRE knowledge base for this repo — survey the codebase, then dispatch kb-curate curator agents per area to produce docs/ (per-service READMEs, reference specs, runbooks, decisions, entry point) following the OntoShip ontology, then lint + index + map. Use to bootstrap or rebuild a project's whole KB. | [scope] (empty → whole repo) | kb-curate skill via Task fan-out + GitMark CLI |
@@ -67,6 +73,21 @@ when the `.omp/` package is copied into another project).
 <!-- END inventory:skills -->
 
 ---
+
+## `/init` — bootstrap the project entry point
+
+- **Definition:** `.omp/commands/init.md`
+- **What it does:** creates or updates the **managed block** in `AGENTS.md` (between
+  `<!-- BEGIN ontoship -->` and `<!-- END ontoship -->`), adds the three `.gitignore` lines
+  the rules require (`.gitmark/`, `*-map.html`, `.scratch/`), then hands over to
+  `/onto-doc`, which builds the KB the block points at.
+- **Idempotency:** a second run changes nothing. The block is replaced only when its content
+  differs from the template — and then a warning is printed, because edits *inside* the
+  block are not preserved (project edits belong outside the markers). Unpaired markers stop
+  the command with an explicit error; the file is never rewritten wholesale, and there is no
+  `--force`.
+- **Args:** none.
+- **Drives:** `kb-curate` skill (entry point) → `/onto-doc`.
 
 ## `/kb` — search the knowledge base
 
