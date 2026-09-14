@@ -5,7 +5,7 @@ service: _platform
 status: draft
 updated: 2026-09-14
 links:
-  depends_on: [deploy-check-marketplace-paths/README.md, payload-refs-undelivered-docs.md, registry-and-version-in-consumer.md]
+  depends_on: [deploy-check-marketplace-paths/README.md, payload-refs-undelivered-docs.md, registry-and-version-in-consumer/README.md]
   documents: [../../README.md, ../../AGENTS.md]
   relates_to: [../reference/architecture.md, ../ops/deploy-ontoship.md]
 ---

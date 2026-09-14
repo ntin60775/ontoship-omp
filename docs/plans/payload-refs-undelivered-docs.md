@@ -32,10 +32,13 @@ links:
 ## Done
 
 - Правило `acceptance-rounds` больше не ссылается на отсутствующий
-  `docs/reference/acceptance-rounds.md`: полная схема раундов лежит файлом внутри
-  payload (`.omp/skills/dev-flow/…`) и адресуется как `skill://dev-flow/<файл>`; в самом
-  правиле остаются краткие инварианты. Инлайн всей схемы в правило отклонён: правило
-  always-on, его текст читается в каждой сессии.
+  `docs/reference/acceptance-rounds.md`: полная схема раундов переезжает в payload файлом
+  рядом с навыком `dev-flow` (`.omp/skills/dev-flow/acceptance-rounds.md`) и адресуется как
+  `skill://dev-flow/acceptance-rounds.md`; в самом правиле остаются краткие инварианты.
+  Источник порта — `erp-main/docs/reference/acceptance-rounds.md` (обкатан также в
+  `erp-demo`). **Payload-файл становится каноном**: проектные копии остаются, но правило
+  на них больше не опирается. Инлайн всей схемы в правило отклонён: правило always-on, его
+  текст читается в каждой сессии.
 - `kb-curate` перестаёт требовать `docs/ontology.md` как «Full model»: модель онтологии
   (словари `node_type`/`status`, обязательные поля frontmatter, папочная раскладка, типы
   связей, инварианты I1–I7) поставляется файлом рядом с навыком и читается через

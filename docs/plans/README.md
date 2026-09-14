@@ -30,18 +30,18 @@ each declaring the tickets that block it.
    у двух плагинных потребителей + страж; внутри 01 → 02 → 03.
 2. [payload-refs-undelivered-docs.md](payload-refs-undelivered-docs.md) — после 1 (общий
    `.omp/skills/kb-curate/SKILL.md`).
-3. [registry-and-version-in-consumer.md](registry-and-version-in-consumer.md) — после 1
+3. [registry-and-version-in-consumer/](registry-and-version-in-consumer/README.md) — после 1
    (общий `.omp/skills/kb-search/SKILL.md`); с 2 не связан, порядок 2↔3 обратим.
 4. [kb-docs-vs-plugin-delivery.md](kb-docs-vs-plugin-delivery.md) — после 1, 2, 3 (правит
    runbook и спецификацию движка поверх устоявшегося поведения).
-5. [consumer-bootstrap.md](consumer-bootstrap.md) — после 4 и 1 (приёмка «с нуля»
+5. [consumer-bootstrap/](consumer-bootstrap/README.md) — после 4 и 1 (приёмка «с нуля»
    заканчивается зелёным `deploy-check`).
 
 - [deploy-check-marketplace-paths/](deploy-check-marketplace-paths/README.md) — пути движка при плагинной установке: самоотносительный корень в deploy-check.sh + `skill://` в payload, проверка-страж (папка, 3 тикета)
 - [payload-refs-undelivered-docs.md](payload-refs-undelivered-docs.md) — payload не ссылается на KB-доки, которых плагин не везёт: схема приёмки и модель онтологии — файлами в payload
-- [registry-and-version-in-consumer.md](registry-and-version-in-consumer.md) — движок находит команды/навыки плагина (I7 и `inventory` перестают быть вакуумными), версия — из манифеста
+- [registry-and-version-in-consumer/](registry-and-version-in-consumer/README.md) — движок находит команды/навыки пакета (I7 и `inventory` перестают быть вакуумными), версия — из манифеста (папка, 2 тикета)
 - [kb-docs-vs-plugin-delivery.md](kb-docs-vs-plugin-delivery.md) — доки репо против ADR доставки: «no marketplace», висячий `ship-1c`, плоские примеры команд
-- [consumer-bootstrap.md](consumer-bootstrap.md) — установка «с нуля»: идемпотентная инициализация entry point и gitignore, зелёный deploy-check
+- [consumer-bootstrap/](consumer-bootstrap/README.md) — установка «с нуля»: идемпотентный управляемый блок в `AGENTS.md`, gitignore, зелёный deploy-check (папка, 2 тикета)
 - [contract-driven-ship.md](contract-driven-ship.md) — contract-spec: entry skills → hand `/ship` (superseded by the ticket-driven model)
 - [plan-file-first.md](plan-file-first.md) — plan file by default; folder + tickets only after `/to-tickets`
 - [command-inventory.md](command-inventory.md) — генерируемый реестр команд/навыков (`gitmark inventory` + I7), исключение эфемеры из индекса
