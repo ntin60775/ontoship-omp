@@ -1,6 +1,6 @@
 {
   "name": "ontoship",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "omp-плагин OntoShip: GitMark KB (md+git, FTS5-поиск, онтология-линтер) и dev-flow"
 }
