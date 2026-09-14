@@ -485,6 +485,24 @@ def cmd_lint(root: Path, paths: list | None = None) -> dict:
 COMMANDS_DIR = ".omp/commands"
 SKILLS_DIR = ".omp/skills"
 REGISTRY_REL = "docs/reference/commands.md"
+# Корень пакета — от расположения самого движка (<пакет>/skills/kb-search/gitmark.py).
+# Работает и в плоской установке (<проект>/.omp/), и в плагинной: каталог плагина в
+# project- или user-scope кэше, путь к кэшу не хардкодится и манифесты не читаются.
+PKG_ROOT = Path(__file__).resolve().parents[2]
+
+
+def _rel(p: Path, root: Path) -> str:
+    """Путь относительно проекта; для пакета вне проекта (user-scope) — абсолютный."""
+    try:
+        return p.relative_to(root).as_posix()
+    except ValueError:
+        return p.as_posix()
+
+
+def _scan_roots(kind: str, root: Path) -> list:
+    """Каталоги для скана: сначала проект, затем пакет — при совпадении имён побеждает
+    команда/навык проекта (тот же приоритет, что у провайдеров omp: нативный выше плагинного)."""
+    return [root / ".omp" / kind, PKG_ROOT / kind]
 
 
 def _cell(s) -> str:
@@ -493,30 +511,38 @@ def _cell(s) -> str:
 
 
 def _scan_commands(root: Path) -> list:
-    """Команды из .omp/commands/*.md: {name, description, args, drives, path}."""
-    out = []
-    d = root / COMMANDS_DIR
-    if not d.is_dir():
-        return out
-    for p in sorted(d.glob("*.md")):
-        fm = parse_frontmatter(p.read_text("utf-8", errors="replace")) or {}
-        out.append({"name": p.stem, "description": fm.get("description", ""),
-                    "args": fm.get("args", ""), "drives": fm.get("drives", ""),
-                    "path": p.relative_to(root).as_posix()})
+    """Команды из <проект>/.omp/commands и <пакет>/commands:
+    {name, description, args, drives, path}. Имя уникально, проект перекрывает пакет."""
+    out, seen = [], set()
+    for d in _scan_roots("commands", root):
+        if not d.is_dir():
+            continue
+        for p in sorted(d.glob("*.md")):
+            if p.stem in seen:
+                continue
+            seen.add(p.stem)
+            fm = parse_frontmatter(p.read_text("utf-8", errors="replace")) or {}
+            out.append({"name": p.stem, "description": fm.get("description", ""),
+                        "args": fm.get("args", ""), "drives": fm.get("drives", ""),
+                        "path": _rel(p, root)})
     return out
 
 
 def _scan_skills(root: Path) -> list:
-    """Навыки из .omp/skills/*/SKILL.md: {name, description, path}."""
-    out = []
-    d = root / SKILLS_DIR
-    if not d.is_dir():
-        return out
-    for p in sorted(d.glob("*/SKILL.md")):
-        fm = parse_frontmatter(p.read_text("utf-8", errors="replace")) or {}
-        out.append({"name": fm.get("name", p.parent.name),
-                    "description": fm.get("description", ""),
-                    "path": p.relative_to(root).as_posix()})
+    """Навыки из <проект>/.omp/skills и <пакет>/skills: {name, description, path}.
+    Имя уникально, проект перекрывает пакет."""
+    out, seen = [], set()
+    for d in _scan_roots("skills", root):
+        if not d.is_dir():
+            continue
+        for p in sorted(d.glob("*/SKILL.md")):
+            if p.parent.name in seen:
+                continue
+            seen.add(p.parent.name)
+            fm = parse_frontmatter(p.read_text("utf-8", errors="replace")) or {}
+            out.append({"name": fm.get("name", p.parent.name),
+                        "description": fm.get("description", ""),
+                        "path": _rel(p, root)})
     return out
 
 
