@@ -145,9 +145,13 @@ see `docs/reference/commands.md`):
 ## Quickstart
 
 ```bash
-python3 .omp/skills/kb-search/gitmark.py index            # build .gitmark/index.db
-python3 .omp/skills/kb-search/gitmark.py search "auth flow"
-python3 .omp/skills/kb-search/gitmark.py map -o docs-map.html && open docs-map.html
+# through the agent — works in any install (plugin or local copy):
+/kb <query>          # search the KB
+/kb-map              # build docs-map.html and open it
+
+# or drive the engine directly; the path depends on the channel:
+python3 .omp/plugins/node_modules/ontoship/skills/kb-search/gitmark.py index   # plugin
+python3 .omp/skills/kb-search/gitmark.py index                                # local copy
 ```
 
 Pure `python3` (≥3.7) with SQLite **FTS5**; the **trigram** tokenizer (SQLite ≥ 3.34) adds
@@ -156,23 +160,39 @@ fuzzy/substring/non-Latin matching — detected automatically, degrades graceful
 
 ## Install as an omp package
 
-1. **Copy the package** — `.omp/` (skills + commands + rules) and `AGENTS.md` into your
-   repo. Project-local, no marketplace needed: omp's native provider picks up
-   `.omp/skills/`, `.omp/commands/`, and `.omp/rules/` automatically.
-2. **Bootstrap the KB** — `AGENTS.md` links to `docs/`, which a fresh project doesn't
+**Channel 1 — plugin (standard).** The catalog `sot-omp-marketplace` publishes OntoShip as
+plugin `ontoship`, pinned to a tag of this repo:
+
+```bash
+omp plugin install ontoship@sot-omp-marketplace    # into this project
+omp plugin upgrade ontoship@sot-omp-marketplace    # later updates
+```
+
+The plugin lands in `.omp/plugins/node_modules/ontoship` and brings **only** `.omp/`
+(skills, commands, rules, scripts); commands resolve with the plugin prefix
+(`/ontoship:kb`, `/ontoship:ship`, …), rules are always-on. `AGENTS.md` and `docs/` stay
+yours — an upgrade never touches them.
+
+**Channel 2 — local copy (development, air-gapped).** Copy `.omp/` and `AGENTS.md` into your
+repo; commands resolve by their short names (`/kb`, `/ship`, …). Installing the plugin over
+such a copy means removing the copy first: the native provider (priority 100) shadows the
+plugin (90), and the two drift apart.
+
+Then, in either channel:
+
+1. **Bootstrap the KB** — `AGENTS.md` links to `docs/`, which a fresh project doesn't
    have yet:
    - **new project** — run `/onto-doc`: it surveys the codebase and builds the whole KB
      (master index + per-service READMEs + reference + decisions), then lints and
      indexes it;
    - **existing KB** — keep your `docs/` as-is and grow it with `/doc`.
-3. **Build the index and smoke-test:**
-   ```bash
-   python3 .omp/skills/kb-search/gitmark.py index
-   python3 .omp/skills/kb-search/gitmark.py search "<your domain>" -k 3
-   ```
-4. **Ignore derived and ephemeral artifacts** — add `.gitmark/`, `*-map.html`, and
+2. **Ignore derived and ephemeral artifacts** — add `.gitmark/`, `*-map.html`, and
    `.scratch/` to `.gitignore` (the first two are regenerated from md; `.scratch/` holds
    session-ephemeral handoff and review reports, never KB knowledge).
+3. **Verify the install** — the package ships the check script: in a plugin install
+   `bash .omp/plugins/node_modules/ontoship/scripts/deploy-check.sh`, with a local copy
+   `bash .omp/scripts/deploy-check.sh`. Exit `0` — all good, `2` — warnings only,
+   `1` — broken (fix the reported `[FAIL]` items).
 
 Full checklist with expected results:
 [`docs/ops/deploy-ontoship.md`](docs/ops/deploy-ontoship.md).
