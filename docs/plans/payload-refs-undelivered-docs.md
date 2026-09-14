@@ -2,7 +2,7 @@
 node_type: plan
 title: Payload ссылается на непоставляемые артефакты — модель KB, схема приёмки, стандарты
 service: _platform
-status: draft
+status: archived
 updated: 2026-09-14
 links:
   depends_on: [deploy-check-marketplace-paths/README.md]

@@ -28,8 +28,8 @@ each declaring the tickets that block it.
 
 1. [deploy-check-marketplace-paths/](deploy-check-marketplace-paths/README.md) — **archived**
    (все 3 тикета влиты: `b571dd6`, `1cae6d2`, `3629862`).
-2. [payload-refs-undelivered-docs.md](payload-refs-undelivered-docs.md) — после 1 (общий
-   `.omp/skills/kb-curate/SKILL.md`).
+2. [payload-refs-undelivered-docs.md](payload-refs-undelivered-docs.md) — **archived**
+   (влит в `main`, `2439575`).
 3. [registry-and-version-in-consumer/](registry-and-version-in-consumer/README.md) — после 1
    (общий `.omp/skills/kb-search/SKILL.md`); с 2 не связан, порядок 2↔3 обратим.
 4. [kb-docs-vs-plugin-delivery.md](kb-docs-vs-plugin-delivery.md) — после 1, 2, 3 (правит
