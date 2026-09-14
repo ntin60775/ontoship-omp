@@ -45,6 +45,7 @@ each declaring the tickets that block it.
 - [kb-docs-vs-plugin-delivery.md](kb-docs-vs-plugin-delivery.md) — доки репо против ADR доставки: «no marketplace», висячий `ship-1c`, плоские примеры команд
 - [deploy-check-guard-pycache.md](deploy-check-guard-pycache.md) — багфикс: страж не должен ловить `__pycache__` в пакете (ложный FAIL)
 - [consumer-bootstrap/](consumer-bootstrap/README.md) — установка «с нуля»: идемпотентный управляемый блок в `AGENTS.md`, gitignore, зелёный deploy-check (папка, 2 тикета)
+- [ontology-twin-invariant-i8.md](ontology-twin-invariant-i8.md) — инвариант I8: дрейф модели онтологии между проектом и пакетом ловится линтером (ERR в репо-источнике, WARN у потребителя)
 - [contract-driven-ship.md](contract-driven-ship.md) — contract-spec: entry skills → hand `/ship` (superseded by the ticket-driven model)
 - [plan-file-first.md](plan-file-first.md) — plan file by default; folder + tickets only after `/to-tickets`
 - [command-inventory.md](command-inventory.md) — генерируемый реестр команд/навыков (`gitmark inventory` + I7), исключение эфемеры из индекса

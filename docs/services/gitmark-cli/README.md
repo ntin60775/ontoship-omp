@@ -19,7 +19,7 @@ regenerated from it. The whole thing is pure Python stdlib (no third-party deps 
 `markdown` is an optional enhancement for the `map` renderer) and runs fully offline.
 
 It enforces and operates over the OntoShip ontology (object types, properties, typed
-links). For the model itself — `node_type`, frontmatter, link types, invariants I1–I7 —
+links). For the model itself — `node_type`, frontmatter, link types, invariants I1–I8 —
 see [ontology.md](../../ontology.md); this doc describes the engine, not the model.
 
 Script: `.omp/skills/kb-search/gitmark.py` — this repo's path (local copy). In a plugin
@@ -39,7 +39,7 @@ auto-detection (see below); it precedes the subcommand. Defined in `main()`.
 | `map [-o OUT]` | Emit a single self-contained HTML file: collapsible tree + rendered markdown + radial link graph. Default out is `docs/docs-map.html`. |
 | `serve [-p PORT]` | Local `http.server` over `docs/` (falls back to repo root) to view the map. Default port 8799. |
 | `stat` | Index statistics: files, folders/areas, chunks, links, bytes, trigram on/off. |
-| `lint [paths…] [--strict]` | Check ontology invariants I1–I7 (frontmatter/types/vocab/links/README/orphans/registry). `--strict` exits 1 on any ERR. |
+| `lint [paths…] [--strict]` | Check ontology invariants I1–I8 (frontmatter/types/vocab/links/README/orphans/registry). `--strict` exits 1 on any ERR. |
 | `inventory [--check]` | Regenerate the two generated summary tables (commands + skills) between the `<!-- BEGIN/END inventory:* -->` markers in `docs/reference/commands.md`, from the frontmatter of the commands and skills of **both** the project (`<проект>/.omp/commands|skills`) and the package that owns the engine (`<пакет>/commands|skills`) — union, project wins on a name collision. Idempotent. `--check` reports any desync and exits 1 (the same check `lint` reports as I7). |
 | `version` | Print `gitmark <version>`: читается из манифеста пакета (`<пакет>/package.json` рядом с движком), фолбэк — константа `VERSION`. |
 
@@ -133,7 +133,7 @@ delimited in the output.
 
 ## Linting (ontology invariants)
 
-`cmd_lint()` checks I1–I7 over `docs/**` using a stdlib mini
+`cmd_lint()` checks I1–I8 over `docs/**` using a stdlib mini
 frontmatter parser (`parse_frontmatter` — no PyYAML). The controlled vocabularies
 (`NODE_TYPES`, `SERVICES`, `STATUSES`, `LOAD_BEARING`, `LINK_KEYS`) are the lint source of
 truth and must stay in sync with
@@ -180,7 +180,7 @@ $G search "trigram ranking"    # bm25 + trigram + fuzzy; prints path:line + snip
 $G search "frontmater" -k 5    # typo-tolerant via fuzzy n-grams
 $G search "ontology" --json    # machine-readable results
 $G stat                        # files/folders/chunks/links/bytes · trigram on|off
-$G lint                        # check ontology invariants over docs/ (I1–I7)
+$G lint                        # check ontology invariants over docs/ (I1–I8)
 $G map -o out.html             # self-contained HTML overview + graph
 $G inventory                   # regenerate the summary tables in docs/reference/commands.md
 $G inventory --check           # exit 1 on any registry desync (I7)

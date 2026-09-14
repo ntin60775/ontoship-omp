@@ -59,6 +59,6 @@ them as truth. See [ontology.md](ontology.md) for how documents are typed and li
 # from the repo root
 python3 .omp/skills/kb-search/gitmark.py index            # build .gitmark/index.db
 python3 .omp/skills/kb-search/gitmark.py search "query"   # FTS5 + trigram search
-python3 .omp/skills/kb-search/gitmark.py lint             # check the ontology (I1–I7)
+python3 .omp/skills/kb-search/gitmark.py lint             # check the ontology (I1–I8)
 python3 .omp/skills/kb-search/gitmark.py map -o docs-map.html   # HTML overview + graph
 ```
