@@ -502,7 +502,7 @@ def _rel(p: Path, root: Path) -> str:
 def _scan_roots(kind: str, root: Path) -> list:
     """Каталоги для скана: сначала проект, затем пакет — при совпадении имён побеждает
     команда/навык проекта (тот же приоритет, что у провайдеров omp: нативный выше плагинного)."""
-    return [root / ".omp" / kind, PKG_ROOT / kind]
+    return [(root / ".omp" / kind, "project"), (PKG_ROOT / kind, "package")]
 
 
 def _cell(s) -> str:
@@ -514,7 +514,7 @@ def _scan_commands(root: Path) -> list:
     """Команды из <проект>/.omp/commands и <пакет>/commands:
     {name, description, args, drives, path}. Имя уникально, проект перекрывает пакет."""
     out, seen = [], set()
-    for d in _scan_roots("commands", root):
+    for d, src in _scan_roots("commands", root):
         if not d.is_dir():
             continue
         for p in sorted(d.glob("*.md")):
@@ -524,7 +524,7 @@ def _scan_commands(root: Path) -> list:
             fm = parse_frontmatter(p.read_text("utf-8", errors="replace")) or {}
             out.append({"name": p.stem, "description": fm.get("description", ""),
                         "args": fm.get("args", ""), "drives": fm.get("drives", ""),
-                        "path": _rel(p, root)})
+                        "path": _rel(p, root), "src": src})
     return out
 
 
@@ -532,7 +532,7 @@ def _scan_skills(root: Path) -> list:
     """Навыки из <проект>/.omp/skills и <пакет>/skills: {name, description, path}.
     Имя уникально, проект перекрывает пакет."""
     out, seen = [], set()
-    for d in _scan_roots("skills", root):
+    for d, src in _scan_roots("skills", root):
         if not d.is_dir():
             continue
         for p in sorted(d.glob("*/SKILL.md")):
@@ -542,7 +542,7 @@ def _scan_skills(root: Path) -> list:
             fm = parse_frontmatter(p.read_text("utf-8", errors="replace")) or {}
             out.append({"name": fm.get("name", p.parent.name),
                         "description": fm.get("description", ""),
-                        "path": _rel(p, root)})
+                        "path": _rel(p, root), "src": src})
     return out
 
 
@@ -598,12 +598,15 @@ def inventory_issues(root: Path) -> list:
         if text[i + len(b):j].strip("\n") != table:
             issues.append((REGISTRY_REL,
                            f"таблица inventory:{what} рассинхронизирована — `gitmark inventory`"))
-    # секции `## /cmd` ↔ файлы команд (в одну пару)
+    # секции `## /cmd`: реестр проекта документирует СВОИ команды. Команды, приехавшие
+    # с пакетом, в таблицах перечислены, но секций в проекте не требуют — их описывает
+    # сам пакет. Обратная проверка (секция без файла) смотрит на все найденные команды.
     sections = set(re.findall(r"^##\s+`?/([\w-]+)", text, re.MULTILINE))
-    names = {c["name"] for c in commands}
-    for n in sorted(names - sections):
+    own = {c["name"] for c in commands if c.get("src") == "project"}
+    known = {c["name"] for c in commands}
+    for n in sorted(own - sections):
         issues.append((REGISTRY_REL, f"нет секции `## /{n}` для {COMMANDS_DIR}/{n}.md"))
-    for n in sorted(sections - names):
+    for n in sorted(sections - known):
         issues.append((REGISTRY_REL, f"секция `## /{n}` без файла {COMMANDS_DIR}/{n}.md"))
     return issues
 
