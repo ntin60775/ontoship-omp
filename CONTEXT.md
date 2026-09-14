@@ -61,7 +61,7 @@ _Avoid_: CLAUDE.md
 
 **Онтология (ontology)**:
 The knowledge model over the KB — `node_type`, frontmatter properties, typed links,
-invariants I1–I7 (see `docs/ontology.md`; the same model ships with the package as
+invariants I1–I8 (see `docs/ontology.md`; the same model ships with the package as
 `.omp/skills/kb-curate/ontology.md`, so a project without its own copy still has it).
 _Avoid_: модель данных, схема
 

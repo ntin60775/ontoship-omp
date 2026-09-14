@@ -409,7 +409,7 @@ def parse_frontmatter(text: str) -> dict | None:
 
 
 def cmd_lint(root: Path, paths: list | None = None) -> dict:
-    """Проверка инвариантов онтологии I1–I7. Возвращает {errors, warnings, checked}."""
+    """Проверка инвариантов онтологии I1–I8. Возвращает {errors, warnings, checked}."""
     docs = list(iter_md(root))
     known = {_nfc(p.relative_to(root).as_posix()) for p in docs}
     # граф связей: кто на кого ссылается (для I3 — сироты)
@@ -491,6 +491,9 @@ def cmd_lint(root: Path, paths: list | None = None) -> dict:
     # I7 — реестр команд синхронен с .omp/ (ERR: рассинхрон ловится машиной)
     for path, msg in inventory_issues(root):
         issues.append(("ERR", "I7", path, msg))
+
+    # I8 — модель онтологии не разошлась с пакетной копией (уровень — из ontology_twin_issues)
+    issues.extend(ontology_twin_issues(root))
 
     errs = [i for i in issues if i[0] == "ERR"]
     warns = [i for i in issues if i[0] == "WARN"]
@@ -584,6 +587,39 @@ def _replace_between(text: str, begin: str, end: str, body: str):
     if i < 0 or j < 0 or j < i:
         return text, False
     return text[:i + len(begin)] + "\n" + body + "\n" + text[j:], True
+
+
+# ───────────────── инвариант I8: модель онтологии в проекте и в пакете ─────────────────
+ONTOLOGY_REL = "docs/ontology.md"
+ONTOLOGY_SHIPPED_REL = "skills/kb-curate/ontology.md"
+
+
+def _model_body(p: Path) -> str:
+    """Тело модели — от первого заголовка `## `. Заголовок и вводные врезки у копий
+    отличаются (у пакетной копии своя шапка), сама модель — нет."""
+    lines = p.read_text("utf-8", errors="replace").splitlines()
+    for i, ln in enumerate(lines):
+        if ln.startswith("## "):
+            return "\n".join(x.rstrip() for x in lines[i:]).strip()
+    return ""
+
+
+def ontology_twin_issues(root: Path) -> list:
+    """I8: модель онтологии проекта и пакетная копия не разошлись. Пусто — синхронно или
+    сравнивать нечего. В плоской раскладке (`.omp/` и есть пакет) расхождение — ERR:
+    обе копии наши; при плагинной установке пакет приходит извне — WARN."""
+    proj, shipped = root / ONTOLOGY_REL, PKG_ROOT / ONTOLOGY_SHIPPED_REL
+    try:
+        if not proj.exists() or not shipped.exists() or proj.samefile(shipped):
+            return []
+    except OSError:
+        return []
+    if _model_body(proj) == _model_body(shipped):
+        return []
+    level = "ERR" if PKG_ROOT == root / ".omp" else "WARN"
+    return [(level, "I8", ONTOLOGY_REL,
+             f"модель онтологии разошлась с пакетной копией ({_rel(shipped, root)}) — "
+             "синхронизируй тело от первого '## '")]
 
 
 def inventory_issues(root: Path) -> list:
@@ -777,7 +813,7 @@ def main(argv=None):
     mp = sub.add_parser("map", help="HTML обзор+граф"); mp.add_argument("-o", "--out", default=None)
     sv = sub.add_parser("serve", help="локальный http"); sv.add_argument("-p", "--port", type=int, default=8799)
     sub.add_parser("stat", help="статистика")
-    lp = sub.add_parser("lint", help="проверить онтологию (I1–I7)")
+    lp = sub.add_parser("lint", help="проверить онтологию (I1–I8)")
     lp.add_argument("paths", nargs="*", help="ограничить файлами (по умолчанию — все docs/)")
     lp.add_argument("--strict", action="store_true", help="exit 1 при любых ERR")
     inv = sub.add_parser("inventory", help="перегенерировать сводные таблицы реестра команд/навыков")

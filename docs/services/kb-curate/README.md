@@ -78,7 +78,7 @@ These map to the kinetic layer ("Actions") of the ontology.
 ### REINDEX — always at the end
 
 ```bash
-python3 .omp/skills/kb-search/gitmark.py lint     # invariants I1–I7
+python3 .omp/skills/kb-search/gitmark.py lint     # invariants I1–I8
 python3 .omp/skills/kb-search/gitmark.py index    # rebuild search
 ```
 
@@ -97,4 +97,4 @@ The skill never invents values — it draws from fixed vocabularies defined in t
 - **`service`**: a controlled vocabulary defined per project.
 
 See [`docs/ontology.md`](../../ontology.md) for the full type/link/property tables and the
-`gitmark lint` invariants (I1–I7) — this README intentionally does not duplicate them.
+`gitmark lint` invariants (I1–I8) — this README intentionally does not duplicate them.
