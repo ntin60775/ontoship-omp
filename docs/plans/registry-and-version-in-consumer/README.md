@@ -2,7 +2,7 @@
 node_type: plan
 title: Реестр команд и навыков + версия движка у плагинного потребителя
 service: _platform
-status: draft
+status: archived
 updated: 2026-09-14
 links:
   depends_on: [../deploy-check-marketplace-paths/README.md]
@@ -101,6 +101,7 @@ links:
 Порядок — по зависимостям; `/ship` — строго по одному, последовательно.
 
 1. [01-package-root-scan.md](01-package-root-scan.md) — корень пакета и скан объединением;
-   `inventory` и I7 перестают быть вакуумными — draft, без блокировщиков.
+   `inventory` и I7 перестают быть вакуумными — **archived** (влит в `main`, `436d88a`,
+   `5ca10ab`).
 2. [02-version-from-manifest.md](02-version-from-manifest.md) — версия из манифеста пакета —
-   draft, blocked by 01.
+   **archived** (влит в `main`, `cc2ce88`).

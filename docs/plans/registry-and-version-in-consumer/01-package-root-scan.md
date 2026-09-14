@@ -2,7 +2,7 @@
 node_type: ticket
 title: Корень пакета — движок видит команды и навыки пакета
 service: _platform
-status: draft
+status: archived
 updated: 2026-09-14
 links:
   part_of: [README.md]

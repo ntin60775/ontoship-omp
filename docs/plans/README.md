@@ -30,17 +30,20 @@ each declaring the tickets that block it.
    (все 3 тикета влиты: `b571dd6`, `1cae6d2`, `3629862`).
 2. [payload-refs-undelivered-docs.md](payload-refs-undelivered-docs.md) — **archived**
    (влит в `main`, `2439575`).
-3. [registry-and-version-in-consumer/](registry-and-version-in-consumer/README.md) — после 1
-   (общий `.omp/skills/kb-search/SKILL.md`); с 2 не связан, порядок 2↔3 обратим.
-4. [kb-docs-vs-plugin-delivery.md](kb-docs-vs-plugin-delivery.md) — после 1, 2, 3 (правит
+3. [registry-and-version-in-consumer/](registry-and-version-in-consumer/README.md) — **archived**
+   (оба тикета влиты: `436d88a`, `5ca10ab`, `cc2ce88`).
+4. [deploy-check-guard-pycache.md](deploy-check-guard-pycache.md) — багфикс стража
+   (`__pycache__` давал ложный FAIL) — **вне очереди**, идёт сразу после 3.
+5. [kb-docs-vs-plugin-delivery.md](kb-docs-vs-plugin-delivery.md) — после 1, 2, 3 (правит
    runbook и спецификацию движка поверх устоявшегося поведения).
-5. [consumer-bootstrap/](consumer-bootstrap/README.md) — после 4 и 1 (приёмка «с нуля»
+6. [consumer-bootstrap/](consumer-bootstrap/README.md) — после 5 и 1 (приёмка «с нуля»
    заканчивается зелёным `deploy-check`).
 
 - [deploy-check-marketplace-paths/](deploy-check-marketplace-paths/README.md) — пути движка при плагинной установке: самоотносительный корень в deploy-check.sh + `skill://` в payload, проверка-страж (папка, 3 тикета)
 - [payload-refs-undelivered-docs.md](payload-refs-undelivered-docs.md) — payload не ссылается на KB-доки, которых плагин не везёт: схема приёмки и модель онтологии — файлами в payload
 - [registry-and-version-in-consumer/](registry-and-version-in-consumer/README.md) — движок находит команды/навыки пакета (I7 и `inventory` перестают быть вакуумными), версия — из манифеста (папка, 2 тикета)
 - [kb-docs-vs-plugin-delivery.md](kb-docs-vs-plugin-delivery.md) — доки репо против ADR доставки: «no marketplace», висячий `ship-1c`, плоские примеры команд
+- [deploy-check-guard-pycache.md](deploy-check-guard-pycache.md) — багфикс: страж не должен ловить `__pycache__` в пакете (ложный FAIL)
 - [consumer-bootstrap/](consumer-bootstrap/README.md) — установка «с нуля»: идемпотентный управляемый блок в `AGENTS.md`, gitignore, зелёный deploy-check (папка, 2 тикета)
 - [contract-driven-ship.md](contract-driven-ship.md) — contract-spec: entry skills → hand `/ship` (superseded by the ticket-driven model)
 - [plan-file-first.md](plan-file-first.md) — plan file by default; folder + tickets only after `/to-tickets`
