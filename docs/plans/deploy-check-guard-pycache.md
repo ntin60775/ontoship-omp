@@ -2,7 +2,7 @@
 node_type: plan
 title: Страж deploy-check не ловит __pycache__ в пакете
 service: _platform
-status: draft
+status: archived
 updated: 2026-09-14
 links:
   documents: [../../.omp/scripts/deploy-check.sh]
