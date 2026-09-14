@@ -2,7 +2,7 @@
 node_type: ticket
 title: Runbook развёртывания — плагинный канал и путь к скрипту
 service: _platform
-status: draft
+status: archived
 updated: 2026-09-14
 links:
   part_of: [README.md]

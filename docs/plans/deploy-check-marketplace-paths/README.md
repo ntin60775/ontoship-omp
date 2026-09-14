@@ -2,7 +2,7 @@
 node_type: plan
 title: Пути движка в пакете — маркетплейс-установка (deploy-check.sh + payload)
 service: _platform
-status: active
+status: archived
 updated: 2026-09-14
 links:
   documents: [../../../.omp/scripts/deploy-check.sh]
@@ -148,4 +148,4 @@ links:
 2. [02-deploy-check-rework.md](02-deploy-check-rework.md) — самоотносительный корень,
    проверка-страж, смоук-поиск — **archived** (влит в `main`, `1cae6d2`).
 3. [03-runbook-and-kb-sync.md](03-runbook-and-kb-sync.md) — runbook развёртывания и
-   KB-синк — draft, blocked by 02.
+   KB-синк — **archived** (влит в `main`, `3629862`).

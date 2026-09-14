@@ -26,8 +26,8 @@ each declaring the tickets that block it.
 **Очередь исполнения** (2026-09-14). `/ship` запускается вручную, один прогон за раз;
 порядок задан рёбрами `depends_on` в самих планах, здесь — сводка:
 
-1. [deploy-check-marketplace-paths/](deploy-check-marketplace-paths/README.md) — живой баг
-   у двух плагинных потребителей + страж; внутри 01 → 02 → 03.
+1. [deploy-check-marketplace-paths/](deploy-check-marketplace-paths/README.md) — **archived**
+   (все 3 тикета влиты: `b571dd6`, `1cae6d2`, `3629862`).
 2. [payload-refs-undelivered-docs.md](payload-refs-undelivered-docs.md) — после 1 (общий
    `.omp/skills/kb-curate/SKILL.md`).
 3. [registry-and-version-in-consumer/](registry-and-version-in-consumer/README.md) — после 1
