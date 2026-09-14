@@ -12,7 +12,7 @@ capture them inline — glossary terms into `CONTEXT.md`, load-bearing choices i
 When the frontier is empty and shared understanding is reached, write the outcome as a
 **plan contract**:
 
-1. Search the KB first (`python3 .omp/skills/kb-search/gitmark.py search "<topic>"`) — if
+1. Search the KB first (`python3 skill://kb-search/gitmark.py search "<topic>"`) — if
    a plan for this topic already exists, edit it, don't duplicate.
 2. Create/update the plan **file** `docs/plans/<slug>.md` — `node_type: plan`,
    `status: draft`, body fields `Goal`, `Done`, `Scope`, `Constraints`, `Context`

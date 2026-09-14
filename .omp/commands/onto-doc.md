@@ -12,7 +12,7 @@ Scope hint: `$ARGUMENTS` — empty = whole repo; or a subset (e.g. `services/api
 
 1. **Survey the repo** — map top-level dirs, services/modules, entry points, build/deploy
    files, and existing docs. Check current coverage:
-   `python3 .omp/skills/kb-search/gitmark.py stat`.
+   `python3 skill://kb-search/gitmark.py stat`.
 
 2. **Decompose into doc areas** — one unit of work per area:
    - each service/component → `docs/services/<svc>/README.md` (`node_type: service`)
@@ -32,9 +32,8 @@ Scope hint: `$ARGUMENTS` — empty = whole repo; or a subset (e.g. `services/api
    `docs/README.md` is the master index, and every folder has a README index.
 
 5. **Verify & derive** —
-   `python3 .omp/skills/kb-search/gitmark.py lint` (fix broken links / orphans /
-   missing frontmatter), then `... gitmark.py index`, then
-   `... gitmark.py map -o docs-map.html`.
+   `python3 skill://kb-search/gitmark.py lint` (fix broken links / orphans /
+   missing frontmatter), then the same call with `index`, then with `map -o docs-map.html`.
 
 6. **Report** — how many docs created/updated, KB coverage before→after, lint result, and the
    map path. List any areas that need a human decision.

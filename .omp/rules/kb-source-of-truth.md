@@ -10,8 +10,8 @@ The project knowledge base is plain **markdown + README indexes + git**. Everyth
 e.g. `docs-map.html`) — is **regenerated** from md by the GitMark CLI:
 
 ```bash
-python3 .omp/skills/kb-search/gitmark.py index
-python3 .omp/skills/kb-search/gitmark.py map -o docs-map.html
+python3 skill://kb-search/gitmark.py index
+python3 skill://kb-search/gitmark.py map -o docs-map.html
 ```
 
 - NEVER edit derived artifacts by hand; NEVER commit `.gitmark/` or `*-map.html`.

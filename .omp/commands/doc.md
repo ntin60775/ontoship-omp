@@ -8,7 +8,7 @@ Compose or update a KB document for: `$ARGUMENTS`
 
 Follow the `kb-curate` skill (ontology over code):
 
-1. **Search first** — `python3 .omp/skills/kb-search/gitmark.py search "$ARGUMENTS"`.
+1. **Search first** — `python3 skill://kb-search/gitmark.py search "$ARGUMENTS"`.
    If the topic already exists → **edit that doc**, don't create a second one.
 2. **Pick a `node_type`** — `service` · `reference` · `runbook` · `gotcha` · `decision` ·
    `plan` · `guide` · `report` · `index` (unsure → spec = `reference`, how-to = `guide`)
@@ -18,7 +18,7 @@ Follow the `kb-curate` skill (ontology over code):
 4. **Add ≥1 typed link** — to code (`documents`/`implemented_by`) or a sibling doc
    (`depends_on`/`relates_to`). No orphans.
 5. **Add a line to the folder `README.md`** (its index): `- [Title](file.md) — hook`.
-6. **Lint + reindex** — `python3 .omp/skills/kb-search/gitmark.py lint`
-   then `... gitmark.py index`.
+6. **Lint + reindex** — `python3 skill://kb-search/gitmark.py lint`, then the same call with
+   `index`.
 
 Report which file you created/updated, its `node_type`, and the links you added.

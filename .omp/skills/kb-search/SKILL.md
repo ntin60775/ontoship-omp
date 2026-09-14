@@ -9,8 +9,9 @@ This skill treats the repo's markdown as a **md + README(index) + git** knowledg
 Markdown is the source of truth; the search index and HTML map are **derived** and
 regenerated from md (`.gitmark/` is gitignored). The CLI is pure Python stdlib.
 
-Script: `.omp/skills/kb-search/gitmark.py` (relative to the repo root; stable when the
-`.omp/` package is copied into another project).
+Script: `skill://kb-search/gitmark.py` — the URI resolves to the package wherever it is
+installed (native `.omp/`, or the marketplace plugin cache), so the same call works in a
+project that has no `.omp/skills/` of its own.
 
 ## When to use
 
@@ -23,18 +24,20 @@ Script: `.omp/skills/kb-search/gitmark.py` (relative to the repo root; stable wh
 ## Commands
 
 ```bash
-G="python3 .omp/skills/kb-search/gitmark.py"
-
-$G index                 # (re)build .gitmark/index.db  (fast)
-$G search "<query>"      # bm25 + trigram(substring) + fuzzy(3-gram); -k N, --json
-$G map -o docs-map.html  # self-contained HTML: tree + rendered md + radial graph
-$G serve -p 8799         # local http server to view the map
-$G stat                  # files/chunks/links/index state
-$G lint [paths…]         # ontology check (frontmatter/links/README/broken links/registry I7)
-$G inventory             # regenerate the command/skill registry tables (docs/reference/commands.md)
-$G inventory --check     # exit 1 on registry desync (same as lint I7)
-$G version
+python3 skill://kb-search/gitmark.py index                # (re)build .gitmark/index.db  (fast)
+python3 skill://kb-search/gitmark.py search "<query>"     # bm25 + trigram(substring) + fuzzy(3-gram); -k N, --json
+python3 skill://kb-search/gitmark.py map -o docs-map.html # self-contained HTML: tree + rendered md + radial graph
+python3 skill://kb-search/gitmark.py serve -p 8799        # local http server to view the map
+python3 skill://kb-search/gitmark.py stat                 # files/chunks/links/index state
+python3 skill://kb-search/gitmark.py lint [paths…]        # ontology check (frontmatter/links/README/broken links/registry I7)
+python3 skill://kb-search/gitmark.py inventory            # regenerate the command/skill registry tables (docs/reference/commands.md)
+python3 skill://kb-search/gitmark.py inventory --check    # exit 1 on registry desync (same as lint I7)
+python3 skill://kb-search/gitmark.py version
 ```
+
+> The URI must be a **command argument**: `skill://` is resolved by the agent's shell, and
+> it is **not** resolved inside a variable assignment — `G="python3 skill://…"` fails with
+> `Errno 2`.
 
 ## Workflow
 
