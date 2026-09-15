@@ -2,7 +2,7 @@
 node_type: plan
 title: GitMark индексирует то, что git игнорирует — парсер .gitignore теряет правила
 service: gitmark-cli
-status: draft
+status: archived
 updated: 2026-09-15
 links:
   documents: [../../.omp/skills/kb-search/gitmark.py, ../../tests/test_gitmark.py]
