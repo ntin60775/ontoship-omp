@@ -3,7 +3,7 @@ node_type: index
 title: Plans — plan contracts + tickets
 service: _platform
 status: active
-updated: 2026-09-14
+updated: 2026-09-15
 ---
 
 # Plans
@@ -40,7 +40,12 @@ each declaring the tickets that block it.
    `d476dd4`, `b65bd2b`).
 7. [ontology-twin-invariant-i8.md](ontology-twin-invariant-i8.md) — **archived**
    (инвариант I8, влит в `main`, `556529b`; в поставку 0.3.0 не входит).
+8. [gitignore-parser.md](gitignore-parser.md) — **draft**, ждёт `/ship`: движок
+   индексирует то, что git игнорирует (парсер `.gitignore` теряет правила с путём).
+   Баг воспроизведён на 0.4.1, влияние замерено: на `erp-demo` бэкапный каталог давал
+   74 % индекса.
 
+- [gitignore-parser.md](gitignore-parser.md) — движок уважает `.gitignore` так же, как git: список файлов от `git ls-files --exclude-standard`, неподдержанное правило — предупреждением, а не молчанием
 - [deploy-check-marketplace-paths/](deploy-check-marketplace-paths/README.md) — пути движка при плагинной установке: самоотносительный корень в deploy-check.sh + `skill://` в payload, проверка-страж (папка, 3 тикета)
 - [payload-refs-undelivered-docs.md](payload-refs-undelivered-docs.md) — payload не ссылается на KB-доки, которых плагин не везёт: схема приёмки и модель онтологии — файлами в payload
 - [registry-and-version-in-consumer/](registry-and-version-in-consumer/README.md) — движок находит команды/навыки пакета (I7 и `inventory` перестают быть вакуумными), версия — из манифеста (папка, 2 тикета)
