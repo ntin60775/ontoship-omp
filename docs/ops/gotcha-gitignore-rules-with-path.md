@@ -2,7 +2,7 @@
 node_type: gotcha
 title: Мусор в индексе KB — правило .gitignore с путём движок не видит
 service: gitmark-cli
-status: active
+status: archived
 updated: 2026-09-15
 links:
   documents: [../../.omp/skills/kb-search/gitmark.py]
@@ -48,11 +48,10 @@ print(f"файлов из игнорируемых каталогов: {len(rows
 PY
 ```
 
-**Когда перестанет быть актуальным.** Правка описана в
-[плане gitignore-parser](../plans/gitignore-parser.md): движок начнёт брать список
-файлов у `git ls-files --exclude-standard`, а неподдержанные правила фолбэка —
-печатать предупреждением. После релиза эту запись надо перевести в `status: archived`
-(с `supersedes` на план), потому что симптом уйдёт вместе с причиной.
+**Устранено в 0.4.2.** Причина ушла вместе с правкой:
+[планом gitignore-parser](../plans/gitignore-parser.md) (отгружен): движок берёт список
+файлов у `git ls-files --exclude-standard`, а неподдержанные правила фолбэка печатает
+предупреждением. Запись оставлена как история: симптомов этого класса больше нет.
 
 **Связанное.** Политика `.gitignore` у потребителей каталога
 (`sot-omp-marketplace`, `docs/reference/consumer-repo-layout.md`) опирается на правила

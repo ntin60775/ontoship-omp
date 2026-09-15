@@ -27,6 +27,7 @@ import json
 import os
 import re
 import sqlite3
+import subprocess
 import sys
 import unicodedata
 from pathlib import Path
@@ -71,23 +72,41 @@ def pkg_version() -> str:
     return v.strip() if isinstance(v, str) and v.strip() else VERSION
 
 
+GITIGNORE_UNSUPPORTED = ("!", "**")  # фолбэк их не умеет — и молчать об этом нельзя
+
+
 def parse_gitignore(root: Path):
-    """Рукописное подмножество .gitignore: имена папок с концевым '/', точные имена и
-    '*'-шаблоны без '/'. Без негативов и '**' — подмножество по дизайну.
-    → (dir_pats, file_pats)."""
-    dir_pats, file_pats = [], []
+    """Подмножество .gitignore для фолбэка (когда git недоступен).
+
+    → (dir_pats, file_pats, path_pats, unsupported).
+
+    dir_pats — односегментные каталоги (`build/`), file_pats — односегментные имена и
+    `*`-шаблоны (`*.log`), path_pats — правила с путём (`.omp/plugins/`, `.omp/.backup-*`,
+    `drafts/secret.md`), они якорятся к корню репозитория. Негативы и `**` попадают в
+    `unsupported`: подмножество их не исполняет, но и не теряет молча.
+    """
+    dir_pats, file_pats, path_pats, unsupported = [], [], [], []
     gi = root / ".gitignore"
     if not gi.exists():
-        return dir_pats, file_pats
+        return dir_pats, file_pats, path_pats, unsupported
     for raw in gi.read_text(encoding="utf-8", errors="replace").splitlines():
         s = raw.strip()
-        if not s or s.startswith("#") or s.startswith("!"):
+        if not s or s.startswith("#"):
+            continue
+        if any(mark in s for mark in GITIGNORE_UNSUPPORTED):
+            unsupported.append(s)
             continue
         if s.endswith("/"):
-            dir_pats.append(s.rstrip("/"))
-        elif "/" not in s:
+            s = s.rstrip("/")
+            if "/" in s:
+                path_pats.append(s)
+            else:
+                dir_pats.append(s)
+        elif "/" in s:
+            path_pats.append(s)
+        else:
             file_pats.append(s)
-    return dir_pats, file_pats
+    return dir_pats, file_pats, path_pats, unsupported
 
 
 def _wild_match(name: str, pat: str) -> bool:
@@ -97,8 +116,60 @@ def _wild_match(name: str, pat: str) -> bool:
     return re.fullmatch(re.escape(pat).replace(r"\*", ".*"), name) is not None
 
 
-def iter_md(root: Path):
-    dir_pats, file_pats = parse_gitignore(root)
+def _path_match(rel: str, pat: str) -> bool:
+    """Правило с '/' якорится к корню: совпал сам путь или каталог под ним.
+
+    `*` внутри сегмента не переходит через '/' — как в git.
+    """
+    pat = pat.lstrip("/").rstrip("/")
+    if not pat:
+        return False
+    rx = "^" + re.escape(pat).replace(r"\*", "[^/]*") + r"(/|$)"
+    return re.match(rx, rel) is not None
+
+
+def git_md_files(root: Path):
+    """Markdown глазами git: `ls-files --cached --others --exclude-standard`.
+
+    Единственный способ уважать `.gitignore` целиком — вложенные файлы, `**`, негативы,
+    якоря и глобальные excludes. None — если git недоступен или это не репозиторий:
+    тогда работает фолбэк `iter_md_fallback`.
+    """
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "-z", "-c", "-o", "--exclude-standard", "--", "*.md"],
+            capture_output=True, text=True)
+    except (FileNotFoundError, OSError):
+        return None
+    if proc.returncode != 0:
+        return None
+    out = []
+    for name in proc.stdout.split("\0"):
+        if not name:
+            continue
+        path = root / name
+        if any(part in EXCLUDE_DIRS for part in Path(name).parts):
+            continue
+        if path.is_file():
+            out.append(path)
+    return sorted(out)
+
+
+def gitignore_warnings(root: Path) -> list:
+    """Неподдержанные правила фолбэка — вслух.
+
+    На основном пути (git) подмножество не задействовано, поэтому предупреждать не о чем.
+    """
+    if git_md_files(root) is not None:
+        return []
+    _, _, _, unsupported = parse_gitignore(root)
+    return [f"правило '{s}' не поддержано фолбэком (нет git) — файлы под него попадут в индекс"
+            for s in unsupported]
+
+
+def iter_md_fallback(root: Path):
+    """Обход без git: то же подмножество, что и раньше, плюс правила с путём."""
+    dir_pats, file_pats, path_pats, _ = parse_gitignore(root)
     for p in sorted(root.rglob("*.md")):
         rel = p.relative_to(root)
         if any(part in EXCLUDE_DIRS for part in rel.parts):
@@ -107,7 +178,18 @@ def iter_md(root: Path):
             continue
         if any(_wild_match(rel.name, f) for f in file_pats):
             continue
+        if any(_path_match(rel.as_posix(), pat) for pat in path_pats):
+            continue
         yield p
+
+
+def iter_md(root: Path):
+    """Markdown, которые git видит как файлы репозитория."""
+    from_git = git_md_files(root)
+    if from_git is not None:
+        yield from from_git
+        return
+    yield from iter_md_fallback(root)
 
 
 def area_of(rel: str) -> str:
@@ -187,6 +269,8 @@ def _has_trigram(con) -> bool:
 
 
 def cmd_index(root: Path, force: bool = False) -> dict:
+    for warning in gitignore_warnings(root):
+        print(f"[WARN] gitignore: {warning}", file=sys.stderr)
     db = root / DB_REL
     db.parent.mkdir(parents=True, exist_ok=True)
     con = sqlite3.connect(db)
@@ -410,6 +494,8 @@ def parse_frontmatter(text: str) -> dict | None:
 
 def cmd_lint(root: Path, paths: list | None = None) -> dict:
     """Проверка инвариантов онтологии I1–I8. Возвращает {errors, warnings, checked}."""
+    for warning in gitignore_warnings(root):
+        print(f"[WARN] gitignore: {warning}", file=sys.stderr)
     docs = list(iter_md(root))
     known = {_nfc(p.relative_to(root).as_posix()) for p in docs}
     # граф связей: кто на кого ссылается (для I3 — сироты)

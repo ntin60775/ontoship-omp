@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import subprocess
 import sys
 from pathlib import Path
 
@@ -90,11 +91,67 @@ def test_gitignore_excludes_dirs_and_files(repo: Path):
 def test_gitignore_wildcard(repo: Path):
     (repo / ".gitignore").write_text("*-map.html\n", encoding="utf-8")
     (repo / "notes.md").write_text("notes", encoding="utf-8")
-    dirs, files = gm.parse_gitignore(repo)
-    assert dirs == []
-    assert files == ["*-map.html"]
+    dir_pats, file_pats, path_pats, unsupported = gm.parse_gitignore(repo)
+    assert dir_pats == [] and path_pats == [] and unsupported == []
+    assert file_pats == ["*-map.html"]
     assert gm._wild_match("docs-map.html", "*-map.html")
     assert not gm._wild_match("notes.md", "*-map.html")
+
+
+def test_gitignore_path_rules_are_not_dropped(repo: Path):
+    """Репро баг-репорта 2026-09-15: правила с путём терялись молча.
+
+    Правило с '/' и без хвостового слэша не попадало ни в один список, а шаблон
+    каталога с путём не матчился никогда — индекс набирал мусор из бэкапов.
+    """
+    (repo / ".gitignore").write_text(
+        "build/\n.omp/plugins/\n.omp/.backup-*\ndrafts/secret.md\n", encoding="utf-8")
+    for rel in ("docs/live.md", ".omp/plugins/x.md", "drafts/secret.md", "build/b.md",
+                ".omp/.backup-20260101-000000/rules/r.md"):
+        path = repo / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("текст", encoding="utf-8")
+
+    hidden = (".omp/plugins/x.md", "drafts/secret.md", "build/b.md",
+              ".omp/.backup-20260101-000000/rules/r.md")
+    for source in (gm.iter_md_fallback, gm.iter_md):
+        found = {p.relative_to(repo).as_posix() for p in source(repo)}
+        assert "docs/live.md" in found, f"{source.__name__}: живой документ потерян"
+        for rel in hidden:
+            assert rel not in found, f"{source.__name__}: {rel} попало в список"
+
+
+def test_iter_md_takes_the_list_from_git(repo: Path):
+    """Основной путь — git: он понимает и вложенные .gitignore, чего фолбэк не умеет."""
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+    (repo / "docs" / "nested").mkdir()
+    (repo / "docs" / "nested" / ".gitignore").write_text("hidden.md\n", encoding="utf-8")
+    (repo / "docs" / "nested" / "hidden.md").write_text("скрытый", encoding="utf-8")
+    (repo / "docs" / "nested" / "shown.md").write_text("видимый", encoding="utf-8")
+
+    assert gm.git_md_files(repo) is not None, "в репозитории список обязан приходить от git"
+    found = {p.relative_to(repo).as_posix() for p in gm.iter_md(repo)}
+    assert "docs/nested/shown.md" in found
+    assert "docs/nested/hidden.md" not in found
+
+
+def test_unsupported_rules_warn_when_git_is_absent(repo: Path, monkeypatch):
+    """Без git фолбэк не исполняет негативы и '**' — обязан сказать вслух."""
+    (repo / ".gitignore").write_text("!keep.md\n**/generated\n", encoding="utf-8")
+    monkeypatch.setattr(gm, "git_md_files", lambda root: None)
+
+    warnings = gm.gitignore_warnings(repo)
+
+    assert any("!keep.md" in w for w in warnings)
+    assert any("**/generated" in w for w in warnings)
+
+
+def test_no_gitignore_warnings_on_the_git_path(repo: Path):
+    """На основном пути подмножество не задействовано — предупреждать не о чем."""
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+    (repo / ".gitignore").write_text("!keep.md\n", encoding="utf-8")
+
+    assert gm.gitignore_warnings(repo) == []
 
 
 # ── inventory: генерация и идемпотентность ─────────────────────────
