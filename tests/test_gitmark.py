@@ -260,3 +260,49 @@ def test_lint_does_not_call_a_frontmatter_linked_doc_an_orphan(tmp_path: Path):
         encoding="utf-8")
     r = gm.cmd_lint(tmp_path)
     assert [i for i in r["issues"] if i[1] == "I3"] == []
+
+
+# ── resolve_link: строгая проверка для I4 ──────────────────────────
+
+def test_resolve_link_strict_refuses_a_link_saved_by_basename():
+    """Ссылку спасает совпадение по имени файла — для читателя она битая."""
+    known = {"CONTEXT.md", "docs/README.md", "docs/reference/README.md"}
+    assert gm.resolve_link("docs/reference/README.md", "../CONTEXT.md", known) == "CONTEXT.md"
+    assert gm.resolve_link("docs/reference/README.md", "../CONTEXT.md", known,
+                           strict=True) is None
+
+
+def test_resolve_link_strict_accepts_an_exact_path():
+    """Точный путь от файла разрешается и строго."""
+    known = {"CONTEXT.md", "docs/README.md", "docs/reference/README.md"}
+    assert gm.resolve_link("docs/reference/README.md", "../../CONTEXT.md", known,
+                           strict=True) == "CONTEXT.md"
+    assert gm.resolve_link("docs/README.md", "reference/README.md", known,
+                           strict=True) == "docs/reference/README.md"
+
+
+def _link_fixture(tmp_path: Path, href: str) -> Path:
+    """KB из трёх документов, где ссылка из docs/reference/ ведёт на CONTEXT.md."""
+    (tmp_path / "docs" / "reference").mkdir(parents=True)
+    (tmp_path / "docs" / "README.md").write_text(
+        "---\nnode_type: index\ntitle: KB\n---\n\n# KB\n", encoding="utf-8")
+    (tmp_path / "CONTEXT.md").write_text(
+        "---\nnode_type: reference\ntitle: Контекст\n---\n\n# Контекст\n", encoding="utf-8")
+    (tmp_path / "docs" / "reference" / "README.md").write_text(
+        f"---\nnode_type: index\ntitle: Reference\n---\n\n# Reference\n\n[CONTEXT]({href})\n",
+        encoding="utf-8")
+    return tmp_path
+
+
+def test_lint_catches_a_link_that_only_the_basename_saves(tmp_path: Path):
+    """I4 ловит ссылку, которую вытягивает только совпадение по имени файла."""
+    repo = _link_fixture(tmp_path, "../CONTEXT.md")
+    r = gm.cmd_lint(repo)
+    assert [i for i in r["issues"] if i[1] == "I4"] != []
+
+
+def test_lint_accepts_a_link_that_resolves_exactly(tmp_path: Path):
+    """I4 молчит на точной ссылке — и на файл, и на папку."""
+    repo = _link_fixture(tmp_path, "../../CONTEXT.md")
+    r = gm.cmd_lint(repo)
+    assert [i for i in r["issues"] if i[1] == "I4"] == []

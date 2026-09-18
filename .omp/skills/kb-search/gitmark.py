@@ -234,7 +234,17 @@ def _nfc(s: str) -> str:
     return unicodedata.normalize("NFC", s)
 
 
-def resolve_link(src_rel: str, href: str, known: set) -> str | None:
+def resolve_link(src_rel: str, href: str, known: set, strict: bool = False) -> str | None:
+    """Разрешить ссылку `href` из файла `src_rel` в известный `.md`.
+
+    Мягко (по умолчанию — индекс и граф): точный путь от файла, путь от корня KB
+    и, наконец, единственное совпадение по имени файла — так документы связываются,
+    даже если ссылку писали «как в вики».
+
+    `strict=True` (линт, I4): только путь, который разрешит читатель, — от каталога
+    файла. Ссылка, спасаемая поблажкой, для читателя битая, и проверка битых ссылок
+    не должна её пропускать.
+    """
     href = _nfc(href.split("#")[0].strip())
     if not href or not href.endswith(".md") or href.startswith(("http", "mailto:")):
         return None
@@ -250,6 +260,8 @@ def resolve_link(src_rel: str, href: str, known: set) -> str | None:
     import posixpath
     norm = posixpath.normpath((src_dir / href).as_posix())
     cands.append(norm)
+    if strict:
+        return norm if norm in known else None
     for c in cands:
         if c in known:
             return c
@@ -540,7 +552,9 @@ def cmd_lint(root: Path, paths: list | None = None) -> dict:
             if tgt:
                 outs.add(tgt)
                 in_links.setdefault(tgt, set()).add(rel)
-            elif href.split("#")[0].endswith(".md") and not href.startswith(("http", "mailto:")):
+            if (href.split("#")[0].endswith(".md")
+                    and not href.startswith(("http", "mailto:"))
+                    and resolve_link(rel, href, known, strict=True) is None):
                 issues.append(("ERR", "I4", rel, f"битая ссылка → {href}"))
         out_links[rel] = outs
 
