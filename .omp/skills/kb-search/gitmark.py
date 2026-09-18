@@ -463,32 +463,47 @@ def strip_code(text: str) -> str:
 
 
 def parse_frontmatter(text: str) -> dict | None:
-    """Мини-парсер YAML-frontmatter (stdlib, без pyyaml). Скаляры + плоские списки."""
+    """Мини-парсер YAML-frontmatter (stdlib, без pyyaml). Скаляры, списки, блок `links:`."""
     m = FM_RE.match(text)
     if not m:
         return None
-    fm, cur_key = {}, None
+    fm, cur_key, cur_sub = {}, None, None
     for raw in m.group(1).split("\n"):
         if not raw.strip() or raw.lstrip().startswith("#"):
             continue
+        indent = len(raw) - len(raw.lstrip())
+        nested = cur_key is not None and indent > 0 and isinstance(fm.get(cur_key), dict)
         if raw.lstrip().startswith("- ") and cur_key:
-            fm.setdefault(cur_key, [])
-            if isinstance(fm[cur_key], list):
-                fm[cur_key].append(raw.lstrip()[2:].strip().strip("[]'\""))
+            item = raw.lstrip()[2:].strip().strip("[]'\"")
+            if nested and cur_sub:
+                fm[cur_key].setdefault(cur_sub, []).append(item)
+            else:
+                fm.setdefault(cur_key, [])
+                if isinstance(fm[cur_key], list):
+                    fm[cur_key].append(item)
             continue
         if ":" not in raw:
             continue
         key, _, val = raw.partition(":")
         key, val = key.strip(), val.strip()
         if not val:                                   # ключ вложенного блока/списка
-            cur_key = key
-            fm[key] = {} if key == "links" else []
+            if nested:                                # внутри блока `links:`
+                fm[cur_key][key] = []
+                cur_sub = key
+            else:
+                cur_key, cur_sub = key, None
+                fm[key] = {} if key == "links" else []
             continue
-        cur_key = None
         if val.startswith("[") and val.endswith("]"):
-            fm[key] = [x.strip().strip("'\"") for x in val[1:-1].split(",") if x.strip()]
+            value = [x.strip().strip("'\"") for x in val[1:-1].split(",") if x.strip()]
         else:
-            fm[key] = val.strip("'\"")
+            value = val.strip("'\"")
+        if nested:                                    # ключ внутри блока `links:`
+            fm[cur_key][key] = value
+            cur_sub = key
+        else:
+            fm[key] = value
+            cur_key, cur_sub = None, None
     return fm
 
 

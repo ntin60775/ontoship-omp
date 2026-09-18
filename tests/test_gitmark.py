@@ -221,3 +221,42 @@ def test_lint_reports_i7_on_desync(repo: Path):
     gm.cmd_inventory(repo)
     r = gm.cmd_lint(repo)
     assert [i for i in r["issues"] if i[1] == "I7"] == []
+
+
+# ── frontmatter: вложенный блок links ──────────────────────────────
+
+def test_parse_frontmatter_nested_links_inline():
+    fm = gm.parse_frontmatter(
+        "---\nnode_type: runbook\ntitle: T\n"
+        "links:\n  part_of: [../README.md]\n  relates_to: [a.md, b.md]\n---\n"
+    )
+    assert fm["links"] == {"part_of": ["../README.md"], "relates_to": ["a.md", "b.md"]}
+    assert "part_of" not in fm
+
+
+def test_parse_frontmatter_nested_links_block_list():
+    fm = gm.parse_frontmatter("---\nlinks:\n  relates_to:\n    - a.md\n    - b.md\n---\n")
+    assert fm["links"] == {"relates_to": ["a.md", "b.md"]}
+
+
+def test_parse_frontmatter_scalar_after_links_stays_on_top():
+    fm = gm.parse_frontmatter("---\nlinks:\n  part_of: [README.md]\nstatus: active\n---\n")
+    assert fm["links"] == {"part_of": ["README.md"]}
+    assert fm["status"] == "active"
+
+
+def test_parse_frontmatter_top_level_list_still_works():
+    fm = gm.parse_frontmatter("---\ntags:\n  - a\n  - b\n---\n")
+    assert fm["tags"] == ["a", "b"]
+
+
+def test_lint_does_not_call_a_frontmatter_linked_doc_an_orphan(tmp_path: Path):
+    """Документ со связями только во frontmatter — не сирота (I3)."""
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs" / "README.md").write_text(
+        "---\nnode_type: index\ntitle: KB\n---\n\n# KB\n", encoding="utf-8")
+    (tmp_path / "docs" / "note.md").write_text(
+        "---\nnode_type: runbook\ntitle: Заметка\nlinks:\n  part_of: [README.md]\n---\n\n# Заметка\n",
+        encoding="utf-8")
+    r = gm.cmd_lint(tmp_path)
+    assert [i for i in r["issues"] if i[1] == "I3"] == []
