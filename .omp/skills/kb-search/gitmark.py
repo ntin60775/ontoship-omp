@@ -552,10 +552,13 @@ def cmd_lint(root: Path, paths: list | None = None) -> dict:
             if tgt:
                 outs.add(tgt)
                 in_links.setdefault(tgt, set()).add(rel)
+            # I4: корне-абсолютные `/…` вне проверки — у формы нет единого читательского
+            # смысла (VS Code и Obsidian разрешают от корня, GitHub — как site-absolute).
             if (href.split("#")[0].endswith(".md")
-                    and not href.startswith(("http", "mailto:"))
-                    and resolve_link(rel, href, known, strict=True) is None):
-                issues.append(("ERR", "I4", rel, f"битая ссылка → {href}"))
+                    and not href.startswith(("http", "mailto:", "/"))):
+                if resolve_link(rel, href, known, strict=True) is None:
+                    hint = f" (рядом нет; похоже на {tgt})" if tgt else ""
+                    issues.append(("ERR", "I4", rel, f"битая ссылка → {href}{hint}"))
         out_links[rel] = outs
 
     # README на каждую docs/-папку (I5)

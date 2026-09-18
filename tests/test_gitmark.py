@@ -306,3 +306,28 @@ def test_lint_accepts_a_link_that_resolves_exactly(tmp_path: Path):
     repo = _link_fixture(tmp_path, "../../CONTEXT.md")
     r = gm.cmd_lint(repo)
     assert [i for i in r["issues"] if i[1] == "I4"] == []
+
+
+def test_lint_skips_a_root_absolute_link(tmp_path: Path):
+    """Корне-абсолютные `/…` вне проверки: у формы нет единого читательского смысла
+    (VS Code и Obsidian разрешают от корня, GitHub — как site-absolute)."""
+    repo = _link_fixture(tmp_path, "/docs/README.md")
+    r = gm.cmd_lint(repo)
+    assert [i for i in r["issues"] if i[1] == "I4"] == []
+
+
+def test_lint_hints_the_target_the_basename_would_save(tmp_path: Path):
+    """Подсказка называет цель мягкого резолва — случай zupupr: `dev-contour.md`
+    из `docs/reference/` при файле в `docs/ops/`."""
+    (tmp_path / "docs" / "reference").mkdir(parents=True)
+    (tmp_path / "docs" / "ops").mkdir(parents=True)
+    (tmp_path / "docs" / "README.md").write_text(
+        "---\nnode_type: index\ntitle: KB\n---\n\n# KB\n", encoding="utf-8")
+    (tmp_path / "docs" / "ops" / "dev-contour.md").write_text(
+        "---\nnode_type: runbook\ntitle: Контур\n---\n\n# Контур\n", encoding="utf-8")
+    (tmp_path / "docs" / "reference" / "configuration.md").write_text(
+        "---\nnode_type: reference\ntitle: Настройка\n---\n\n[контур](dev-contour.md)\n",
+        encoding="utf-8")
+    r = gm.cmd_lint(tmp_path)
+    msgs = [i[3] for i in r["issues"] if i[1] == "I4"]
+    assert len(msgs) == 1 and "docs/ops/dev-contour.md" in msgs[0]
