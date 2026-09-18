@@ -3,7 +3,7 @@ node_type: service
 title: gitmark CLI — KB search/index engine
 service: gitmark-cli
 status: active
-updated: 2026-06-16
+updated: 2026-09-18
 tags: [fts5, search, sqlite, ontology, cli]
 links:
   documents: [../../../.omp/skills/kb-search/gitmark.py, ../../../.omp/skills/kb-search/SKILL.md]
@@ -144,6 +144,12 @@ vocab), I4 (broken link), I7 (command registry desync — the same check as
 `gitmark inventory --check`). WARN-level: I2 service/status out of vocab, I3 (orphan — a
 load-bearing doc with no in/out links and no `links:` block), I5 (a `docs/` folder with no
 `README.md`), I6 (a `supersedes` target that isn't `deprecated`/`archived`).
+
+Резолв ссылок для I3/I4 — предмет отдельного контракта. **Целевая семантика** (следующая
+версия движка): граф и поиск разрешают ссылку мягко — «что имел в виду автор»; линт —
+строго, как читатель, без basename-поблажки. Обоснование и границы —
+[решение «резолв ссылок — две моды»](../../decisions/link-resolution.md); что из него
+ещё не сделано — [план «I4 говорит правду»](../../plans/i4-truthful-links.md).
 
 ## The inventory (generated command/skill registry)
 
