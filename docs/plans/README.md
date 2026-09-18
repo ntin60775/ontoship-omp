@@ -3,7 +3,7 @@ node_type: index
 title: Plans — plan contracts + tickets
 service: _platform
 status: active
-updated: 2026-09-15
+updated: 2026-09-18
 ---
 
 # Plans
@@ -44,7 +44,10 @@ each declaring the tickets that block it.
    индексирует то, что git игнорирует (парсер `.gitignore` теряет правила с путём).
    Баг воспроизведён на 0.4.1, влияние замерено: на `erp-demo` бэкапный каталог давал
    74 % индекса.
+9. [i4-truthful-links.md](i4-truthful-links.md) — **draft**: I4 проверяет тело и
+   frontmatter `links.*` против файловой системы; S1 — открытый PR #3, дальше S2–S4.
 
+- [i4-truthful-links.md](i4-truthful-links.md) — I4 говорит правду: тело и frontmatter резолвятся против ФС как у читателя, граф и поиск остаются мягкими (по [решению о двух модах](../decisions/link-resolution.md))
 - [gitignore-parser.md](gitignore-parser.md) — движок уважает `.gitignore` так же, как git: список файлов от `git ls-files --exclude-standard`, неподдержанное правило — предупреждением, а не молчанием
 - [deploy-check-marketplace-paths/](deploy-check-marketplace-paths/README.md) — пути движка при плагинной установке: самоотносительный корень в deploy-check.sh + `skill://` в payload, проверка-страж (папка, 3 тикета)
 - [payload-refs-undelivered-docs.md](payload-refs-undelivered-docs.md) — payload не ссылается на KB-доки, которых плагин не везёт: схема приёмки и модель онтологии — файлами в payload
