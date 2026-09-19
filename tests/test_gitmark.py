@@ -262,23 +262,59 @@ def test_lint_does_not_call_a_frontmatter_linked_doc_an_orphan(tmp_path: Path):
     assert [i for i in r["issues"] if i[1] == "I3"] == []
 
 
-# ── resolve_link: строгая проверка для I4 ──────────────────────────
+# ── резолв: мягкий (граф) и строгий (линт) ─────────────────────────
 
-def test_resolve_link_strict_refuses_a_link_saved_by_basename():
-    """Ссылку спасает совпадение по имени файла — для читателя она битая."""
-    known = {"CONTEXT.md", "docs/README.md", "docs/reference/README.md"}
-    assert gm.resolve_link("docs/reference/README.md", "../CONTEXT.md", known) == "CONTEXT.md"
-    assert gm.resolve_link("docs/reference/README.md", "../CONTEXT.md", known,
-                           strict=True) is None
+def _fs_fixture(tmp_path: Path) -> Path:
+    """KB с каталогом, `.md` и файлом кода — цели всех видов."""
+    (tmp_path / "docs" / "ops").mkdir(parents=True)
+    (tmp_path / "docs" / "README.md").write_text("# KB\n", encoding="utf-8")
+    (tmp_path / "docs" / "ops" / "dev-contour.md").write_text("# Контур\n", encoding="utf-8")
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src" / "module.bsl").write_text("// код\n", encoding="utf-8")
+    (tmp_path / "my file.md").write_text("# Пробел\n", encoding="utf-8")
+    return tmp_path
 
 
-def test_resolve_link_strict_accepts_an_exact_path():
-    """Точный путь от файла разрешается и строго."""
-    known = {"CONTEXT.md", "docs/README.md", "docs/reference/README.md"}
-    assert gm.resolve_link("docs/reference/README.md", "../../CONTEXT.md", known,
-                           strict=True) == "CONTEXT.md"
-    assert gm.resolve_link("docs/README.md", "reference/README.md", known,
-                           strict=True) == "docs/reference/README.md"
+def test_fs_resolve_checks_directories_and_non_md_files(tmp_path: Path):
+    """Строгая цель — не только `.md`: каталог и файл кода проверяются так же."""
+    root = _fs_fixture(tmp_path)
+    assert gm.fs_resolve(root, "docs/README.md", "ops")[0] is True
+    assert gm.fs_resolve(root, "docs/README.md", "../src/module.bsl")[0] is True
+    assert gm.fs_resolve(root, "docs/README.md", "../src/gone.bsl")[0] is False
+    assert gm.fs_resolve(root, "docs/README.md", "ops/gone")[0] is False
+
+
+def test_fs_resolve_decodes_url_encoding_and_strips_selectors(tmp_path: Path):
+    """`%20`, `:строки` и `#якорь` срезаются до проверки — как их видит читатель."""
+    root = _fs_fixture(tmp_path)
+    assert gm.fs_resolve(root, "docs/README.md", "../my%20file.md")[0] is True
+    assert gm.fs_resolve(root, "docs/README.md", "../my file.md:12-34")[0] is True
+    assert gm.fs_resolve(root, "docs/README.md", "ops/dev-contour.md#шаг")[0] is True
+
+
+def test_fs_resolve_checks_a_path_that_leaves_the_repo(tmp_path: Path):
+    """Ссылка за корень репозитория проверяется там, куда ведёт: KB читается
+    в многорепозиторной раскладке, соседний репозиторий — рабочая цель."""
+    root = tmp_path / "repo"
+    (root / "docs").mkdir(parents=True)
+    (root / "docs" / "README.md").write_text("# KB\n", encoding="utf-8")
+    (tmp_path / "sibling").mkdir()
+    (tmp_path / "sibling" / "note.md").write_text("# Сосед\n", encoding="utf-8")
+    assert gm.fs_resolve(root, "docs/README.md", "../../sibling/note.md")[0] is True
+    assert gm.fs_resolve(root, "docs/README.md", "../../nowhere/note.md")[0] is False
+
+
+def test_fs_resolve_unwraps_an_angle_bracket_destination(tmp_path: Path):
+    """`[x](</abs/path.pdf>)` — корне-абсолютная цель в обёртке: вне проверки."""
+    root = _fs_fixture(tmp_path)
+    assert gm.fs_resolve(root, "docs/README.md", "</home/nobody/file.pdf>") == (True, None)
+
+
+def test_fs_resolve_skips_external_anchors_and_root_absolute(tmp_path: Path):
+    """Внешние URI, якоря и `/…` — вне проверки: вердикт по ним не выносится."""
+    root = _fs_fixture(tmp_path)
+    for href in ("https://example.com/x.md", "mailto:a@b.c", "#якорь", "/docs/README.md"):
+        assert gm.fs_resolve(root, "docs/README.md", href) == (True, None)
 
 
 def _link_fixture(tmp_path: Path, href: str) -> Path:
@@ -331,3 +367,61 @@ def test_lint_hints_the_target_the_basename_would_save(tmp_path: Path):
     r = gm.cmd_lint(tmp_path)
     msgs = [i[3] for i in r["issues"] if i[1] == "I4"]
     assert len(msgs) == 1 and "docs/ops/dev-contour.md" in msgs[0]
+
+
+def test_lint_catches_broken_body_and_frontmatter_links(tmp_path: Path):
+    """Приёмка: тело + `documents` + `depends_on` битые → ровно 3 ERR I4."""
+    (tmp_path / "docs" / "reference").mkdir(parents=True)
+    (tmp_path / "docs" / "README.md").write_text(
+        "---\nnode_type: index\ntitle: KB\n---\n\n# KB\n", encoding="utf-8")
+    (tmp_path / "docs" / "reference" / "README.md").write_text(
+        "---\nnode_type: index\ntitle: Reference\n---\n\n# Reference\n", encoding="utf-8")
+    (tmp_path / "docs" / "reference" / "note.md").write_text(
+        "---\nnode_type: reference\ntitle: Заметка\nservice: _platform\n"
+        "links:\n  documents: [../../nope_does_not_exist]\n"
+        "  depends_on: [../missing_doc.md]\n---\n\n"
+        "Тело: [битая ссылка](../../nope2.md)\n", encoding="utf-8")
+    r = gm.cmd_lint(tmp_path)
+    i4 = [i for i in r["issues"] if i[1] == "I4"]
+    assert len(i4) == 3, i4
+    assert any("documents:" in i[3] for i in i4) and any("depends_on:" in i[3] for i in i4)
+
+
+def test_lint_checks_non_md_targets(tmp_path: Path):
+    """Ссылка на файл кода проверяется так же, как на `.md`."""
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src" / "module.bsl").write_text("// код\n", encoding="utf-8")
+    (tmp_path / "docs" / "README.md").write_text(
+        "---\nnode_type: index\ntitle: KB\n---\n\n# KB\n"
+        "[код](../src/module.bsl) · [нет](../src/gone.bsl)\n", encoding="utf-8")
+    r = gm.cmd_lint(tmp_path)
+    msgs = [i[3] for i in r["issues"] if i[1] == "I4"]
+    assert len(msgs) == 1 and "gone.bsl" in msgs[0]
+
+
+def test_lint_ignores_a_link_title(tmp_path: Path):
+    """`[x](doc.md "подсказка")` — валидная ссылка, а не битая."""
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs" / "README.md").write_text(
+        "---\nnode_type: index\ntitle: KB\n---\n\n# KB\n", encoding="utf-8")
+    (tmp_path / "docs" / "note.md").write_text(
+        "---\nnode_type: reference\ntitle: Заметка\n---\n\n"
+        '[README](README.md "индекс папки")\n', encoding="utf-8")
+    r = gm.cmd_lint(tmp_path)
+    assert [i for i in r["issues"] if i[1] == "I4"] == []
+
+
+def test_lint_catches_a_scalar_supersedes(tmp_path: Path):
+    """`supersedes:` скаляром — не молчаливый пропуск: I6 проверяет и его."""
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs" / "README.md").write_text(
+        "---\nnode_type: index\ntitle: KB\n---\n\n# KB\n", encoding="utf-8")
+    (tmp_path / "docs" / "old.md").write_text(
+        "---\nnode_type: reference\ntitle: Старое\nstatus: active\n---\n\n# Старое\n",
+        encoding="utf-8")
+    (tmp_path / "docs" / "new.md").write_text(
+        "---\nnode_type: reference\ntitle: Новое\nlinks:\n  supersedes: old.md\n---\n\n"
+        "# Новое\n", encoding="utf-8")
+    r = gm.cmd_lint(tmp_path)
+    assert [i for i in r["issues"] if i[1] == "I6"] != []

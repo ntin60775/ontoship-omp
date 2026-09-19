@@ -25,11 +25,13 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import posixpath
 import re
 import sqlite3
 import subprocess
 import sys
 import unicodedata
+import urllib.parse
 from pathlib import Path
 
 VERSION = "0.1.0"
@@ -234,19 +236,49 @@ def _nfc(s: str) -> str:
     return unicodedata.normalize("NFC", s)
 
 
-def resolve_link(src_rel: str, href: str, known: set, strict: bool = False) -> str | None:
-    """Разрешить ссылку `href` из файла `src_rel` в известный `.md`.
+def _strip_sel(href: str) -> str:
+    """Отсечь title, обёртку `<…>`, `#якорь` и селектор строк (`:123`, `:12-34`, `:46+`)."""
+    href = href.strip()
+    href = re.sub(r"""\s+["'][^"']*["']$""", "", href).strip()
+    if href.startswith("<") and href.endswith(">"):
+        href = href[1:-1].strip()
+    href = href.split("#")[0].strip()
+    return re.sub(r":\d+(?:-\d+)?\+?$", "", href)
 
-    Мягко (по умолчанию — индекс и граф): точный путь от файла, путь от корня KB
-    и, наконец, единственное совпадение по имени файла — так документы связываются,
-    даже если ссылку писали «как в вики».
 
-    `strict=True` (линт, I4): только путь, который разрешит читатель, — от каталога
-    файла. Ссылка, спасаемая поблажкой, для читателя битая, и проверка битых ссылок
-    не должна её пропускать.
+SCHEME_RE = re.compile(r"^[a-z][a-z0-9+.\-]*://", re.IGNORECASE)
+
+
+def is_external(href: str) -> bool:
+    """Внешние и внутренние URI, чистые якоря: существование не проверяется."""
+    return href.startswith(("#", "mailto:")) or bool(SCHEME_RE.match(href))
+
+
+def fs_resolve(root: Path, src_rel: str, href: str):
+    """Строгий резолв ссылки против файловой системы — «дойдёт ли читатель».
+
+    → `(ok, norm)`: `norm` — нормализованный путь от корня репозитория. Непроверяемые
+    цели (внешние URI, якоря, корне-абсолютные `/…`) → `(True, None)`: у этих форм нет
+    единого читательского смысла, и вердикт по ним не выносится. Путь, ведущий за корень
+    репозитория, проверяется там, куда ведёт: KB читается в многорепозиторной раскладке,
+    и ссылка на соседний репозиторий — рабочая, пока файл на месте.
     """
-    href = _nfc(href.split("#")[0].strip())
-    if not href or not href.endswith(".md") or href.startswith(("http", "mailto:")):
+    h = _nfc(urllib.parse.unquote(_strip_sel(href))).replace("\\", "/")
+    if not h or is_external(h) or h.startswith("/"):
+        return True, None
+    norm = posixpath.normpath((Path(_nfc(src_rel)).parent / h).as_posix())
+    return (root / norm).exists(), norm
+
+
+def resolve_link(src_rel: str, href: str, known: set) -> str | None:
+    """Мягкий резолв `.md`-ссылки внутри KB — «что имел в виду автор».
+
+    Для индекса, графа, I3 и I6: точный путь от файла, путь от корня KB и, наконец,
+    единственное совпадение по имени файла — так документы связываются, даже если
+    ссылку писали «как в вики». Адресуемость проверяет не он, а `fs_resolve` (I4).
+    """
+    href = _nfc(urllib.parse.unquote(_strip_sel(href)))
+    if not href or not href.endswith(".md") or is_external(href):
         return None
     known = {_nfc(k) for k in known}
     src_dir = Path(_nfc(src_rel)).parent
@@ -256,12 +288,7 @@ def resolve_link(src_rel: str, href: str, known: set, strict: bool = False) -> s
     except Exception:
         pass
     cands.append(href.lstrip("./"))
-    # нормализуем ../ через PurePosix
-    import posixpath
-    norm = posixpath.normpath((src_dir / href).as_posix())
-    cands.append(norm)
-    if strict:
-        return norm if norm in known else None
+    cands.append(posixpath.normpath((src_dir / href).as_posix()))
     for c in cands:
         if c in known:
             return c
@@ -519,6 +546,22 @@ def parse_frontmatter(text: str) -> dict | None:
     return fm
 
 
+def fm_links(fm: dict) -> dict:
+    """Типизированные ссылки документа — блок `links:` (все типы `LINK_KEYS`).
+
+    Скаляр приводится к списку, нестроковые записи отбрасываются: каждая уходит
+    в резолв, и словарь вместо пути уронил бы линт.
+    """
+    out: dict = {}
+    nested = fm.get("links")
+    if isinstance(nested, dict):
+        for k, v in nested.items():
+            if k in LINK_KEYS:
+                vals = v if isinstance(v, list) else [v]
+                out.setdefault(k, []).extend(x for x in vals if isinstance(x, str))
+    return out
+
+
 def cmd_lint(root: Path, paths: list | None = None) -> dict:
     """Проверка инвариантов онтологии I1–I8. Возвращает {errors, warnings, checked}."""
     for warning in gitignore_warnings(root):
@@ -548,18 +591,22 @@ def cmd_lint(root: Path, paths: list | None = None) -> dict:
         fm_cache[rel] = fm
         outs = set()
         for href in LINK_RE.findall(strip_code(text)):
-            tgt = resolve_link(rel, href, known)
+            tgt = resolve_link(rel, href, known)      # мягко: ребро графа и поиска
             if tgt:
                 outs.add(tgt)
                 in_links.setdefault(tgt, set()).add(rel)
-            # I4: корне-абсолютные `/…` вне проверки — у формы нет единого читательского
-            # смысла (VS Code и Obsidian разрешают от корня, GitHub — как site-absolute).
-            if (href.split("#")[0].endswith(".md")
-                    and not href.startswith(("http", "mailto:", "/"))):
-                if resolve_link(rel, href, known, strict=True) is None:
-                    hint = f" (рядом нет; похоже на {tgt})" if tgt else ""
-                    issues.append(("ERR", "I4", rel, f"битая ссылка → {href}{hint}"))
+            ok, _ = fs_resolve(root, rel, href)       # строго: дойдёт ли читатель
+            if not ok:
+                hint = f" (рядом нет; похоже на {tgt})" if tgt else ""
+                issues.append(("ERR", "I4", rel, f"битая ссылка → {href}{hint}"))
         out_links[rel] = outs
+        # I4 (frontmatter) — те же правила, что и для тела: путь проверяется по ФС
+        for ltype, targets in fm_links(fm or {}).items():
+            for target in targets:
+                ok, _ = fs_resolve(root, rel, target)
+                if not ok:
+                    issues.append(("ERR", "I4", rel,
+                                   f"битая frontmatter-ссылка {ltype}: {target}"))
 
     # README на каждую docs/-папку (I5)
     docs_dirs = {p.parent for p in docs if p.relative_to(root).as_posix().startswith("docs/")}
@@ -592,13 +639,12 @@ def cmd_lint(root: Path, paths: list | None = None) -> dict:
         if st and st not in STATUSES:
             issues.append(("WARN", "I2", rel, f"status='{st}' вне словаря"))
         # I3 — сироты (несущий тип без входящих/исходящих связей)
+        links_fm = fm_links(fm)
         if nt in LOAD_BEARING:
             has_link = bool(out_links.get(rel)) or bool(in_links.get(rel))
-            links_fm = fm.get("links") if isinstance(fm.get("links"), dict) else {}
             if not has_link and not links_fm:
                 issues.append(("WARN", "I3", rel, "сирота — нет связей (ни in, ни out)"))
         # I6 — supersedes-цель должна быть deprecated/archived
-        links_fm = fm.get("links") if isinstance(fm.get("links"), dict) else {}
         for tgt in (links_fm.get("supersedes") or []):
             t = resolve_link(rel, tgt, known)
             if t:

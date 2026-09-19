@@ -140,16 +140,18 @@ truth and must stay in sync with
 [ontology.md](../../ontology.md). Broken-link detection (I4) strips fenced/inline code first
 (`strip_code`) so example links in code blocks aren't flagged. ERR-level
 issues: I1 (missing frontmatter/`node_type` on a load-bearing path), I2 (`node_type` out of
-vocab), I4 (broken link), I7 (command registry desync — the same check as
+vocab), I4 (broken link — body **or** frontmatter `links:`, any target type), I7 (command
+registry desync — the same check as
 `gitmark inventory --check`). WARN-level: I2 service/status out of vocab, I3 (orphan — a
 load-bearing doc with no in/out links and no `links:` block), I5 (a `docs/` folder with no
 `README.md`), I6 (a `supersedes` target that isn't `deprecated`/`archived`).
 
-Резолв ссылок для I3/I4 — предмет отдельного контракта. **Целевая семантика** (следующая
-версия движка): граф и поиск разрешают ссылку мягко — «что имел в виду автор»; линт —
-строго, как читатель, без basename-поблажки. Обоснование и границы —
-[решение «резолв ссылок — две моды»](../../decisions/link-resolution.md); что из него
-ещё не сделано — [план «I4 говорит правду»](../../plans/i4-truthful-links.md).
+Резолв ссылок — две моды. Граф и поиск (`resolve_link`) разрешают `.md`-ссылку мягко —
+«что имел в виду автор»: точный путь от файла, путь от корня KB, единственное совпадение
+по имени файла. Линт (`fs_resolve`) проверяет адресуемость — «дойдёт ли читатель»: путь от
+каталога файла против файловой системы, включая каталоги и файлы кода; сообщение называет
+цель мягкого резолва, если она нашлась. Обоснование и границы —
+[решение «резолв ссылок — две моды»](../../decisions/link-resolution.md).
 
 ## The inventory (generated command/skill registry)
 
