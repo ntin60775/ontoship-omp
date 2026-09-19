@@ -2,7 +2,7 @@
 node_type: plan
 title: I4 перестаёт врать — тело и frontmatter против файловой системы
 service: gitmark-cli
-status: active
+status: archived
 updated: 2026-09-19
 links:
   documents: [../../.omp/skills/kb-search/gitmark.py, ../../tests/test_gitmark.py]
@@ -50,7 +50,7 @@ frontmatter, для `.md`, каталогов и любых файлов. Гра
   нашёл 6 таких ссылок, из них 3 — рабочие ссылки в соседний репозиторий (`cross-project`,
   `erp-main`, `ut-10`) и 3 — настоящие off-by-one (`erp-main/docs/plans/moped-health-metrics/`
   не хватает уровня). Проверка идёт по ФС и там, куда путь ведёт.
-- **Следующий шаг:** мерж, релиз 0.4.7 (манифест + тег + каталог). Раскатка по
+- **Влит в `main`** — `866e46e` (S1: `9f4b160`, `235b60e`). Релиз — 0.4.7. Раскатка по
   потребителям — отдельным решением, и она **покраснит линт** у пяти KB до починки ссылок.
 
 ## Slices

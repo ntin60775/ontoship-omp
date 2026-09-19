@@ -44,9 +44,8 @@ each declaring the tickets that block it.
    индексирует то, что git игнорирует (парсер `.gitignore` теряет правила с путём).
    Баг воспроизведён на 0.4.1, влияние замерено: на `erp-demo` бэкапный каталог давал
    74 % индекса.
-9. [i4-truthful-links.md](i4-truthful-links.md) — **draft**, следующий шаг: мерж PR #3
-   (S1 — строгий линт), затем `/ship` по плану (S2 `fs_resolve`, S3 frontmatter в I4,
-   S4 онтология).
+9. [i4-truthful-links.md](i4-truthful-links.md) — **archived** (влит в `main`, `866e46e`;
+   релиз 0.4.7). I4 проверяет тело и frontmatter против ФС.
 
 - [i4-truthful-links.md](i4-truthful-links.md) — I4 говорит правду: тело и frontmatter резолвятся против ФС как у читателя, граф и поиск остаются мягкими (по [решению о двух модах](../decisions/link-resolution.md))
 - [gitignore-parser.md](gitignore-parser.md) — движок уважает `.gitignore` так же, как git: список файлов от `git ls-files --exclude-standard`, неподдержанное правило — предупреждением, а не молчанием
