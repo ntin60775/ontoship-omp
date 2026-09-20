@@ -425,3 +425,97 @@ def test_lint_catches_a_scalar_supersedes(tmp_path: Path):
         "# Новое\n", encoding="utf-8")
     r = gm.cmd_lint(tmp_path)
     assert [i for i in r["issues"] if i[1] == "I6"] != []
+
+
+# ── схемы карточек (I9) и словарь типов из онтологии ───────────────
+
+ONTOLOGY = """# GitMark ontology
+
+## Semantic layer
+
+| node_type | what it is | lives in |
+|---|---|---|
+| `reference` | a spec | `docs/reference/` |
+| `index` | a folder index | any `README.md` |
+| `schema` | a card schema | the cards' folder |
+| `wallet` | a wallet card | `wallets/` |
+"""
+
+
+def _cards_fixture(tmp_path: Path) -> Path:
+    """KB с папкой карточек: схема кошелька и одна соответствующая карточка."""
+    (tmp_path / "docs").mkdir()
+    (tmp_path / "docs" / "README.md").write_text("# KB\n", encoding="utf-8")
+    (tmp_path / "docs" / "ontology.md").write_text(ONTOLOGY, encoding="utf-8")
+    (tmp_path / "wallets").mkdir()
+    (tmp_path / "wallets" / "README.md").write_text("# Кошельки\n", encoding="utf-8")
+    (tmp_path / "wallets" / "_schema.md").write_text(
+        "---\nnode_type: schema\ntitle: Кошелёк\ncard_type: wallet\n"
+        "required: [uid, kind, balance]\n"
+        'values: ["kind: карта|счёт"]\n---\n\n# Схема\n', encoding="utf-8")
+    (tmp_path / "wallets" / "main.md").write_text(
+        "---\nnode_type: wallet\ntitle: Основной\nuid: main\nkind: карта\n"
+        "balance: 100\n---\n\nПроза вольная: схема её не ограничивает.\n", encoding="utf-8")
+    return tmp_path
+
+
+def test_lint_reads_node_types_from_the_ontology(tmp_path: Path):
+    """Словарь типов — из таблицы онтологии: тип из неё проходит, вне её — ERR."""
+    repo = _cards_fixture(tmp_path)
+    (repo / "docs" / "reference").mkdir()
+    doc = repo / "docs" / "reference" / "README.md"
+    doc.write_text("---\nnode_type: wallet\ntitle: Док\n---\n\n# Док\n", encoding="utf-8")
+    assert [i for i in gm.cmd_lint(repo)["issues"] if i[1] == "I2"] == []
+    doc.write_text("---\nnode_type: nosuchtype\ntitle: Док\n---\n\n# Док\n", encoding="utf-8")
+    assert [i for i in gm.cmd_lint(repo)["issues"]
+            if i[1] == "I2" and "вне словаря" in i[3]] != []
+
+
+def test_node_types_fall_back_without_an_ontology(tmp_path: Path):
+    """Онтологии нет — словарь типов берётся из фолбэк-константы."""
+    (tmp_path / "docs").mkdir()
+    assert gm.node_types(tmp_path) == gm.NODE_TYPES
+
+
+def test_lint_requires_declared_type_in_a_card_folder(tmp_path: Path):
+    """Карточка без node_type в папке со схемой — ошибка, а не тихий пропуск."""
+    repo = _cards_fixture(tmp_path)
+    (repo / "wallets" / "bare.md").write_text(
+        "---\ntitle: Без типа\n---\n\nПроза.\n", encoding="utf-8")
+    msgs = [i[3] for i in gm.cmd_lint(repo)["issues"] if i[1] == "I9"]
+    assert any("без объявленного типа" in m for m in msgs)
+
+
+def test_lint_reports_a_type_the_folder_schema_does_not_declare(tmp_path: Path):
+    """Тип, не объявленный схемой папки, — ошибка: карточка не выбирает схему сама."""
+    repo = _cards_fixture(tmp_path)
+    (repo / "wallets" / "alien.md").write_text(
+        "---\nnode_type: reference\ntitle: Чужой\n---\n\nПроза.\n", encoding="utf-8")
+    msgs = [i[3] for i in gm.cmd_lint(repo)["issues"] if i[1] == "I9"]
+    assert any("не объявлен схемой" in m for m in msgs)
+
+
+def test_lint_requires_schema_fields(tmp_path: Path):
+    """Нет обязательного поля — ERR с именем поля."""
+    repo = _cards_fixture(tmp_path)
+    (repo / "wallets" / "no-kind.md").write_text(
+        "---\nnode_type: wallet\ntitle: Без вида\nuid: x\nbalance: 1\n---\n\nПроза.\n",
+        encoding="utf-8")
+    assert [i[3] for i in gm.cmd_lint(repo)["issues"] if i[1] == "I9"] == [
+        "нет обязательного поля: kind"]
+
+
+def test_lint_keeps_schema_values_within_the_list(tmp_path: Path):
+    """Значение вне списка схемы — ERR с именем поля."""
+    repo = _cards_fixture(tmp_path)
+    (repo / "wallets" / "bad-kind.md").write_text(
+        "---\nnode_type: wallet\ntitle: Плохой\nuid: y\nkind: наличные\nbalance: 2\n---\n\nПроза.\n",
+        encoding="utf-8")
+    msgs = [i[3] for i in gm.cmd_lint(repo)["issues"] if i[1] == "I9"]
+    assert any("поле kind" in m and "вне списка" in m for m in msgs)
+
+
+def test_lint_leaves_a_conforming_card_and_its_prose_alone(tmp_path: Path):
+    """Соответствующая карточка проходит: README и схема — не карточки, проза свободна."""
+    repo = _cards_fixture(tmp_path)
+    assert [i for i in gm.cmd_lint(repo)["issues"] if i[1] == "I9"] == []

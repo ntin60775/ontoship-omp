@@ -481,19 +481,22 @@ def cmd_stat(root: Path) -> dict:
 
 
 # ─────────────────────────── lint (онтология) ───────────────────────────
-# Словари из docs/reference/gitmark-ontology.md (source of truth).
+# Фолбэк-словари: словарь типов читается из docs/ontology.md (source of truth, I2);
+# константа работает, когда онтологии в репозитории нет.
 NODE_TYPES = {"service", "reference", "runbook", "gotcha", "decision",
-              "plan", "ticket", "guide", "report", "index", "memory"}
+              "plan", "ticket", "guide", "index", "schema"}
 # Реальный словарь сервисов выводится per-repo из имён папок docs/services/*
 # (см. cmd_lint). Здесь — только кросс-срезовый sentinel.
 SERVICES = {"_platform"}
 STATUSES = {"active", "draft", "deprecated", "archived"}
-LOAD_BEARING = {"service", "reference", "runbook", "plan", "decision", "ticket"}
+LOAD_BEARING = {"service", "reference", "runbook", "plan", "decision", "ticket", "schema"}
 LINK_KEYS = {"documents", "depends_on", "supersedes", "relates_to",
              "implemented_by", "part_of"}
 FM_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 FENCE_RE = re.compile(r"```.*?```", re.DOTALL)
 INLINE_CODE_RE = re.compile(r"`[^`]*`")
+TYPE_ROW_RE = re.compile(r"^\|\s*`([a-z][a-z_0-9]*)`\s*\|")
+SCHEMA_TYPE = "schema"
 
 
 def strip_code(text: str) -> str:
@@ -562,12 +565,94 @@ def fm_links(fm: dict) -> dict:
     return out
 
 
+def node_types(root: Path) -> set:
+    """Словарь типов — из таблицы `node_type` в docs/ontology.md: один носитель.
+
+    Документ и код читают одно объявление: новый тип заводится правкой онтологии,
+    а не кода. Онтологии нет (или таблицы в ней) — фолбэк на NODE_TYPES.
+    """
+    doc = root / "docs" / "ontology.md"
+    if doc.exists():
+        found, in_table = set(), False
+        for line in doc.read_text("utf-8", errors="replace").splitlines():
+            if line.startswith("| node_type "):
+                in_table = True
+                continue
+            if in_table:
+                if not line.startswith("|"):
+                    break
+                m = TYPE_ROW_RE.match(line)
+                if m:
+                    found.add(m.group(1))
+        if found:
+            return found
+    return set(NODE_TYPES)
+
+
+def _as_list(v) -> list:
+    """Значение frontmatter как список: скаляр — через запятую, список — как есть."""
+    if v is None:
+        return []
+    if isinstance(v, list):
+        return [str(x) for x in v]
+    return [x.strip() for x in str(v).split(",") if x.strip()]
+
+
+def card_schema_issues(rels: list, fm_cache: dict) -> list:
+    """I9 — схемы карточек: обязательные поля и допустимые значения.
+
+    Схема — документ `node_type: schema` рядом с карточками; она действует на
+    документы своей папки. Карточка обязана назвать тип, объявленный схемой папки
+    (без типа она не проскакивает), нести все поля `required` и держать значения
+    `values` в объявленном наборе. Тело карточки — проза: схема его не ограничивает.
+    """
+    folders: dict = {}
+    schema_rels = set()
+    for rel in rels:
+        fm = fm_cache.get(rel) or {}
+        if fm.get("node_type") == SCHEMA_TYPE:
+            schema_rels.add(rel)
+            folders.setdefault(str(Path(rel).parent.as_posix()), []).append(fm)
+    issues = []
+    for folder, group in sorted(folders.items()):
+        schemas = {fm.get("card_type"): fm for fm in group if fm.get("card_type")}
+        prefix = "" if folder == "." else folder + "/"
+        for rel in rels:
+            if not rel.startswith(prefix):
+                continue
+            rest = rel[len(prefix):]
+            if "/" in rest or rest == "README.md" or rel in schema_rels:
+                continue                    # вложенные папки, индекс папки и сами схемы
+            fm = fm_cache.get(rel) or {}
+            nt = fm.get("node_type")
+            if not nt:
+                issues.append(("ERR", "I9", rel,
+                               "карточка без объявленного типа: нет node_type"))
+                continue
+            schema = schemas.get(nt)
+            if schema is None:
+                issues.append(("ERR", "I9", rel, f"тип '{nt}' не объявлен схемой папки"))
+                continue
+            for field in _as_list(schema.get("required")):
+                if field not in fm:
+                    issues.append(("ERR", "I9", rel, f"нет обязательного поля: {field}"))
+            for spec in _as_list(schema.get("values")):
+                field, _, raw = spec.partition(":")
+                field = field.strip()
+                allowed = [v.strip() for v in raw.split("|") if v.strip()]
+                if field in fm and allowed and str(fm[field]) not in allowed:
+                    issues.append(("ERR", "I9", rel,
+                                   f"поле {field}: значение '{fm[field]}' вне списка"))
+    return issues
+
+
 def cmd_lint(root: Path, paths: list | None = None) -> dict:
-    """Проверка инвариантов онтологии I1–I8. Возвращает {errors, warnings, checked}."""
+    """Проверка инвариантов онтологии I1–I9. Возвращает {errors, warnings, checked}."""
     for warning in gitignore_warnings(root):
         print(f"[WARN] gitignore: {warning}", file=sys.stderr)
     docs = list(iter_md(root))
-    known = {_nfc(p.relative_to(root).as_posix()) for p in docs}
+    rels = [p.relative_to(root).as_posix() for p in docs]
+    known = {_nfc(r) for r in rels}
     # граф связей: кто на кого ссылается (для I3 — сироты)
     out_links: dict = {}
     in_links: dict = {}
@@ -580,6 +665,7 @@ def cmd_lint(root: Path, paths: list | None = None) -> dict:
     services_vocab = set(SERVICES)
     if docs_root.exists():
         services_vocab |= {d.name for d in docs_root.rglob("*") if d.is_dir()}
+    types_vocab = node_types(root)
 
     for p in docs:
         rel = p.relative_to(root).as_posix()
@@ -630,7 +716,7 @@ def cmd_lint(root: Path, paths: list | None = None) -> dict:
                 issues.append(("ERR", "I1", rel, "нет frontmatter с node_type"))
             continue
         # I2 — значения в словарях
-        if nt not in NODE_TYPES:
+        if nt not in types_vocab:
             issues.append(("ERR", "I2", rel, f"node_type='{nt}' вне словаря"))
         svc = fm.get("service")
         if svc and svc not in services_vocab:
@@ -658,6 +744,9 @@ def cmd_lint(root: Path, paths: list | None = None) -> dict:
 
     # I8 — модель онтологии не разошлась с пакетной копией (уровень — из ontology_twin_issues)
     issues.extend(ontology_twin_issues(root))
+
+    # I9 — схемы карточек: обязательные поля и допустимые значения
+    issues.extend(card_schema_issues(rels, fm_cache))
 
     errs = [i for i in issues if i[0] == "ERR"]
     warns = [i for i in issues if i[0] == "WARN"]
