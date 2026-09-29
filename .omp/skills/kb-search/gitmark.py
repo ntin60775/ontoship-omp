@@ -484,7 +484,7 @@ def cmd_stat(root: Path) -> dict:
 # Фолбэк-словари: словарь типов читается из docs/ontology.md (source of truth, I2);
 # константа работает, когда онтологии в репозитории нет.
 NODE_TYPES = {"service", "reference", "runbook", "gotcha", "decision",
-              "plan", "ticket", "guide", "index", "schema"}
+              "plan", "ticket", "guide", "report", "index", "schema"}
 # Реальный словарь сервисов выводится per-repo из имён папок docs/services/*
 # (см. cmd_lint). Здесь — только кросс-срезовый sentinel.
 SERVICES = {"_platform"}

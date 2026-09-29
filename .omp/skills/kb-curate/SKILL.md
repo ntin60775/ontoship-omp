@@ -22,6 +22,8 @@ If the topic already exists — **edit the existing doc**, don't create a second
 
 1. **Pick a `node_type`**: `service` · `reference` · `runbook` · `gotcha` · `decision`
    · `plan` · `ticket` · `guide` · `report` · `index`. Unsure → spec = `reference`, how-to = `guide`.
+   Ephemeral output (diagnoses, reviews, handoffs, prototypes) goes to `.scratch/` or
+   OS temp — no `node_type`, not indexed as KB.
 2. **Put it in the right folder** (type → folder): service-specific →
    `docs/services/<svc>/`; cross-cutting → `docs/reference/`; ops procedure →
    `docs/ops/`; plan → `docs/plans/<slug>.md` (a file; `mp-to-tickets` promotes it to

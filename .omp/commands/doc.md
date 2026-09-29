@@ -11,7 +11,8 @@ Follow the `kb-curate` skill (ontology over code):
 1. **Search first** — `python3 skill://kb-search/gitmark.py search "$ARGUMENTS"`.
    If the topic already exists → **edit that doc**, don't create a second one.
 2. **Pick a `node_type`** — `service` · `reference` · `runbook` · `gotcha` · `decision` ·
-   `plan` · `guide` · `report` · `index` (unsure → spec = `reference`, how-to = `guide`)
+   `plan` · `guide` · `report` · `index` (unsure → spec = `reference`, how-to = `guide`).
+   Ephemeral output (diagnoses, reviews, handoffs) goes to `.scratch/` — no `node_type`.
    and the **right folder** (service → `docs/services/<svc>/`, cross-cutting → `docs/reference/`,
    ops → `docs/ops/`, plan → `docs/plans/`, decision → `docs/decisions/`).
 3. **Write frontmatter** — `node_type`, `title`, `service`, `status: active`, `updated: <today>`.

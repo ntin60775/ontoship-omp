@@ -32,6 +32,7 @@ Each document has exactly one `node_type` — its "table" in the ontology.
 | `guide` | how to use something (clients, public API) | varies |
 | `index` | a folder's table of contents | any `README.md` |
 | `schema` | a card schema: the required fields and allowed values of the cards in its folder | the cards' folder, next to them |
+| `report` | a read-only report (review, diagnosis, handoff) — lives in `docs/` as a KB document | `docs/` |
 
 Rule: if unsure, a spec is `reference`, a how-to is `guide`. Add a new type only if
 none fit and there will be ≥3 such documents.

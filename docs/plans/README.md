@@ -40,15 +40,19 @@ each declaring the tickets that block it.
    `d476dd4`, `b65bd2b`).
 7. [ontology-twin-invariant-i8.md](ontology-twin-invariant-i8.md) — **archived**
    (инвариант I8, влит в `main`, `556529b`; в поставку 0.3.0 не входит).
-8. [gitignore-parser.md](gitignore-parser.md) — **draft**, ждёт `/ship`: движок
-   индексирует то, что git игнорирует (парсер `.gitignore` теряет правила с путём).
-   Баг воспроизведён на 0.4.1, влияние замерено: на `erp-demo` бэкапный каталог давал
-   74 % индекса.
+8. [gitignore-parser.md](gitignore-parser.md) — **archived** (влит в `main`, `677956d`).
 9. [i4-truthful-links.md](i4-truthful-links.md) — **archived** (влит в `main`, `866e46e`;
    релиз 0.4.7). I4 проверяет тело и frontmatter против ФС.
+10. [report-node-type-model.md](report-node-type-model.md) — **archived**: `report`
+    объявлен в прозе навыка как тип KB, но в таблице `node_type` отсутствовал —
+    потребитель получал ERR I2 / WARN I8.
+11. [ticket-granularity-criteria.md](ticket-granularity-criteria.md) — **draft**:
+    навык `mp-to-tickets` не дробит до неделимой логической единицы; единственный
+    регулятор размера — квиз оператора.
 
+- [report-node-type-model.md](report-node-type-model.md) — `report` в таблице модели: согласовать с прозой навыка и командой `/doc`
+- [ticket-granularity-criteria.md](ticket-granularity-criteria.md) — критерии неделимой логической единицы и процедура дробления в `mp-to-tickets/SKILL.md`
 - [i4-truthful-links.md](i4-truthful-links.md) — I4 говорит правду: тело и frontmatter резолвятся против ФС как у читателя, граф и поиск остаются мягкими (по [решению о двух модах](../decisions/link-resolution.md))
-- [gitignore-parser.md](gitignore-parser.md) — движок уважает `.gitignore` так же, как git: список файлов от `git ls-files --exclude-standard`, неподдержанное правило — предупреждением, а не молчанием
 - [deploy-check-marketplace-paths/](deploy-check-marketplace-paths/README.md) — пути движка при плагинной установке: самоотносительный корень в deploy-check.sh + `skill://` в payload, проверка-страж (папка, 3 тикета)
 - [payload-refs-undelivered-docs.md](payload-refs-undelivered-docs.md) — payload не ссылается на KB-доки, которых плагин не везёт: схема приёмки и модель онтологии — файлами в payload
 - [registry-and-version-in-consumer/](registry-and-version-in-consumer/README.md) — движок находит команды/навыки пакета (I7 и `inventory` перестают быть вакуумными), версия — из манифеста (папка, 2 тикета)
