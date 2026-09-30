@@ -2,7 +2,7 @@
 node_type: plan
 title: "mp-to-tickets: дробить сразу до неделимых логических единиц"
 service: _platform
-status: active
+status: archived
 updated: 2026-09-29
 links:
   documents: [../../.omp/skills/mp-to-tickets/SKILL.md]

@@ -46,9 +46,7 @@ each declaring the tickets that block it.
 10. [report-node-type-model.md](report-node-type-model.md) — **archived**: `report`
     объявлен в прозе навыка как тип KB, но в таблице `node_type` отсутствовал —
     потребитель получал ERR I2 / WARN I8.
-11. [ticket-granularity-criteria.md](ticket-granularity-criteria.md) — **active**:
-    навык `mp-to-tickets` не дробит до неделимой логической единицы; единственный
-    регулятор размера — квиз оператора.
+11. [ticket-granularity-criteria.md](ticket-granularity-criteria.md) — **archived** (влит в `main`, `7cae42e`; критерии неделимой логической единицы и таблица Tickets в `mp-to-tickets/SKILL.md`).
 
 - [report-node-type-model.md](report-node-type-model.md) — `report` в таблице модели: согласовать с прозой навыка и командой `/doc`
 - [ticket-granularity-criteria.md](ticket-granularity-criteria.md) — критерии неделимой логической единицы и процедура дробления в `mp-to-tickets/SKILL.md`
