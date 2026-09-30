@@ -3,7 +3,7 @@ node_type: index
 title: Plans — plan contracts + tickets
 service: _platform
 status: active
-updated: 2026-09-18
+updated: 2026-09-29
 ---
 
 # Plans
@@ -46,7 +46,7 @@ each declaring the tickets that block it.
 10. [report-node-type-model.md](report-node-type-model.md) — **archived**: `report`
     объявлен в прозе навыка как тип KB, но в таблице `node_type` отсутствовал —
     потребитель получал ERR I2 / WARN I8.
-11. [ticket-granularity-criteria.md](ticket-granularity-criteria.md) — **draft**:
+11. [ticket-granularity-criteria.md](ticket-granularity-criteria.md) — **active**:
     навык `mp-to-tickets` не дробит до неделимой логической единицы; единственный
     регулятор размера — квиз оператора.
 

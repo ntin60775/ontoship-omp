@@ -96,7 +96,7 @@ links:
 
 Порядок — по зависимостям; `/ship` — строго по одному, последовательно.
 
-1. [01-init-command.md](01-init-command.md) — команда инициализации и шаблон блока —
-   **archived** (влит в `main`, `d476dd4`).
-2. [02-from-scratch-runbook.md](02-from-scratch-runbook.md) — сценарий «с нуля» в runbook и
-   его прогон — **archived** (влит в `main`, `b65bd2b`).
+| # | Title | Status | Blocked by |
+|---|-------|--------|------------|
+| 01 | [Команда инициализации — управляемый блок в AGENTS.md](01-init-command.md) | archived (влит в `main`, `d476dd4`) | — |
+| 02 | [Сценарий «с нуля» в runbook и его прогон](02-from-scratch-runbook.md) | archived (влит в `main`, `b65bd2b`) | 01 |

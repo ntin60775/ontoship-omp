@@ -16,6 +16,6 @@ Run the **mp-to-tickets** skill.
 - The skill then drafts tracer-bullet vertical slices (each sized to one fresh context
   window / one `/ship` run), gives each its blocking edges, quizzes the user on
   granularity and edges, and writes `docs/plans/<slug>/NN-<ticket>.md` (blockers first)
-  plus the plan's `Tickets` section.
+  plus the plan's `Tickets` table (`#`, `Title`, `Status`, `Blocked by`).
 - It lints + reindexes and stops. It does NOT launch `/ship` — the operator starts it by
   hand, one ticket at a time.

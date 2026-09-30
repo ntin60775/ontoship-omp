@@ -3,7 +3,7 @@ node_type: reference
 title: GitMark ontology — a knowledge model over code
 service: _platform
 status: active
-updated: 2026-09-18
+updated: 2026-09-29
 tags: [ontology, palantir, node-type, links, frontmatter]
 links:
   relates_to: [services/kb-curate/README.md, services/gitmark-cli/README.md, reference/architecture.md, decisions/link-resolution.md]
@@ -142,7 +142,8 @@ consumes:
 - `Constraints` — stop-points: `stop-before-commit`, `stop-after-mr`, `no-deploy`
 - `Context` — what the entry phase already established (root cause, prototype verdict,
   resolved design-tree branches)
-- `Tickets` — the decomposition, in order, with status (folder form only, added by `mp-to-tickets`)
+- `Tickets` — the decomposition, in order, as a table with columns `#`, `Title`,
+  `Status`, `Blocked by` (folder form only, added by `mp-to-tickets`)
 
 Each ticket carries: `What to build` (the end-to-end behaviour the slice makes work),
 `Blocked by` (the tickets that gate it), `Status`, and acceptance criteria.

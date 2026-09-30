@@ -3,7 +3,7 @@ node_type: service
 title: mp-to-tickets — plan → tracer-bullet tickets
 service: _platform
 status: active
-updated: 2026-08-25
+updated: 2026-09-29
 tags: [service, mp-to-tickets, tickets, plan]
 links:
   documents: [../../../.omp/skills/mp-to-tickets/SKILL.md]
@@ -22,5 +22,5 @@ Driven by the `/to-tickets` command (or "разбей на тикеты"). If th
 it is first promoted to the folder form (`git mv docs/plans/<slug>.md
 docs/plans/<slug>/README.md`, links rewritten for the extra depth) — the folder is
 created **only here**. Then it writes `docs/plans/<slug>/NN-<ticket>.md` (blockers
-first), updates the plan's `Tickets` section, lints + reindexes, and stops. It does NOT
-launch `/ship`.
+first), updates the plan's `Tickets` table (`#`, `Title`, `Status`, `Blocked by`), lints
++ reindexes, and stops. It does NOT launch `/ship`.

@@ -128,7 +128,8 @@ consumes:
 - `Constraints` — stop-points: `stop-before-commit`, `stop-after-mr`, `no-deploy`
 - `Context` — what the entry phase already established (root cause, prototype verdict,
   resolved design-tree branches)
-- `Tickets` — the decomposition, in order, with status (folder form only, added by `mp-to-tickets`)
+- `Tickets` — the decomposition, in order, as a table with columns `#`, `Title`,
+  `Status`, `Blocked by` (folder form only, added by `mp-to-tickets`)
 
 Each ticket carries: `What to build` (the end-to-end behaviour the slice makes work),
 `Blocked by` (the tickets that gate it), `Status`, and acceptance criteria.

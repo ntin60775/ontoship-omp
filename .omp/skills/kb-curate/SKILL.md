@@ -64,7 +64,8 @@ Plan contract body fields:
 - `Scope` — files/services touched (required)
 - `Constraints` — stop-points: `stop-before-commit`, `stop-after-mr`, `no-deploy`
 - `Context` — what the entry phase established (root cause, prototype verdict, resolved branches)
-- `Tickets` — the decomposition, in order, with status (added by `mp-to-tickets`, folder form only)
+- `Tickets` — the decomposition, in order, as a table with columns `#`, `Title`,
+  `Status`, `Blocked by` (added by `mp-to-tickets`, folder form only)
 
 Ticket body fields: `What to build` (end-to-end behaviour), `Blocked by` (ticket
 numbers), acceptance criteria.
