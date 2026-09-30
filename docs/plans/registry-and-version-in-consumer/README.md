@@ -100,8 +100,7 @@ links:
 
 Порядок — по зависимостям; `/ship` — строго по одному, последовательно.
 
-1. [01-package-root-scan.md](01-package-root-scan.md) — корень пакета и скан объединением;
-   `inventory` и I7 перестают быть вакуумными — **archived** (влит в `main`, `436d88a`,
-   `5ca10ab`).
-2. [02-version-from-manifest.md](02-version-from-manifest.md) — версия из манифеста пакета —
-   **archived** (влит в `main`, `cc2ce88`).
+| # | Title | Status | Blocked by |
+|---|-------|--------|------------|
+| 01 | [Корень пакета — движок видит команды и навыки пакета](01-package-root-scan.md) | archived (влит в `main`, `436d88a`, `5ca10ab`) | — |
+| 02 | [Версия движка — из манифеста пакета](02-version-from-manifest.md) | archived (влит в `main`, `cc2ce88`) | 01 |

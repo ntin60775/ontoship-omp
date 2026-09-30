@@ -52,15 +52,49 @@ Break the work into **tracer bullet** tickets.
 - Each slice is sized to fit in a single fresh context window — one `/ship` run.
 - Any prefactoring should be its own first ticket.
 
+**The unit is atomic: one verifiable capability with its own way of being accepted** —
+a synthetic test (engine/backend work) or another observable fact. Draft to that
+boundary *here*: a "too coarse" answer at the quiz means this step stopped early, not
+that the operator should do the split.
+
+**Split** a ticket when it:
+
+- promises **two or more independent capabilities**;
+- needs, for its acceptance, mechanics it does **not declare** in `depends_on` — an
+  undeclared dependency means the ticket builds something verifiable only together with
+  someone else's work;
+- cannot be verified without its neighbours and that dependency is not deliberately
+  recorded in `Blocked by`.
+
+**Merge** it into its neighbour when it adds nothing new beyond that neighbour — too
+small to stand alone.
+
+Splitting is normal at either stage:
+
+- **Before publication** — still a draft (before step 4): just edit the list; nothing is
+  on disk yet.
+- **After publication** — keep history: `git mv` the ticket file to its new number,
+  renumber the others, then rewrite **every** reference — `depends_on` in the
+  frontmatter, the `**Blocked by:**` line in the body, the `Blocked by` column of the
+  plan README's tickets table, and the prose of neighbouring tickets. Verify with a grep
+  of the plan folder for the old file names and number→title pairings: it must return
+  nothing. (The bare old numbers prove nothing — renumbering reuses the same strings.)
+
 Give each ticket its **blocking edges**: the other tickets that must complete before it
-can start. A ticket with no blockers can start immediately.
+can start. A ticket with no blockers can start immediately. Edges are minimal and form a
+**DAG — no cycles**: for every ticket A, A is not in its own `depends_on`, and there is
+no path A → B → … → A (walk it transitively). Every edge is recorded **identically in
+three places** — `links.depends_on` in the frontmatter, the `**Blocked by:**` line in
+the ticket body, and the `Blocked by` column of the plan README's tickets table. Any
+disagreement between the three is a breakdown defect.
 
 **Wide refactors are the exception to vertical slicing.** A wide refactor is one
 mechanical change (rename a column, retype a shared symbol) whose blast radius fans
 across the whole codebase, so no vertical slice can land green. Sequence it as
 **expand–contract**: expand (add the new form beside the old), migrate call sites in
 batches sized by blast radius (each batch its own ticket, blocked by the expand), then
-contract (delete the old form, blocked by every migrate batch).
+contract (delete the old form, blocked by every migrate batch). A wide refactor is
+atomic by definition — the criteria above do not split it.
 
 ### 3. Quiz the user
 
@@ -72,7 +106,9 @@ Present the proposed breakdown as a numbered list. For each ticket, show:
 
 Ask the user:
 
-- Does the granularity feel right? (too coarse / too fine)
+- Does the granularity feel right? (too coarse / too fine) — the atomicity criteria of
+  step 2 are already applied, so "too coarse" means the draft stopped short: split it,
+  don't file it.
 - Are the blocking edges correct: does each ticket only depend on tickets that genuinely
   gate it?
 - Should any tickets be merged or split further?
@@ -112,9 +148,9 @@ start immediately)".
 ```
 
 Also update the plan's `README.md` (the parent contract — the migrated file, or the
-existing folder README): add a `Tickets` section listing the tickets in order with
-their status, and set `status: active` only if the operator confirms shipping has
-started (otherwise leave `draft`).
+existing folder README): add a `Tickets` **table** — one row per ticket in order, with
+columns `#`, `Title`, `Status`, `Blocked by` — and set `status: active` only if the
+operator confirms shipping has started (otherwise leave `draft`).
 Avoid specific file paths or code snippets in tickets: they go stale fast. Exception: if
 a prototype produced a snippet that encodes a decision more precisely than prose can
 (state machine, reducer, schema, type shape), inline it and note briefly that it came

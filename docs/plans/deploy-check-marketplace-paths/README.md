@@ -143,9 +143,8 @@ links:
 
 Порядок — по зависимостям; `/ship` — строго по одному, последовательно.
 
-1. [01-payload-engine-refs.md](01-payload-engine-refs.md) — ссылки на движок в payload
-   на `skill://` — **archived** (влит в `main`, `b571dd6`).
-2. [02-deploy-check-rework.md](02-deploy-check-rework.md) — самоотносительный корень,
-   проверка-страж, смоук-поиск — **archived** (влит в `main`, `1cae6d2`).
-3. [03-runbook-and-kb-sync.md](03-runbook-and-kb-sync.md) — runbook развёртывания и
-   KB-синк — **archived** (влит в `main`, `3629862`).
+| # | Title | Status | Blocked by |
+|---|-------|--------|------------|
+| 01 | [Ссылки на движок в payload — на `skill://`](01-payload-engine-refs.md) | archived (влит в `main`, `b571dd6`) | — |
+| 02 | [deploy-check.sh — самоотносительный корень, страж, смоук-поиск](02-deploy-check-rework.md) | archived (влит в `main`, `1cae6d2`) | 01 |
+| 03 | [Runbook развёртывания — плагинный канал и путь к скрипту](03-runbook-and-kb-sync.md) | archived (влит в `main`, `3629862`) | 02 |

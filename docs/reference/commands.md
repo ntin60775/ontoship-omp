@@ -3,7 +3,7 @@ node_type: reference
 title: OntoShip slash commands
 service: _platform
 status: active
-updated: 2026-08-28
+updated: 2026-09-29
 tags: [commands, slash-commands, reference]
 links:
   documents: [../../.omp/commands/kb.md, ../../.omp/commands/kb-map.md, ../../.omp/commands/doc.md, ../../.omp/commands/onto-doc.md, ../../.omp/commands/grill.md, ../../.omp/commands/grilling.md, ../../.omp/commands/architecture.md, ../../.omp/commands/code-review.md, ../../.omp/commands/to-tickets.md, ../../.omp/commands/handoff.md, ../../.omp/commands/prototype.md, ../../.omp/commands/ship.md]
@@ -262,7 +262,7 @@ path.
   links for the extra depth and the incoming links from other docs). Then drafts the
   slices, gives each its blocking edges, quizzes the user on granularity and edges, and
   writes `docs/plans/<slug>/NN-<ticket>.md` (blockers first) and updates the plan's
-  `Tickets` section. Lints + reindexes and stops.
+  `Tickets` table (`#`, `Title`, `Status`, `Blocked by`). Lints + reindexes and stops.
 - **Drives:** `mp-to-tickets` skill.
 
 ## `/handoff` — session bridge
